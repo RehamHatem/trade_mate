@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:trade_mate/utils/app_colors.dart';
 
 import '../../../utils/shared_preference.dart';
-import '../../home/home.dart';
-import '../login/ui/view/login_screen.dart';
+import '../auth/login/ui/view/login_screen.dart';
+import '../home/home.dart';
 
 class Splash extends StatefulWidget {
   static const String routeName="splash";

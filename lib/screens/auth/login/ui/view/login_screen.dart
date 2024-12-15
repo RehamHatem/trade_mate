@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trade_mate/screens/auth/login/data/model/user_login_model.dart';
 import 'package:trade_mate/screens/auth/login/ui/view_model/login_screen_view_model.dart';
 import 'package:trade_mate/screens/auth/login/ui/view_model/states.dart';
+import 'package:trade_mate/screens/home/home.dart';
 
 import '../../../../../utils/app_colors.dart';
 import '../../../../../utils/dialog_utils.dart';
@@ -32,10 +33,11 @@ class _LoginScreenState extends State<LoginScreen> {
         else if (state is ErrorLoginState){
           DialogUtils.hideLoading(context);
           return DialogUtils.showMessage(context, state.errorMessage.toString(),title: "Error");
+
         }
         else if (state  is SuccessLoginState){
           DialogUtils.hideLoading(context);
-          return DialogUtils.showMessage(context, "success");
+          Navigator.pushReplacementNamed(context, Home.routeName);
         }
 
       },

@@ -40,9 +40,11 @@ class TextFieldItem extends StatelessWidget {
             decoration: InputDecoration(
                 fillColor: Color(0xfffcfafa),
                 filled: true,
+
                 enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.r)),
                 focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: AppColors.primaryColor),
                     borderRadius: BorderRadius.circular(15.r)),
                 errorBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15.r)),
