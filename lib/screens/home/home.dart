@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trade_mate/screens/auth/login/ui/view/login_screen.dart';
-import 'package:trade_mate/screens/home/tabs/bills_tab/bills.dart';
-import 'package:trade_mate/screens/home/tabs/categories_tab/categories.dart';
-import 'package:trade_mate/screens/home/tabs/products_tab/products.dart';
-import 'package:trade_mate/screens/home/tabs/suppliers_tab/suppliers.dart';
+import 'package:trade_mate/screens/home/tabs/home_tab/ui/view/home_tab.dart';
+import 'package:trade_mate/screens/home/tabs/more_tab/ui/view/more_tab.dart';
 import 'package:trade_mate/utils/app_colors.dart';
 
 class Home extends StatefulWidget {
@@ -24,6 +22,8 @@ class _HomeState extends State<Home> {
     return Scaffold(
       extendBody: true,
       extendBodyBehindAppBar: true,
+      backgroundColor: AppColors.lightGreyColor,
+
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         // flexibleSpace: Container(
@@ -73,7 +73,7 @@ class _HomeState extends State<Home> {
           //   },
           // );
         },
-        child: index==0?Text("bill",textAlign: TextAlign.center,style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.whiteColor)):index==1?Text("sup",textAlign: TextAlign.center,style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.whiteColor)):index==2?Text("cat",textAlign: TextAlign.center,style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.whiteColor)):Text("pro",textAlign: TextAlign.center,style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.whiteColor),),
+        child: Text("bill",textAlign: TextAlign.center,style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.whiteColor)),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
@@ -96,18 +96,15 @@ backgroundColor: Colors.transparent,
             setState(() {});
           },
           items: [
-            BottomNavigationBarItem(icon: Icon(Icons.shopify,size: 22.sp), label: "Bills"),
+            BottomNavigationBarItem(icon: Icon(Icons.home,size: 22.sp), label: "Home"),
             BottomNavigationBarItem(
-                icon: Icon(Icons.supervised_user_circle,size: 22.sp), label: "Suppliers"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.category,size: 22.sp), label: "Categories"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.store_rounded,size: 22.sp), label: "Products"),
+                icon: Icon(Icons.menu,size: 22.sp), label: "More"),
+
           ],
         ),
       ),
     );
   }
 
-  List<Widget> tabs = [Bills(),Suppliers(),Categories(),Products()];
+  List<Widget> tabs = [HomeTab(),MoreTab()];
 }

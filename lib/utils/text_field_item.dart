@@ -13,7 +13,8 @@ class TextFieldItem extends StatelessWidget {
   TextEditingController controller;
 
   TextFieldItem(
-      {required this.fieldName,
+      {
+        this.fieldName="",
         required this.hintText,
         this.suffixIcon,
         this.isObscure = false,
