@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trade_mate/screens/home/tabs/add_product/ui/view/add_product_screen.dart';
+import 'package:trade_mate/screens/home/tabs/customers/ui/view/customers_screen.dart';
+import 'package:trade_mate/screens/home/tabs/orders/ui/view/orders_screen.dart';
+import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/suplliers_screen.dart';
 import 'package:trade_mate/screens/widgets/container_text_icon.dart';
 
 import '../../../../../../utils/app_colors.dart';
@@ -120,6 +124,7 @@ class HomeTab extends StatelessWidget {
                 child: InkWell(
                     onTap: () {
                       //ToDo: add products
+                      Navigator.pushNamed(context,AddProductScreen. routeName);
                     },
                     child: ContainerTextIcon(txt: 'Add Products To Shop', icn: Icon(Icons.add_shopping_cart,color: AppColors.primaryColor,size: 35.sp,))),
               ),
@@ -134,9 +139,15 @@ class HomeTab extends StatelessWidget {
               Navigator.pushNamed(context, StockScreen.routeName);
             },
                 child: ContainerIconTxt(txt: 'Stock ', icn: Icon(Icons.inventory_2_outlined,color: AppColors.primaryColor,size: 25.sp,))),
-            ContainerIconTxt(txt: 'Suppliers ', icn: Icon(Icons.local_shipping_outlined,color: AppColors.primaryColor,size: 25.sp,),),
-            ContainerIconTxt(txt: 'Customers ', icn: Icon(Icons.people_outline,color: AppColors.primaryColor,size: 25.sp,),),
-            ContainerIconTxt(txt: 'Orders ', icn: Icon(Icons.fact_check_outlined,color: AppColors.primaryColor,size: 25.sp,)),
+            InkWell(onTap: () {
+              Navigator.pushNamed(context, SuplliersScreen.routeName);
+            },child: ContainerIconTxt(txt: 'Suppliers ', icn: Icon(Icons.local_shipping_outlined,color: AppColors.primaryColor,size: 25.sp,),)),
+            InkWell(onTap: () {
+              Navigator.pushNamed(context, CustomersScreen.routeName);
+            },child: ContainerIconTxt(txt: 'Customers ', icn: Icon(Icons.people_outline,color: AppColors.primaryColor,size: 25.sp,),)),
+            InkWell(onTap: () {
+              Navigator.pushNamed(context, OrdersScreen.routeName);
+            },child: ContainerIconTxt(txt: 'Orders ', icn: Icon(Icons.fact_check_outlined,color: AppColors.primaryColor,size: 25.sp,))),
 
           ],
         )
