@@ -35,6 +35,7 @@ class _SignupScreenState extends State<SignupScreen> {
         }
         else if (state  is SuccessSignupState){
           DialogUtils.hideLoading(context);
+          Navigator.pushReplacementNamed(context,LoginScreen. routeName);
           return DialogUtils.showMessage(context, "success");
         }
 

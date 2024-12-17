@@ -13,6 +13,7 @@ import '../../../../../widgets/container_icon_txt.dart';
 import '../../../stock/ui/view/stock_screen.dart';
 
 class HomeTab extends StatelessWidget {
+
   const HomeTab({super.key});
 
   @override

@@ -12,7 +12,7 @@ class AddProductTextField extends StatelessWidget {
   bool isEnabled;
   TextInputType? keyboardType;
   String? Function(String?)? validator;
-  TextEditingController? controller;
+  TextEditingController controller;
   bool isDropdown;
    List<String>? dropdownItems;
   String? dropdownValue;
@@ -24,7 +24,7 @@ class AddProductTextField extends StatelessWidget {
         this.suffix,
         this.isEnabled=true ,
         this.validator,
-         this.controller,
+         required this.controller,
         this.keyboardType,
         this.isDropdown = false,
         this.dropdownItems,
@@ -78,6 +78,15 @@ class AddProductTextField extends StatelessWidget {
               borderRadius: BorderRadius.circular(15.r),
               borderSide: BorderSide(color: AppColors.primaryColor),
             ),
+            focusedErrorBorder:OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15.r),
+              borderSide:
+              BorderSide(color: AppColors.primaryColor),
+            ) ,
+            errorBorder:  OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15.r),
+              borderSide: BorderSide(color: AppColors.primaryColor),
+            ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15.r),
               borderSide: BorderSide(color: AppColors.primaryColor),
@@ -92,6 +101,7 @@ class AddProductTextField extends StatelessWidget {
             :
         TextFormField(
   keyboardType: keyboardType,
+controller: controller,
           decoration: InputDecoration(
             // fillColor: Color(0xfffcfafa),
             // filled: true,
@@ -118,6 +128,11 @@ suffix: suffix,
                 borderSide: BorderSide(
                     color: AppColors.primaryColor),
                 borderRadius: BorderRadius.circular(15.r)),
+            focusedErrorBorder:OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15.r),
+    borderSide:
+    BorderSide(color: AppColors.primaryColor),
+    ) ,
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15.r),
               borderSide:
