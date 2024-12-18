@@ -17,9 +17,22 @@ class StockSuccessState extends StockStates{
   StockSuccessState({required this.products});
 
 }
-class StockErrorState extends StockStates{
+class StockErrorState extends StockStates {
   Failures error;
+
   StockErrorState({required this.error});
+}
+  class DeleteProductLoadingState extends StockStates{
+  String load;
+  DeleteProductLoadingState({required this.load});
 
+  }
+  class DeleteProductSuccessState extends StockStates{
+  String success;
+  DeleteProductSuccessState({required this.success});
 
+  }
+  class DeleteProductErrorState extends StockStates{
+  String error;
+  DeleteProductErrorState({required this.error});
 }

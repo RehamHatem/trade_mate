@@ -11,4 +11,7 @@ class StockUseCases{
     return stockRepository.getProducts();
 
 }
+Future<void>deleteProduct(String id){
+    return stockRepository.deleteProduct(id);
+}
 }

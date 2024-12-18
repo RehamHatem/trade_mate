@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trade_mate/screens/home/tabs/stock/ui/view/product_item.dart';
 import 'package:trade_mate/screens/home/tabs/stock/ui/view_model/stock_view_model.dart';
 import 'package:trade_mate/utils/app_colors.dart';
+import 'package:trade_mate/utils/dialog_utils.dart';
 import 'package:trade_mate/utils/text_field_item.dart';
 
 import '../../../add_product/domain/entity/product_entity.dart';
@@ -52,16 +53,31 @@ class StockScreen extends StatelessWidget {
                   }
 
                   if (state is StockErrorState) {
-                    return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("Something went wrong"),
-                        ElevatedButton(
-                          onPressed: () =>
-                              context.read<StockViewModel>().getProducts(),
-                          child: const Text("Try Again"),
-                        ),
-                      ],
+                    return BlocListener(
+                      listener: (context, state) {
+    if (state is DeleteProductLoadingState) {
+                          DialogUtils.showLoading(
+                              context, "Deleting product...");
+                        } else if (state is DeleteProductErrorState) {
+                          DialogUtils.hideLoading(context);
+                          DialogUtils.showMessage(context, state.error);
+                        } else if (state is DeleteProductSuccessState) {
+                          DialogUtils.hideLoading(context);
+                          DialogUtils.showMessage(
+                              context, "Product deleted successfully");
+                        }
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Something went wrong"),
+                          ElevatedButton(
+                            onPressed: () =>
+                                context.read<StockViewModel>().getProducts(),
+                            child: const Text("Try Again"),
+                          ),
+                        ],
+                      ),
                     );
                   }
 
@@ -78,25 +94,31 @@ class StockScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final product = products[index];
                           return ProductItem(
-                            name: product.name,
-                            quantity: product.quantity,
-                            price: product.price != null
-                                ? double.parse(product.price.toString()).toStringAsFixed(2)
-                                : '0.00',
-                            totalPrice: product.total != null
-                                ? double.parse(product.total.toString()).toStringAsFixed(2)
-                                : '0.00',
-                            supplier: product.supplier,
-                            category: product.category,
+                            delete: (p0) {
+                              stockViewModel.deleteProduct(product.id);
+
+                              // stockViewModel.stream.listen((state) {
+                              //   if (state is DeleteProductLoadingState) {
+                              //     DialogUtils.showLoading(context, "Deleting product...");
+                              //   } else if (state is DeleteProductErrorState) {
+                              //     DialogUtils.hideLoading(context);
+                              //     DialogUtils.showMessage(context, state.error);
+                              //   } else if (state is DeleteProductSuccessState) {
+                              //     DialogUtils.hideLoading(context);
+                              //     DialogUtils.showMessage(context, "Product deleted successfully");
+                              //   }
+                              // });
+                            },
+                           productModel: product,
                           );
                         },
-                        separatorBuilder: (_, __) => const SizedBox(height: 10),
+                        separatorBuilder: (_, __) =>  SizedBox(height: 10.h),
                         itemCount: products.length,
                       ),
                     );
                   }
 
-                  return const Center(child: Text("No Products Available"));
+                  return  Center(child: Text("No Products Available"));
                 },
               ),
             ),

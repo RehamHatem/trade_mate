@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trade_mate/screens/home/tabs/add_product/data/model/product_model.dart';
+import 'package:trade_mate/screens/home/tabs/add_product/domain/entity/product_entity.dart';
+import 'package:trade_mate/screens/home/tabs/stock/ui/view_model/stock_view_model.dart';
 import 'package:trade_mate/utils/app_colors.dart';
 
 class ProductItem extends StatelessWidget {
    ProductItem({
-    required this.name,
-     required this.quantity,
-     required this.price,
-     required this.totalPrice,
-     this.supplier,this.category});
-String name;
-double quantity;
-String price;
-   String totalPrice;
-  String? category;
-  String? supplier;
+     required this.productModel,
+     required this.delete
+   });
+ProductEntity productModel;
+void Function (String)delete;
+
   @override
   Widget build(BuildContext context) {
     return  Container(
@@ -34,11 +32,12 @@ String price;
 
           children: [
 
-          Text(name,style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.darkPrimaryColor
+          Text(productModel.name,style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.darkPrimaryColor
           ,fontSize: 22.sp),),
           SizedBox(height: 5.h,),
 
-          Text("price: ${price} EGP",style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.greyColor
+          Text("price: ${double.parse(productModel.price.toString()).toStringAsFixed(2)
+            ??"0.00"} EGP",style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.greyColor
               ,fontSize: 14.sp,overflow: TextOverflow.ellipsis,),),
 
           Row(
@@ -46,12 +45,13 @@ String price;
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("quantity: ${quantity}",
+                  Text("quantity: ${double.parse(productModel.quantity.toString()).toStringAsFixed(2)
+                    ??"0.00"}",
                     style: Theme.of(context).textTheme.titleMedium!.
                     copyWith(color: AppColors.greyColor
                       ,fontSize: 14.sp),),
                   Text("category: "
-                      "${category??"N/A"}",style: Theme.of(context)
+                      "${productModel.category}",style: Theme.of(context)
                       .textTheme.titleMedium!.copyWith(color: AppColors.greyColor
                       ,fontSize: 14.sp),)
                 ],
@@ -60,11 +60,11 @@ String price;
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("total: ${totalPrice} EGP",
+                  Text("total: ${productModel.total} EGP",
                     style: Theme.of(context).textTheme.titleMedium!.
                     copyWith(color: AppColors.greyColor,overflow:TextOverflow.ellipsis
                       ,fontSize: 14.sp),),
-                  Text("supplier: ${supplier??"N/A"} ",
+                  Text("supplier: ${productModel.supplier} ",
                     style: Theme.of(context).textTheme.titleMedium!.
                     copyWith(color: AppColors.greyColor
                       ,fontSize: 14.sp),),
@@ -88,7 +88,7 @@ String price;
                     child: Row(
                       children: [
                                       Container(
-                    height: 20.h,width: 20.h,
+                    height: 20.h,width: 20.w,
 
                     decoration:BoxDecoration(
 
@@ -96,13 +96,13 @@ String price;
                         color: AppColors.primaryColor),
 
                       child: Icon(Icons.edit,size: 10.sp,color: AppColors.whiteColor,)),
-                                      SizedBox(width: 10.h,),
+                                      SizedBox(width: 10.w,),
                                       Text("Edit",style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.greyColor
                       ,fontSize: 14.sp),),
                                     ],)),
     SizedBox(width:85.w,),
                 IconButton(onPressed: () {
-                  //ToDo: delete
+                 delete(productModel.id);
                 }, icon: Icon(Icons.delete,size: 30.sp,color: AppColors.redColor,))
               ],
             )

@@ -15,5 +15,10 @@ class StockRepoImpl implements StockRepository{
     return stockDataSource.getProducts();
   }
 
+  @override
+  Future<void> deleteProduct(String id) {
+    return stockDataSource.deleteProduct(id);
+  }
+
 
 }

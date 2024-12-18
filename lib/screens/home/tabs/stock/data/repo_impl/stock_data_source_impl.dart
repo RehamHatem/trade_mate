@@ -44,5 +44,10 @@ print(entityList);
     });
   }
 
+  @override
+  Future<void> deleteProduct(String id) {
+    return stockFireBaseFunctions.daleteTask(id);
+  }
+
 
 }
