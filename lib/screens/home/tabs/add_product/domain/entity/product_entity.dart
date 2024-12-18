@@ -29,7 +29,7 @@ class ProductEntity{
 
 
 
-   ProductEntity toEntity() {
+  ProductEntity toEntity() {
   return ProductEntity(
       category:category,
       supplier:supplier,

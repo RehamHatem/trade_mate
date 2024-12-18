@@ -146,7 +146,7 @@ clearForm();
 
                     ),
                   SizedBox(height: 10.h,),
-                  Text("The product added successfully",style: Theme.of(context)
+                  Text("The product is added successfully",style: Theme.of(context)
                       .textTheme
                       .titleMedium!
                       .copyWith(color: AppColors.primaryColor),
@@ -218,7 +218,7 @@ clearForm();
                             isEnabled: true,
                             keyboardType: TextInputType.number,
                             validator: (value) {
-                              if (value == null || value.trim().isEmpty) {
+                              if (value == null || value.trim().isEmpty  ) {
                                 return 'please enter product quantity';
                               }
                               return null;

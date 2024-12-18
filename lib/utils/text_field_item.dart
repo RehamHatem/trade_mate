@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'app_colors.dart';
 
 class TextFieldItem extends StatelessWidget {
-  String fieldName;
+  String? fieldName;
   String hintText;
   Widget? suffixIcon;
   bool isObscure;
@@ -14,7 +14,7 @@ class TextFieldItem extends StatelessWidget {
 
   TextFieldItem(
       {
-        this.fieldName="",
+        this.fieldName,
         required this.hintText,
         this.suffixIcon,
         this.isObscure = false,
@@ -27,14 +27,15 @@ class TextFieldItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          fieldName,
+
+       fieldName!=null ?Text(
+          fieldName!,
           style: Theme.of(context)
               .textTheme
               .titleMedium!
               .copyWith(fontSize: 18.sp),
           textAlign: TextAlign.start,
-        ),
+        ): SizedBox(),
         Padding(
           padding: EdgeInsets.only(top: 15.h, bottom: 24.h),
           child: TextFormField(

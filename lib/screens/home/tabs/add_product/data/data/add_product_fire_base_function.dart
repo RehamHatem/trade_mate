@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../model/product_model.dart';
 
 class AddProductFireBaseFunction{
-  static CollectionReference<ProductModel> getTasksCollection() {
+  static CollectionReference<ProductModel> getProductsCollection() {
     return FirebaseFirestore.instance
         .collection("Products")
         .withConverter<ProductModel>(
@@ -17,7 +17,7 @@ class AddProductFireBaseFunction{
   }
 
    Future<void> addProduct(ProductModel product) {
-    var collection = getTasksCollection();
+    var collection = getProductsCollection();
     var docRef = collection.doc();
     product.id = docRef.id;
     return docRef.set(product);
