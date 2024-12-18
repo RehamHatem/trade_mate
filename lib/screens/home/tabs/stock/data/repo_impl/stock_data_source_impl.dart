@@ -46,7 +46,12 @@ print(entityList);
 
   @override
   Future<void> deleteProduct(String id) {
-    return stockFireBaseFunctions.daleteTask(id);
+    return stockFireBaseFunctions.daleteProduct(id);
+  }
+
+  @override
+  Future<void> updateProduct(String id, ProductEntity product) {
+    return stockFireBaseFunctions.updateProduct(id, product.fromEntity(product));
   }
 
 

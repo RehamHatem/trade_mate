@@ -36,3 +36,17 @@ class StockErrorState extends StockStates {
   String error;
   DeleteProductErrorState({required this.error});
 }
+class UpdateProductLoadingState extends StockStates{
+  String load;
+  UpdateProductLoadingState({required this.load});
+
+}
+class UpdateProductSuccessState extends StockStates{
+  String success;
+  UpdateProductSuccessState({required this.success});
+
+}
+class UpdateProductErrorState extends StockStates{
+  String error;
+  UpdateProductErrorState({required this.error});
+}

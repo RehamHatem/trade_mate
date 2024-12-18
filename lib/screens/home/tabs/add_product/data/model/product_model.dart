@@ -11,8 +11,8 @@ class ProductModel extends ProductEntity{
   required super.quantity,
   required super.price,
   required super.total,
-  required super.supplier,
-  required super.category,
+   super.supplier="N/A",
+   super.category="N/A",
   required super.date, required super.userId,
   });
 

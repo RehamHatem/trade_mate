@@ -20,5 +20,11 @@ class StockRepoImpl implements StockRepository{
     return stockDataSource.deleteProduct(id);
   }
 
+  @override
+  Future<void> updateProduct(String id, ProductEntity product) {
+    // TODO: implement updateProduct
+    throw UnimplementedError();
+  }
+
 
 }

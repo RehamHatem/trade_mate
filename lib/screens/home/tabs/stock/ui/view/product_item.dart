@@ -51,7 +51,7 @@ void Function (String)delete;
                     copyWith(color: AppColors.greyColor
                       ,fontSize: 14.sp),),
                   Text("category: "
-                      "${productModel.category}",style: Theme.of(context)
+                      "${productModel.category??"N/A"}",style: Theme.of(context)
                       .textTheme.titleMedium!.copyWith(color: AppColors.greyColor
                       ,fontSize: 14.sp),)
                 ],
@@ -64,7 +64,7 @@ void Function (String)delete;
                     style: Theme.of(context).textTheme.titleMedium!.
                     copyWith(color: AppColors.greyColor,overflow:TextOverflow.ellipsis
                       ,fontSize: 14.sp),),
-                  Text("supplier: ${productModel.supplier} ",
+                  Text("supplier: ${productModel.supplier??"N/A"} ",
                     style: Theme.of(context).textTheme.titleMedium!.
                     copyWith(color: AppColors.greyColor
                       ,fontSize: 14.sp),),

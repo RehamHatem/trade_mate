@@ -8,4 +8,5 @@ import '../../../add_product/data/model/product_model.dart';
 abstract class StockDataSource{
   Stream<Either<Failures,List<ProductEntity>>>getProducts();
   Future<void>deleteProduct(String id);
+  Future<void>updateProduct(String id,ProductEntity product);
 }

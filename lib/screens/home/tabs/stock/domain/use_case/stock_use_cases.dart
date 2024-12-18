@@ -14,4 +14,7 @@ class StockUseCases{
 Future<void>deleteProduct(String id){
     return stockRepository.deleteProduct(id);
 }
+  Future<void>updateProduct(String id,ProductEntity product){
+    return stockRepository.updateProduct(id, product);
+  }
 }

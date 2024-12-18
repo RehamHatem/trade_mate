@@ -42,11 +42,11 @@ class StockFireBaseFunctions{
      return Stream.value(left(Failures(errorMsg: e.toString())));
    }
  }
- Future<void> daleteTask(String id) {
+ Future<void> daleteProduct(String id) {
   return getProductsCollection().doc(id).delete();
 }
 
- Future<void> updateTask(String id, ProductModel product) {
+ Future<void> updateProduct(String id, ProductModel product) {
   return getProductsCollection().doc(id).update(product.toJson());
 }
 
