@@ -5,8 +5,8 @@ class ProductEntity{
   String id;
   String name;
   String notes;
-  String? category;
-  String? supplier;
+  String category;
+  String supplier;
   double quantity;
   double price;
   double total;
@@ -17,12 +17,11 @@ class ProductEntity{
   ProductEntity(
   {this.id = "",
   required this.name,
-  this.notes="N/A",
+  required this.notes,
   required this.quantity,
   required this.price,
-  required this.total,
-  this.supplier="N/A",
-   this.category="N/A",
+  required this.total, required this.supplier,
+    required this.category,
   required this.date, required this.userId,
   });
 

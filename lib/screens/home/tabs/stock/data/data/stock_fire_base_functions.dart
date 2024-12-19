@@ -46,8 +46,14 @@ class StockFireBaseFunctions{
   return getProductsCollection().doc(id).delete();
 }
 
- Future<void> updateProduct(String id, ProductModel product) {
-  return getProductsCollection().doc(id).update(product.toJson());
-}
+ Future<void> updateProduct(String id, ProductModel product) async {
+   try {
+     await getProductsCollection().doc(id).update(product.toJson());
+     print("Product updated successfully!");
+   } catch (e) {
+     print("Error updating product: $e");
+     throw Exception("Failed to update product: ${e.toString()}");
+   }
+ }
 
 }

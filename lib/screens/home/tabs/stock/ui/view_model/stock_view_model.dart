@@ -43,11 +43,11 @@ class StockViewModel extends Cubit<StockStates>{
       print("view model delete product error");
     }
   }
-  void updateProduct(String id, ProductEntity product)async{
+  void updateProduct(String id, ProductEntity product){
     if (isClosed) return;
     emit(UpdateProductLoadingState(load: "loading..."));
     try{
-      await stockUseCases.updateProduct(id, product);
+      stockUseCases.updateProduct(id, product);
       emit(UpdateProductSuccessState(success: "success"));
       print("view model update product success");
       if (!isClosed) {
@@ -55,6 +55,7 @@ class StockViewModel extends Cubit<StockStates>{
       }
     }catch(e){
       emit(UpdateProductErrorState(error: e.toString()));
+      print(e.toString());
       print("view model update product error");
     }
   }

@@ -7,12 +7,12 @@ class ProductModel extends ProductEntity{
   ProductModel(
   {super.id = "",
   required super.name,
-    super.notes="N/A",
+    required super.notes,
   required super.quantity,
   required super.price,
   required super.total,
-   super.supplier="N/A",
-   super.category="N/A",
+    required super.supplier,
+    required super.category,
   required super.date, required super.userId,
   });
 

@@ -364,11 +364,12 @@ clearForm();
                               print("Product Supplier: ${viewModel.productSup.text}");
                               if (viewModel.formKey.currentState!.validate()){
                                 ProductEntity product=ProductEntity(name: viewModel.productName.text,
-                                    quantity: double.tryParse(viewModel.productQuantity.text)??1.0,
+                                    quantity: double.tryParse(viewModel.productQuantity.text)??0.0,
                                     price: double.tryParse(viewModel.productPrice.text)??0.0,
                                     total: viewModel.total,
-                                    supplier: viewModel.productSup.text,
-                                    category: viewModel.productCat.text,
+                                    notes: viewModel.productNotes.text==""?"N/A":viewModel.productNotes.text,
+                                    supplier: viewModel.productSup.text==""?"N/A":viewModel.productSup.text,
+                                    category: viewModel.productCat.text==""?"N/A":viewModel.productCat.text,
                                     date: DateUtils.dateOnly(viewModel.selectedDate).millisecondsSinceEpoch,
                                     userId: FirebaseAuth.instance.currentUser!.uid);
                                 viewModel.addProduct(product);
