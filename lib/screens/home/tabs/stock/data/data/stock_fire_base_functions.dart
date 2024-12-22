@@ -43,7 +43,17 @@ class StockFireBaseFunctions{
    }
  }
  Future<void> daleteProduct(String id) {
-  return getProductsCollection().doc(id).delete();
+
+  try {
+    print("Product deleted successfully!");
+    return getProductsCollection().doc(id).delete();
+
+  } catch (e) {
+    print("Error deleting product: $e");
+    throw Exception("Failed to update product: ${e.toString()}");
+  }
+
+
 }
 
  Future<void> updateProduct(String id, ProductModel product) async {

@@ -49,6 +49,9 @@ class StockScreen extends StatelessWidget {
                 ),
                 child: TextFieldItem(
                   controller: stockViewModel.search,
+                  change: (query) {
+                    stockViewModel.searchProducts(query);
+                  },
                   hintText: "Search in stock ",
                   suffixIcon: Icon(
                     Icons.search,
@@ -56,61 +59,84 @@ class StockScreen extends StatelessWidget {
                 ),
               )),
           Expanded(
-            child: BlocProvider(
-              create: (_) => stockViewModel..getProducts(),
-              child: BlocBuilder<StockViewModel, StockStates>(
+            child: BlocListener(
+              bloc: stockViewModel..getProducts(),
+              listener: (context, state) {
+                if (state is DeleteProductLoadingState) {
+                  DialogUtils.showLoading(context, "Deleting product...");
+                } else if (state is DeleteProductErrorState) {
+                  DialogUtils.hideLoading(context);
+                  DialogUtils.showMessage(context, state.error);
+                } else if (state is DeleteProductSuccessState) {
+                  DialogUtils.hideLoading(context);
+                  DialogUtils.showMessage(
+                      context, "Product deleted successfully",
+                      title: "Note");
+                } else if (state is UpdateProductLoadingState) {
+                  DialogUtils.showLoading(context, "Updating product...");
+                } else if (state is UpdateProductErrorState) {
+                  DialogUtils.hideLoading(context);
+                  DialogUtils.showMessage(context, state.error);
+                } else if (state is UpdateProductSuccessState) {
+                  DialogUtils.hideLoading(context);
+                  DialogUtils.showMessage(
+                      context, "Product updated successfully",
+                      title: "Note");
+                } else if (state is StockLoadingState) {
+                  return DialogUtils.showLoading(context, "Loading...");
+                } else if (state is StockErrorState) {
+                  DialogUtils.hideLoading(context);
+                  DialogUtils.showMessage(
+                      context, state.error.errorMsg.toString());
+                } else if (state is StockSuccessState) {
+                  DialogUtils.hideLoading(context);
+                  final products = state.products;
 
-                builder: (context, state) {
-                  if (state is StockLoadingState) {
-                    return const Center(child: CircularProgressIndicator());
+                  if (products.isEmpty) {
+                    return DialogUtils.showMessage(
+                        context, "No Products Found");
                   }
-                  if (state is StockErrorState) {
-                    return BlocListener(
-                      listener: (context, state) {
-                        if (state is DeleteProductLoadingState) {
-                          DialogUtils.showLoading(
-                              context, "Deleting product...");
-                        } else if (state is DeleteProductErrorState) {
-                          DialogUtils.hideLoading(context);
-                          DialogUtils.showMessage(context, state.error);
-                        } else if (state is DeleteProductSuccessState) {
-                          DialogUtils.hideLoading(context);
-                          DialogUtils.showMessage(
-                              context, "Product deleted successfully");
-                        }
-                        else if(state is UpdateProductLoadingState){
-                          DialogUtils.showLoading(
-                              context, "Updating product...");
-                        }
-                        else if (state is UpdateProductErrorState) {
-                          DialogUtils.hideLoading(context);
-                          DialogUtils.showMessage(context, state.error);
-                        } else if (state is UpdateProductSuccessState) {
-                          DialogUtils.hideLoading(context);
-                          DialogUtils.showMessage(
-                              context, "Product updated successfully");
-                        }
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text("Something went wrong"),
-                          ElevatedButton(
-                            onPressed: () =>
-                                context.read<StockViewModel>().getProducts(),
-                            child: const Text("Try Again"),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  if (state is StockSuccessState) {
-                    final products = state.products;
-
-                    if (products.isEmpty) {
-                      return const Center(child: Text("No Products Found"));
+                  ;
+                }
+              },
+              child: StreamBuilder<List<ProductEntity>>(
+                  stream: stockViewModel.productStreamController.stream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
                     }
+
+                    if (snapshot.hasError) {
+                      return Center(child: Text("Error: ${snapshot.error}"));
+                    }
+
+                    final products = snapshot.data ?? [];
+                    if (products.isEmpty) {
+                      return Center(child: Text("No Products Found"));
+                    }
+                    // if (state is StockLoadingState) {
+                    //   return const Center(child: CircularProgressIndicator());
+                    // }
+                    // if (state is StockErrorState) {
+                    //   return Column(
+                    //     mainAxisAlignment: MainAxisAlignment.center,
+                    //     children: [
+                    //       const Text("Something went wrong"),
+                    //       ElevatedButton(
+                    //         onPressed: () =>
+                    //             context.read<StockViewModel>().getProducts(),
+                    //         child: const Text("Try Again"),
+                    //       ),
+                    //     ],
+                    //   );
+                    // }
+                    //
+                    // if (state is StockSuccessState) {
+                    //   final products = state.products;
+                    //
+                    //   if (products.isEmpty) {
+                    //     return const Center(child: Text("No Products Found"));
+                    //   }
 
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -126,9 +152,8 @@ class StockScreen extends StatelessWidget {
                                   return AlertDialog(
                                     backgroundColor: AppColors.lightGreyColor,
                                     shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15.r),
-                                        ),
+                                      borderRadius: BorderRadius.circular(15.r),
+                                    ),
                                     title: Column(
                                       children: [
                                         Row(
@@ -148,11 +173,13 @@ class StockScreen extends StatelessWidget {
                                               style: ButtonStyle(
                                                   backgroundColor:
                                                       WidgetStatePropertyAll(
-                                                          AppColors.darkPrimaryColor),
+                                                          AppColors
+                                                              .darkPrimaryColor),
                                                   shape: WidgetStatePropertyAll(
                                                       RoundedRectangleBorder(
                                                     borderRadius:
-                                                        BorderRadius.circular(50.r),
+                                                        BorderRadius.circular(
+                                                            50.r),
                                                   ))),
                                               onPressed: () {
                                                 Navigator.pop(context);
@@ -163,7 +190,8 @@ class StockScreen extends StatelessWidget {
                                             ),
                                           ],
                                         ),
-                                        Divider(color: AppColors.darkPrimaryColor,
+                                        Divider(
+                                          color: AppColors.darkPrimaryColor,
                                         )
                                       ],
                                     ),
@@ -192,8 +220,7 @@ class StockScreen extends StatelessWidget {
                                 // });
                               },
                               update: (p0, p1) {
-                                stockViewModel.updateProduct(
-                                    product.id, p1);
+                                stockViewModel.updateProduct(product.id, p1);
                               },
                               productModel: product,
                             ),
@@ -205,9 +232,9 @@ class StockScreen extends StatelessWidget {
                     );
                   }
 
-                  return Center(child: Text("No Products Available"));
-                },
-              ),
+                  // return Center(child: Text("No Products Available"));
+                  // },
+                  ),
             ),
           ),
         ],

@@ -8,6 +8,7 @@ class TextFieldItem extends StatelessWidget {
   String hintText;
   Widget? suffixIcon;
   bool isObscure;
+   Function(String)? change;
   var keyboardType;
   String? Function(String?)? validator;
   TextEditingController controller;
@@ -19,6 +20,7 @@ class TextFieldItem extends StatelessWidget {
         this.suffixIcon,
         this.isObscure = false,
         this.validator,
+        this.change,
         required this.controller,
         this.keyboardType = TextInputType.text});
 
@@ -61,6 +63,7 @@ class TextFieldItem extends StatelessWidget {
             controller: controller,
             obscureText: isObscure,
             keyboardType: keyboardType,
+            onChanged: change,
           ),
         )
       ],

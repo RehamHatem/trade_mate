@@ -87,8 +87,9 @@ void Function (String,ProductEntity)update;
           
                 children: [
                   ElevatedButton(onPressed: () {
-              //ToDo: edit
+
                     showModalBottomSheet(
+                      backgroundColor: AppColors.lightGreyColor,
                       context: context,
                       isScrollControlled: true,
                       builder: (context) {
@@ -101,7 +102,7 @@ void Function (String,ProductEntity)update;
                             padding: EdgeInsets.only(
           
                                 bottom: MediaQuery.of(context).viewInsets.bottom),
-                            decoration: BoxDecoration(color: AppColors.whiteColor,borderRadius:
+                            decoration: BoxDecoration(color: AppColors.lightGreyColor,borderRadius:
                             BorderRadius.only(topLeft: Radius.circular(15.r),topRight:
                             Radius.circular(15.r))),
                             child:EditProduct(update:(p0, p1) {
