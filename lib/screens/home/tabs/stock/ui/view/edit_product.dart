@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:trade_mate/screens/home/tabs/add_product/domain/entity/product_entity.dart';
 
 import '../../../../../../utils/app_colors.dart';
@@ -114,6 +115,7 @@ class _EditProductState extends State<EditProduct> {
             isEnabled: true,
             isDropdown: true,
             controller: productCat,
+            dropdownValue: productCat.text,
             validator: (value) {
               if (value == null || productCat.text.isEmpty) {
                 productCat.text = value ?? "";
@@ -136,6 +138,7 @@ class _EditProductState extends State<EditProduct> {
             hintText: "select supplier",
             isEnabled: true,
             isDropdown: true,
+            dropdownValue: productSup.text,
             controller: productSup,
             validator: (value) {
               if (value == null || productSup.text.isEmpty) {
@@ -234,7 +237,7 @@ class _EditProductState extends State<EditProduct> {
                     if (formKey.currentState!.validate()) {
                       formKey.currentState!.save();
                       final updatedProduct = ProductEntity(
-                        date: DateUtils.dateOnly(selectedDate).millisecondsSinceEpoch,
+                        date: widget.productEntity.date,
                         userId: FirebaseAuth.instance.currentUser!.uid,
                         id: widget.productEntity.id,
                         name: productName.text,

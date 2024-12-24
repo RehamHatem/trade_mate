@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:trade_mate/screens/auth/login/ui/view/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:trade_mate/screens/auth/signup/ui/view/signup_screen.dart';
@@ -9,6 +13,7 @@ import 'package:trade_mate/screens/home/tabs/add_product/ui/view/add_product_scr
 import 'package:trade_mate/screens/home/tabs/customers/ui/view/customers_screen.dart';
 import 'package:trade_mate/screens/home/tabs/orders/ui/view/orders_screen.dart';
 import 'package:trade_mate/screens/home/tabs/stock/ui/view/stock_screen.dart';
+import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/add_supplier_screen.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/suplliers_screen.dart';
 import 'package:trade_mate/screens/widgets/splash.dart';
 import 'package:trade_mate/utils/app_theme.dart';
@@ -21,6 +26,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  final path =await getApplicationDocumentsDirectory();
+  Hive.init(path.path);
   runApp(const MyApp());
 }
 
@@ -47,6 +54,7 @@ class MyApp extends StatelessWidget {
           SuplliersScreen.routeName:(context)=>SuplliersScreen(),
           CustomersScreen.routeName:(context)=>CustomersScreen(),
           AddProductScreen.routeName:(context)=>AddProductScreen(),
+          AddSupplierScreen.routeName:(context)=>AddSupplierScreen(),
 
         },
       ),

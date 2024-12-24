@@ -14,7 +14,6 @@ class AddProductViewModel extends Cubit<AddProductStates>{
   TextEditingController productCat = TextEditingController();
   TextEditingController productSup = TextEditingController();
   TextEditingController productTotal = TextEditingController();
-  DateTime selectedDate=DateTime.now();
   TextEditingController productPrice = TextEditingController();
   TextEditingController productNotes = TextEditingController();
   double total = 0.0;

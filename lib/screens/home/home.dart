@@ -22,6 +22,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       extendBody: true,
       extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.lightGreyColor,
 
       appBar: AppBar(
@@ -79,8 +80,9 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: BottomAppBar(
         notchMargin: 10,
         shape: CircularNotchedRectangle(),
-
+color: AppColors.whiteColor,
         child: BottomNavigationBar(
+
           selectedItemColor: AppColors.primaryColor,
           unselectedItemColor: AppColors.blackColor,
 backgroundColor: Colors.transparent,

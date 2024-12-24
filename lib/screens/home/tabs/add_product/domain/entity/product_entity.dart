@@ -11,7 +11,7 @@ class ProductEntity{
   double price;
   double total;
 
-  int date;
+  String date;
   String userId;
 
   ProductEntity(

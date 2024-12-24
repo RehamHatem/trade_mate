@@ -22,7 +22,7 @@ void Function (String,ProductEntity)update;
     return  Container(
       width: double.infinity,
       height: 170.h,
-      margin: EdgeInsets.only(left: 15.w,right: 15.w,top: 10.h,bottom: 10.h),
+      margin: EdgeInsets.only(left: 10.w,right: 10.w,top: 10.h,bottom: 10.h),
       decoration: BoxDecoration(
         color: AppColors.whiteColor,
         borderRadius: BorderRadius.circular(15.r),
