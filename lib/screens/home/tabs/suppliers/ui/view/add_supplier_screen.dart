@@ -11,6 +11,7 @@ import 'package:trade_mate/screens/home/tabs/suppliers/ui/view_model/supplier_vi
 
 import '../../../../../../utils/app_colors.dart';
 import '../../../../../../utils/dialog_utils.dart';
+import '../../../../../../utils/shared_preference.dart';
 import '../../../../../widgets/add_product_text_field.dart';
 import '../../domain/supplier_di.dart';
 import '../view_model/supplier_states.dart';
@@ -148,6 +149,12 @@ SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSu
                 .copyWith(color: AppColors.whiteColor),
           ),
           toolbarHeight: 100.h,
+          // leading: IconButton(onPressed: () {
+          //   Navigator.pushNamedAndRemoveUntil(context, SuplliersScreen.routeName, (route) {
+          //     return false;
+          //   },);
+          //
+          // },icon: Icon(Icons.arrow_back),),
         ),
         body: Center(
           child: SingleChildScrollView(
@@ -281,16 +288,19 @@ SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSu
                           SizedBox(width: 10.w,),
                           Expanded(
                             child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async{
+                                await SharedPreference.init();
+                                var user=SharedPreference.getData(key: 'email' );
                     supplierViewModel.formKey.currentState!.save();
                     print("Product Name: ${supplierViewModel.supplierName.text}");
-                    print("Product Quantity: ${supplierViewModel.supplierAddress.text}");
-                    print("Product Price: ${supplierViewModel.supplierCity.text}");
-                    print("Product Category: ${supplierViewModel.supplierPhone.text}");
-                    print("Product Supplier: ${supplierViewModel.supplierNotes.text}");
+                    print("Product address: ${supplierViewModel.supplierAddress.text}");
+                    print("Product city: ${supplierViewModel.supplierCity.text}");
+                    print("Product phone: ${supplierViewModel.supplierPhone.text}");
+                    print("Product notes: ${supplierViewModel.supplierNotes.text}");
                     if (supplierViewModel.formKey.currentState!.validate()){
                       SupplierEntity supplier=SupplierEntity(name: supplierViewModel.supplierName.text
-                          , notes: supplierViewModel.supplierNotes.text,
+                          , notes: supplierViewModel.supplierNotes.text??"N/A",
+                          id: user.toString(),
                           phone: supplierViewModel.supplierPhone.text
                           , address: supplierViewModel.supplierAddress.text
                           , city: supplierViewModel.supplierCity.text

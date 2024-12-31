@@ -30,3 +30,15 @@ class GetSupplierSuccessState extends SupplierStates{
   GetSupplierSuccessState({required this.entity});
   List<SupplierEntity>  entity;
 }
+class RemoveSupplierLoadingState extends SupplierStates{
+  RemoveSupplierLoadingState({required this.load});
+  String load;
+}
+class RemoveSupplierErrorState extends SupplierStates{
+  RemoveSupplierErrorState({required this.error});
+  String error;
+}
+class RemoveSupplierSuccessState extends SupplierStates{
+  RemoveSupplierSuccessState({required this.success});
+  String success;
+}

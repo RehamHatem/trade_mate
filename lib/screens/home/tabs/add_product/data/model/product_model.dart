@@ -19,16 +19,22 @@ class ProductModel extends ProductEntity{
   ProductModel.fromJson(Map<String, dynamic> json)
       :this
   (
-      name: json['name'],
-      notes: json['notes'],
-      quantity: json['quantity'],
-      price: json['price'],
-      total: json['total'],
-      category: json['category'],
-  date: json['date'],
-  id: json['id'],
-      supplier: json['supplier'],
-  userId: json['userId'],
+      id: json['id'].toString(), // Ensure 'id' is always a String
+      name: json['name'] as String,
+      notes: json['notes'] as String,
+      category: json['category'] as String,
+      supplier: json['supplier'] as String,
+      quantity: (json['quantity'] is int)
+          ? (json['quantity'] as int).toDouble()
+          : json['quantity'] as double,
+      price: (json['price'] is int)
+          ? (json['price'] as int).toDouble()
+          : json['price'] as double,
+      total: (json['total'] is int)
+          ? (json['total'] as int).toDouble()
+          : json['total'] as double,
+      date: json['date'].toString(), // Ensure 'date' is always a String
+      userId: json['userId'].toString(),
   );
 
 

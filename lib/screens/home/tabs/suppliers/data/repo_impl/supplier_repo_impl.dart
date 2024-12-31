@@ -18,5 +18,10 @@ class SupplierRepoImpl implements SupplierRepository{
    return supplierDataSource.getSuppliers();
   }
 
+  @override
+  void removeSupplier(String index) {
+    return supplierDataSource.removeSupplier(index);
+  }
+
 
 }

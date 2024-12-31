@@ -5,8 +5,9 @@ import 'package:trade_mate/screens/home/tabs/suppliers/domain/entity/supplier_en
 import '../../../../../../utils/app_colors.dart';
 
 class SupplierItem extends StatelessWidget {
-   SupplierItem({required this.supplierEntity});
+   SupplierItem({required this.supplierEntity,required this.delete});
 SupplierEntity supplierEntity;
+   void Function (String)delete;
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -14,7 +15,7 @@ SupplierEntity supplierEntity;
       children: [
         Container(
           width: double.infinity,
-          height: 95.h,
+          height: 110.h,
 
           margin: EdgeInsets.only(left: 10.w,right: 10.w,top: 10.h,bottom: 10.h),
           padding: EdgeInsets.only(left: 20.w),
@@ -66,16 +67,17 @@ SupplierEntity supplierEntity;
           ],),
         ),
         Positioned(
-          bottom: 72.h,
-          left: 345.w,
+          bottom: 88.h,
+          left: 350.w,
           child: IconButton(onPressed: () {
+            delete(supplierEntity.name);
 
           },
             color: AppColors.redColor,
             icon: Icon(Icons.cancel),),
         ),
         Positioned(
-          top: 58.h,
+          top: 72.h,
           right: 15.w,
           child: IconButton(onPressed: () {
           

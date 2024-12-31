@@ -22,6 +22,7 @@ class StockViewModel extends Cubit<StockStates>{
     stockUseCases.getProducts().listen((either) {
       either.fold(
             (failure) {
+              print(failure.errorMsg);
           emit(StockErrorState(error: failure));
         },
             (products) {
@@ -30,7 +31,8 @@ class StockViewModel extends Cubit<StockStates>{
         },
       );
     }, onError: (error) {
-      emit(StockErrorState(error: error)); 
+      print(error.toString());
+      emit(StockErrorState(error: error));
     });
   }
 
@@ -92,3 +94,6 @@ class StockViewModel extends Cubit<StockStates>{
   }
 
 }
+
+
+

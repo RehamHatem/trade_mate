@@ -10,5 +10,8 @@ class SupplierUseCases{
   Future<List<SupplierEntity>>getSupplier(){
     return supplierRepository.getSuppliers();
   }
+  void removeSupplier(String index){
+    return supplierRepository.removeSupplier(index);
+  }
 
 }

@@ -23,6 +23,7 @@ class StockScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+stockViewModel.getProducts();
     return
 
       Scaffold(
@@ -61,187 +62,143 @@ class StockScreen extends StatelessWidget {
                 ),
               )),
           Expanded(
-            child: BlocProvider(
-              create: (context) => stockViewModel..getProducts(),
-              child: BlocListener(
-                bloc: stockViewModel..getProducts(),
-                listener: (context, state) {
-                  if (state is DeleteProductLoadingState) {
-                    DialogUtils.showLoading(context, "Deleting product...");
-                  } else if (state is DeleteProductErrorState) {
-                    DialogUtils.hideLoading(context);
-                    DialogUtils.showMessage(context, state.error);
-                  } else if (state is DeleteProductSuccessState) {
-                    DialogUtils.hideLoading(context);
-                    DialogUtils.showMessage(
-                        context, "Product deleted successfully",
-                        title: "Note");
-                  } else if (state is UpdateProductLoadingState) {
-                    DialogUtils.showLoading(context, "Updating product...");
-                  } else if (state is UpdateProductErrorState) {
-                    DialogUtils.hideLoading(context);
-                    DialogUtils.showMessage(context, state.error);
-                  } else if (state is UpdateProductSuccessState) {
-                    DialogUtils.hideLoading(context);
-                    DialogUtils.showMessage(
-                        context, "Product updated successfully",
-                        title: "Note");
-                  } else if (state is StockLoadingState) {
-                    return DialogUtils.showLoading(context, "Loading...");
-                  } else if (state is StockErrorState) {
-                    DialogUtils.hideLoading(context);
-                    DialogUtils.showMessage(
-                        context, state.error.errorMsg.toString());
-                  } else if (state is StockSuccessState) {
-                    DialogUtils.hideLoading(context);
-                    DialogUtils.showMessage(
-                        context, "success");
-                    // final products = state.products;
-                    //
-                    //  if (products.isEmpty) {
-                    //   return DialogUtils.showMessage(
-                    //       context, "No Products Found");
-                    // }
+            child: BlocListener(
+              bloc: stockViewModel,
+              listener: (context, state) {
+                if (state is DeleteProductLoadingState) {
+                  DialogUtils.showLoading(context, "Deleting product...");
+                } else if (state is DeleteProductErrorState) {
+                  DialogUtils.hideLoading(context);
+                  DialogUtils.showMessage(context, state.error);
+                } else if (state is DeleteProductSuccessState) {
+                  DialogUtils.hideLoading(context);
+                  DialogUtils.showMessage(
+                      context, "Product deleted successfully",
+                      title: "Note");
+                } else if (state is UpdateProductLoadingState) {
+                  DialogUtils.showLoading(context, "Updating product...");
+                } else if (state is UpdateProductErrorState) {
+                  DialogUtils.hideLoading(context);
+                  DialogUtils.showMessage(context, state.error);
+                } else if (state is UpdateProductSuccessState) {
+                  DialogUtils.hideLoading(context);
+                  DialogUtils.showMessage(
+                      context, "Product updated successfully",
+                      title: "Note");
+                }
 
-                  }
-                },
-                child: StreamBuilder<List<ProductEntity>>(
+              },
+              child: StreamBuilder<List<ProductEntity>>(
+                  stream: stockViewModel.productStreamController.stream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
 
-                    stream: stockViewModel.productStreamController.stream,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-
-                      if (snapshot.hasError) {
-                        return Center(child: Text("Error: ${snapshot.error}"));
-                      }
-
-                      final products = snapshot.data ?? [];
-                      if (products.isEmpty) {
-                        return Center(child: Text("No Products Found"));
-                      }
-                      // if (state is StockLoadingState) {
-                      //   return const Center(child: CircularProgressIndicator());
-                      // }
-                      // if (state is StockErrorState) {
-                      //   return Column(
-                      //     mainAxisAlignment: MainAxisAlignment.center,
-                      //     children: [
-                      //       const Text("Something went wrong"),
-                      //       ElevatedButton(
-                      //         onPressed: () =>
-                      //             context.read<StockViewModel>().getProducts(),
-                      //         child: const Text("Try Again"),
-                      //       ),
-                      //     ],
-                      //   );
-                      // }
-                      //
-                      // if (state is StockSuccessState) {
-                      //   final products = state.products;
-                      //
-                      //   if (products.isEmpty) {
-                      //     return const Center(child: Text("No Products Found"));
-                      //   }
-
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: ListView.separated(
-                          itemBuilder: (context, index) {
-                            final product = products[index];
-                            return InkWell(
-                              onTap: () {
-                                showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      backgroundColor: AppColors.lightGreyColor,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15.r),
-                                      ),
-                                      title: Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "Details",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleLarge!
-                                                    .copyWith(
-                                                        color: AppColors
-                                                            .darkPrimaryColor),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                              Spacer(),
-                                              IconButton(
-                                                style: ButtonStyle(
-                                                    backgroundColor:
-                                                        WidgetStatePropertyAll(
-                                                            AppColors
-                                                                .darkPrimaryColor),
-                                                    shape: WidgetStatePropertyAll(
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              50.r),
-                                                    ))),
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                icon: Icon(Icons.close,
-                                                    size: 25.sp,
-                                                    color: AppColors.whiteColor),
-                                              ),
-                                            ],
-                                          ),
-                                          Divider(
-                                            color: AppColors.darkPrimaryColor,
-                                          )
-                                        ],
-                                      ),
-                                      alignment: Alignment.center,
-                                      content: ProductView(
-                                        productEntity: product,
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              child: ProductItem(
-                                delete: (p0) {
-                                  stockViewModel.deleteProduct(product.id);
-
-                                  // stockViewModel.stream.listen((state) {
-                                  //   if (state is DeleteProductLoadingState) {
-                                  //     DialogUtils.showLoading(context, "Deleting product...");
-                                  //   } else if (state is DeleteProductErrorState) {
-                                  //     DialogUtils.hideLoading(context);
-                                  //     DialogUtils.showMessage(context, state.error);
-                                  //   } else if (state is DeleteProductSuccessState) {
-                                  //     DialogUtils.hideLoading(context);
-                                  //     DialogUtils.showMessage(context, "Product deleted successfully");
-                                  //   }
-                                  // });
-                                },
-                                update: (p0, p1) {
-                                  stockViewModel.updateProduct(product.id, p1);
-                                },
-                                productModel: product,
-                              ),
-                            );
-                          },
-                          separatorBuilder: (_, __) => SizedBox(height: 5.h),
-                          itemCount: products.length,
-                        ),
+                    if (snapshot.hasError) {
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Something went wrong"),
+                          ElevatedButton(
+                            onPressed: () =>
+                                context.read<StockViewModel>().getProducts(),
+                            child: const Text("Try Again"),
+                          ),
+                        ],
                       );
                     }
 
+                    final products = snapshot.data ?? [];
+                    if (products.isEmpty) {
+                      return Center(child: Text("No Products Found"));
+                    }
 
-                    ),
-              ),
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: ListView.separated(
+                        itemBuilder: (context, index) {
+                          final product = products[index];
+                          return InkWell(
+                            onTap: () {
+                              showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    backgroundColor: AppColors.lightGreyColor,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15.r),
+                                    ),
+                                    title: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "Details",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleLarge!
+                                                  .copyWith(
+                                                      color: AppColors
+                                                          .darkPrimaryColor),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Spacer(),
+                                            IconButton(
+                                              style: ButtonStyle(
+                                                  backgroundColor:
+                                                      WidgetStatePropertyAll(
+                                                          AppColors
+                                                              .darkPrimaryColor),
+                                                  shape: WidgetStatePropertyAll(
+                                                      RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50.r),
+                                                  ))),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              icon: Icon(Icons.close,
+                                                  size: 25.sp,
+                                                  color: AppColors.whiteColor),
+                                            ),
+                                          ],
+                                        ),
+                                        Divider(
+                                          color: AppColors.darkPrimaryColor,
+                                        )
+                                      ],
+                                    ),
+                                    alignment: Alignment.center,
+                                    content: ProductView(
+                                      productEntity: product,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: ProductItem(
+                              delete: (p0) {
+                                stockViewModel.deleteProduct(product.id);
+                              },
+                              update: (p0, p1) {
+                                stockViewModel.updateProduct(product.id, p1);
+                              },
+                              productModel: product,
+                            ),
+                          );
+                        },
+                        separatorBuilder: (_, __) => SizedBox(height: 5.h),
+                        itemCount: products.length,
+                      ),
+                    );
+                  }
+
+
+                  ),
             ),
           ),
         ],

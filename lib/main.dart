@@ -19,6 +19,7 @@ import 'package:trade_mate/screens/widgets/splash.dart';
 import 'package:trade_mate/utils/app_theme.dart';
 import 'package:trade_mate/utils/bloc_observer.dart';
 import 'firebase_options.dart';
+final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver<ModalRoute<void>>();
 
 void main() async {
   Bloc.observer = MyBlocObserver();
@@ -28,6 +29,8 @@ void main() async {
   );
   final path =await getApplicationDocumentsDirectory();
   Hive.init(path.path);
+  print("Hive data stored at: ${path}");
+
   runApp(const MyApp());
 }
 
@@ -42,6 +45,7 @@ class MyApp extends StatelessWidget {
 
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        navigatorObservers: [routeObserver],
         initialRoute:Splash.routeName,
         theme: AppTheme.mainTheme,
         routes: {

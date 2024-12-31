@@ -11,9 +11,8 @@ class SupplierEntity{
   String notes;
   String date;
   String userId;
-
   SupplierEntity(
-      {this.id = "",
+      {required this.id,
         required this.name,
         required this.notes,
         required this.phone,

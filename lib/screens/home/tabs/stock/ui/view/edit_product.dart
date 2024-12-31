@@ -40,8 +40,8 @@ class _EditProductState extends State<EditProduct> {
     super.initState();
     productName.text = widget.productEntity.name;
     productQuantity.text = widget.productEntity.quantity.toString();
-    productCat.text = widget.productEntity.category ?? "";
-    productSup.text = widget.productEntity.supplier ?? "";
+    productCat.text = widget.productEntity.category ;
+    productSup.text = widget.productEntity.supplier ;
     productPrice.text = widget.productEntity.price.toString();
     productTotal.text = widget.productEntity.total.toString();
     productNotes.text = widget.productEntity.notes ?? "";
@@ -115,9 +115,10 @@ class _EditProductState extends State<EditProduct> {
             isEnabled: true,
             isDropdown: true,
             controller: productCat,
-            dropdownValue: productCat.text,
+            dropdownValue:productCat.text=="N/A"?null: productCat.text,
             validator: (value) {
-              if (value == null || productCat.text.isEmpty) {
+              if (value == null || productCat.text.isEmpty ) {
+
                 productCat.text = value ?? "";
                 return ("please select a category");
               }
@@ -138,7 +139,7 @@ class _EditProductState extends State<EditProduct> {
             hintText: "select supplier",
             isEnabled: true,
             isDropdown: true,
-            dropdownValue: productSup.text,
+            dropdownValue: productSup.text=="N/A"?null:productSup.text,
             controller: productSup,
             validator: (value) {
               if (value == null || productSup.text.isEmpty) {

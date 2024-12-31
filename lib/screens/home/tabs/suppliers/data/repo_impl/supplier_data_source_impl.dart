@@ -18,6 +18,11 @@ class SupplierDataSourceImpl implements SupplierDataSource{
     return models.map((model) => model.toEntity()).toList();
   }
 
+  @override
+  void removeSupplier(String index) {
+    return supplierData.removeSupplier(index);
+  }
+
 
 
 

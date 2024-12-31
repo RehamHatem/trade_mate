@@ -4,28 +4,68 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/domain/entity/supplier_entity.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/supplier_item.dart';
+import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/supplier_view.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view_model/supplier_view_model.dart';
 
+import '../../../../../../main.dart';
 import '../../../../../../utils/app_colors.dart';
 import '../../../../../../utils/dialog_utils.dart';
 import '../../../../../../utils/text_field_item.dart';
+import '../../../../home.dart';
+import '../../../home_tab/ui/view/home_tab.dart';
 import '../../domain/supplier_di.dart';
 import '../view_model/supplier_states.dart';
 import 'add_supplier_screen.dart';
 
-class SuplliersScreen extends StatelessWidget {
+class SuplliersScreen extends StatefulWidget {
   static const String routeName="supplier";
    SuplliersScreen({super.key});
-SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSupplierUseCases());
-
 
   @override
+  State<SuplliersScreen> createState() => _SuplliersScreenState();
+}
+
+class _SuplliersScreenState extends State<SuplliersScreen>with RouteAware {
+late SupplierViewModel supplierViewModel;
+@override
+void initState() {
+  super.initState();
+  supplierViewModel = SupplierViewModel(supplierUseCases: injectSupplierUseCases());
+  supplierViewModel.getSuppliers();
+}
+
+@override
+void didChangeDependencies() {
+  super.didChangeDependencies();
+  routeObserver.subscribe(this, ModalRoute.of(context)!);
+}
+
+@override
+void didPopNext() {
+  // Trigger when coming back to this screen
+  supplierViewModel.getSuppliers();
+}
+
+@override
+void dispose() {
+  routeObserver.unsubscribe(this);
+  supplierViewModel.close();
+  super.dispose();
+}
+  @override
   Widget build(BuildContext context) {
+    supplierViewModel.getSuppliers();
     return Scaffold(
       backgroundColor: AppColors.lightGreyColor,
       appBar: AppBar(
         iconTheme: IconThemeData(color: AppColors.whiteColor),
         backgroundColor: AppColors.darkPrimaryColor,
+        leading: IconButton(onPressed: () {
+          Navigator.pushNamedAndRemoveUntil(context, Home.routeName, (route) {
+            return false;
+          },);
+
+        },icon: Icon(Icons.arrow_back),),
         title: Text(
           'Suppliers',
           style: Theme.of(context)
@@ -48,7 +88,7 @@ SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSu
                 child: TextFieldItem(
                   controller: supplierViewModel.search,
                   change: (query) {
-                    // stockViewModel.searchProducts(query);
+                    supplierViewModel.searchSuppliers(query);
                   },
                   hintText: "Search in suppliers ",
                   suffixIcon: Icon(
@@ -57,110 +97,109 @@ SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSu
                 ),
               )),
           Expanded(
-            child: BlocProvider(
-              create: (context) => supplierViewModel..getSuppliers(),
-              child: BlocBuilder<SupplierViewModel, SupplierStates>(
-                  builder: (context, state) {
-                    if (state is GetSupplierLoadingState) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (state is GetSupplierErrorState) {
-                      print(state.error);
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                           Text("Something went wrong: ${state.error}"),
+            child: BlocListener(
+              bloc: supplierViewModel,
+              listener: (context, state) {
 
-                          ElevatedButton(
-                            onPressed: () =>
-                                context.read<SupplierViewModel>().getSuppliers(),
-                            child: const Text("Try Again"),
-                          ),
-                        ],
-                      );
-                    }
+                if (state is RemoveSupplierSuccessState){
+                  DialogUtils.showMessage(context, "supplier removed successfully");
+                }
+              },
+              child: StreamBuilder<List<SupplierEntity>>(
+                stream:  supplierViewModel.supplierStream,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                    if (state is GetSupplierSuccessState) {
-                      supplierViewModel.suppliers = state.entity;
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text("No Suppliers Found"));
+                  }
+                  final suppliers = snapshot.data!;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: ListView.separated(
+                      itemBuilder: (context, index) {
 
-                      if (supplierViewModel.suppliers.isEmpty) {
-                        return const Center(child: Text("No Products Found"));
-                      }
-
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: ListView.separated(
-                          itemBuilder: (context, index) {
-
-                            return InkWell(
-                              onTap: () {
-                                showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      backgroundColor: AppColors.lightGreyColor,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(15.r),
-                                      ),
-                                      title: Column(
+                        return InkWell(
+                          onTap: () {
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  backgroundColor: AppColors.lightGreyColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15.r),
+                                  ),
+                                  title: Column(
+                                    children: [
+                                      Row(
                                         children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "Details",
-                                                style: Theme
-                                                    .of(context)
-                                                    .textTheme
-                                                    .titleLarge!
-                                                    .copyWith(
-                                                    color: AppColors
-                                                        .darkPrimaryColor),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                              Spacer(),
-                                              IconButton(
-                                                style: ButtonStyle(
-                                                    backgroundColor:
-                                                    WidgetStatePropertyAll(
-                                                        AppColors
-                                                            .darkPrimaryColor),
-                                                    shape: WidgetStatePropertyAll(
-                                                        RoundedRectangleBorder(
-                                                          borderRadius:
-                                                          BorderRadius.circular(
-                                                              50.r),
-                                                        ))),
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                icon: Icon(Icons.close,
-                                                    size: 25.sp,
-                                                    color: AppColors.whiteColor),
-                                              ),
-                                            ],
+                                          Text(
+                                            "Details",
+                                            style: Theme
+                                                .of(context)
+                                                .textTheme
+                                                .titleLarge!
+                                                .copyWith(
+                                                color: AppColors
+                                                    .darkPrimaryColor),
+                                            textAlign: TextAlign.center,
                                           ),
-                                          Divider(
-                                            color: AppColors.darkPrimaryColor,
-                                          )
-                                        ],
-                                      ),
-                                      alignment: Alignment.center,
 
-                                    );
-                                  },
+                                          Spacer(),
+                                          IconButton(
+                                            style: ButtonStyle(
+                                                backgroundColor:
+                                                WidgetStatePropertyAll(
+                                                    AppColors
+                                                        .darkPrimaryColor),
+                                                shape: WidgetStatePropertyAll(
+                                                    RoundedRectangleBorder(
+                                                      borderRadius:
+                                                      BorderRadius.circular(
+                                                          50.r),
+                                                    ))),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            icon: Icon(Icons.close,
+                                                size: 25.sp,
+                                                color: AppColors.whiteColor),
+                                          ),
+
+                                        ],
+
+                                      ),
+                                      Divider(
+                                        color: AppColors.darkPrimaryColor,
+                                      )
+                                    ],
+                                  ),
+                                  alignment: Alignment.center,
+                                  content: SupplierView(
+                                    supplierEntity: suppliers [index],
+                                  ),
+
                                 );
                               },
-                              child: SupplierItem(supplierEntity:supplierViewModel.suppliers[index] ,),
                             );
                           },
-                          separatorBuilder: (_, __) => SizedBox(height: 1.h),
-                          itemCount: supplierViewModel.suppliers.length,
-                        ),
-                      );
-                    }
-                    return Container();
-                  }
+                          child: SupplierItem(supplierEntity:suppliers[index] ,delete: (p0) {
+                            supplierViewModel.removeSupplier(p0);
+                          },),
+                        );
+                      },
+                      separatorBuilder: (_, __) => SizedBox(height: 1.h),
+                      itemCount: suppliers.length,
+                    ),
+                  );
+                },
+
               ),
             ),
           ),

@@ -3,5 +3,6 @@ import 'package:trade_mate/screens/home/tabs/suppliers/domain/entity/supplier_en
 abstract class SupplierRepository{
   void addSupplier(SupplierEntity supplier);
   Future<List<SupplierEntity>> getSuppliers();
+  void removeSupplier(String index);
 
 }
