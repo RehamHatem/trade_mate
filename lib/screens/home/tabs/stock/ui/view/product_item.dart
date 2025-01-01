@@ -135,7 +135,75 @@ void Function (String,ProductEntity)update;
                                       ],)),
               SizedBox(width:85.w,),
                   IconButton(onPressed: () {
-                   delete(productModel.id);
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) {
+                        return AlertDialog(
+                          actions: [Row(
+                            children: [
+                              ElevatedButton(onPressed: () {
+                                Navigator.pop(context);
+                              },
+
+                                child: Text("Cancel",style:
+                                Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(fontSize: 16.sp,
+                                  color: AppColors.whiteColor,
+                                ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(AppColors.primaryColor),shape:
+                                WidgetStatePropertyAll(RoundedRectangleBorder
+                                  (borderRadius: BorderRadius.circular(15.r),
+                                ))
+
+                                ),),
+                              Spacer(),
+                              ElevatedButton(onPressed: () {
+                                delete(productModel.id);
+                                Navigator.pop(context);
+                              },
+
+                                child: Text("Delete",style:
+                                Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(fontSize: 16.sp,
+                                  color: AppColors.whiteColor,
+                                ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(AppColors.redColor),shape:
+                                WidgetStatePropertyAll(RoundedRectangleBorder
+                                  (borderRadius: BorderRadius.circular(15.r),
+                                ))
+
+                                ),),
+                            ],
+                          )],backgroundColor: AppColors.lightGreyColor,shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r),side: BorderSide(color: AppColors.primaryColor)),
+
+
+
+                          alignment: Alignment.center,
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(height: 10.h,),
+                              Text("Do you want to delete ${productModel.name}?",style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium!
+                                  .copyWith(color: AppColors.primaryColor),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+
+                    );
+
                   }, icon: Icon(Icons.delete,size: 30.sp,color: AppColors.redColor,))
                 ],
               )

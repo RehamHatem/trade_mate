@@ -17,41 +17,14 @@ import '../../domain/supplier_di.dart';
 import '../view_model/supplier_states.dart';
 import 'add_supplier_screen.dart';
 
-class SuplliersScreen extends StatefulWidget {
-  static const String routeName="supplier";
-   SuplliersScreen({super.key});
+class SuplliersScreen extends StatelessWidget {
+  static const String routeName = "supplier";
 
-  @override
-  State<SuplliersScreen> createState() => _SuplliersScreenState();
-}
+  SuplliersScreen({super.key});
 
-class _SuplliersScreenState extends State<SuplliersScreen>with RouteAware {
-late SupplierViewModel supplierViewModel;
-@override
-void initState() {
-  super.initState();
-  supplierViewModel = SupplierViewModel(supplierUseCases: injectSupplierUseCases());
-  supplierViewModel.getSuppliers();
-}
+  SupplierViewModel supplierViewModel =
+      SupplierViewModel(supplierUseCases: injectSupplierUseCases());
 
-@override
-void didChangeDependencies() {
-  super.didChangeDependencies();
-  routeObserver.subscribe(this, ModalRoute.of(context)!);
-}
-
-@override
-void didPopNext() {
-  // Trigger when coming back to this screen
-  supplierViewModel.getSuppliers();
-}
-
-@override
-void dispose() {
-  routeObserver.unsubscribe(this);
-  supplierViewModel.close();
-  super.dispose();
-}
   @override
   Widget build(BuildContext context) {
     supplierViewModel.getSuppliers();
@@ -60,12 +33,18 @@ void dispose() {
       appBar: AppBar(
         iconTheme: IconThemeData(color: AppColors.whiteColor),
         backgroundColor: AppColors.darkPrimaryColor,
-        leading: IconButton(onPressed: () {
-          Navigator.pushNamedAndRemoveUntil(context, Home.routeName, (route) {
-            return false;
-          },);
-
-        },icon: Icon(Icons.arrow_back),),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Home.routeName,
+              (route) {
+                return false;
+              },
+            );
+          },
+          icon: Icon(Icons.arrow_back),
+        ),
         title: Text(
           'Suppliers',
           style: Theme.of(context)
@@ -100,13 +79,32 @@ void dispose() {
             child: BlocListener(
               bloc: supplierViewModel,
               listener: (context, state) {
+                if (state is RemoveSupplierLoadingState) {
+                  DialogUtils.showLoading(context, "Deleting supplier...");
+                } else if (state is RemoveSupplierErrorState) {
+                  DialogUtils.hideLoading(context);
+                  DialogUtils.showMessage(context, state.error);
+                } else if (state is RemoveSupplierSuccessState) {
+                  DialogUtils.hideLoading(context);
+                  DialogUtils.showMessage(
+                      context, "Supplier deleted successfully",
+                      title: "Note");
 
-                if (state is RemoveSupplierSuccessState){
-                  DialogUtils.showMessage(context, "supplier removed successfully");
+                }
+                else if (state is UpdateSupplierLoadingState) {
+                  DialogUtils.showLoading(context, "Updating product...");
+                } else if (state is UpdateSupplierErrorState) {
+                  DialogUtils.hideLoading(context);
+                  DialogUtils.showMessage(context, state.error);
+                } else if (state is UpdateSupplierSuccessState) {
+                  DialogUtils.hideLoading(context);
+                  DialogUtils.showMessage(
+                      context, "Product updated successfully",
+                      title: "Note");
                 }
               },
               child: StreamBuilder<List<SupplierEntity>>(
-                stream:  supplierViewModel.supplierStream,
+                stream: supplierViewModel.supplierStreamController.stream,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -123,7 +121,6 @@ void dispose() {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: ListView.separated(
                       itemBuilder: (context, index) {
-
                         return InkWell(
                           onTap: () {
                             showDialog(
@@ -141,29 +138,27 @@ void dispose() {
                                         children: [
                                           Text(
                                             "Details",
-                                            style: Theme
-                                                .of(context)
+                                            style: Theme.of(context)
                                                 .textTheme
                                                 .titleLarge!
                                                 .copyWith(
-                                                color: AppColors
-                                                    .darkPrimaryColor),
+                                                    color: AppColors
+                                                        .darkPrimaryColor),
                                             textAlign: TextAlign.center,
                                           ),
-
                                           Spacer(),
                                           IconButton(
                                             style: ButtonStyle(
                                                 backgroundColor:
-                                                WidgetStatePropertyAll(
-                                                    AppColors
-                                                        .darkPrimaryColor),
+                                                    WidgetStatePropertyAll(
+                                                        AppColors
+                                                            .darkPrimaryColor),
                                                 shape: WidgetStatePropertyAll(
                                                     RoundedRectangleBorder(
-                                                      borderRadius:
+                                                  borderRadius:
                                                       BorderRadius.circular(
                                                           50.r),
-                                                    ))),
+                                                ))),
                                             onPressed: () {
                                               Navigator.pop(context);
                                             },
@@ -171,9 +166,7 @@ void dispose() {
                                                 size: 25.sp,
                                                 color: AppColors.whiteColor),
                                           ),
-
                                         ],
-
                                       ),
                                       Divider(
                                         color: AppColors.darkPrimaryColor,
@@ -182,16 +175,19 @@ void dispose() {
                                   ),
                                   alignment: Alignment.center,
                                   content: SupplierView(
-                                    supplierEntity: suppliers [index],
+                                    supplierEntity: suppliers[index],
                                   ),
-
                                 );
                               },
                             );
                           },
-                          child: SupplierItem(supplierEntity:suppliers[index] ,delete: (p0) {
-                            supplierViewModel.removeSupplier(p0);
-                          },),
+                          child: SupplierItem(
+                            supplierEntity: suppliers[index],
+                            delete: (p0) {
+                              supplierViewModel.deleteSupplier(suppliers[index].id);
+                            },
+                            update: supplierViewModel.updateSupplier,
+                          ),
                         );
                       },
                       separatorBuilder: (_, __) => SizedBox(height: 1.h),
@@ -199,12 +195,9 @@ void dispose() {
                     ),
                   );
                 },
-
               ),
             ),
           ),
-
-
         ],
       ),
       floatingActionButton: Padding(
@@ -214,7 +207,7 @@ void dispose() {
             Navigator.pushNamed(context, AddSupplierScreen.routeName);
           },
           shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.r)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.r)),
           child: Icon(
             Icons.add,
             size: 35.sp,

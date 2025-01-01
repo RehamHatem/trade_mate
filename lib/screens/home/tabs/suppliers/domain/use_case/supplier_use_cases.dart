@@ -1,17 +1,36 @@
+import 'package:dartz/dartz.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/domain/entity/supplier_entity.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/domain/repo/supplier_repository.dart';
+
+import '../../../../../../utils/failures.dart';
 
 class SupplierUseCases{
   SupplierUseCases({required this.supplierRepository});
   SupplierRepository supplierRepository;
-  void addSupplier(SupplierEntity supplier){
+  Future<Either<Failures,void>>addSupplier(SupplierEntity supplier) async{
     return supplierRepository.addSupplier(supplier);
   }
-  Future<List<SupplierEntity>>getSupplier(){
+  Stream<Either<Failures,List<SupplierEntity>>>getSuppliers(){
     return supplierRepository.getSuppliers();
+
   }
-  void removeSupplier(String index){
-    return supplierRepository.removeSupplier(index);
+  Future<void>deleteSupplier(String id){
+    return supplierRepository.deleteSupplier(id);
   }
+  Future<void>updateProduct(String id,SupplierEntity product){
+    return supplierRepository.updateSupplier(id, product);
+  }
+
+
+
+  // void addSupplier(SupplierEntity supplier){
+  //   return supplierRepository.addSupplier(supplier);
+  // }
+  // Future<List<SupplierEntity>>getSupplier(){
+  //   return supplierRepository.getSuppliers();
+  // }
+  // void removeSupplier(String index){
+  //   return supplierRepository.removeSupplier(index);
+  // }
 
 }

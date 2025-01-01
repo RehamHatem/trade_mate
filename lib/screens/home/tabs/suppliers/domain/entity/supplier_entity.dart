@@ -11,6 +11,7 @@ class SupplierEntity{
   String notes;
   String date;
   String userId;
+  bool edited;
   SupplierEntity(
       {required this.id,
         required this.name,
@@ -18,6 +19,7 @@ class SupplierEntity{
         required this.phone,
         required this.address,
         required this.city,
+        this.edited=false,
         required this.date, required this.userId,
       });
 
@@ -28,6 +30,7 @@ class SupplierEntity{
       name: json['name'],
       notes: json['notes'],
       address: json['address'],
+      edited: json['edited'],
       city: json['city'],
       phone: json['phone'],
       date: json['date'],
@@ -42,6 +45,7 @@ class SupplierEntity{
         address:address,
         city:city,
         id:id,
+        edited:edited,
         name:name,
         userId:userId,
         date:date,
@@ -51,6 +55,7 @@ class SupplierEntity{
   SupplierModel fromEntity(SupplierEntity entity) {
     return SupplierModel(
         phone:entity.phone,
+        edited:entity.edited,
         address:entity.address,
         city:entity.city,
         id:entity.id,

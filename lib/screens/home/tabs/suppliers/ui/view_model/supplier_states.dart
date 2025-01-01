@@ -42,3 +42,16 @@ class RemoveSupplierSuccessState extends SupplierStates{
   RemoveSupplierSuccessState({required this.success});
   String success;
 }
+
+class UpdateSupplierLoadingState extends SupplierStates{
+  UpdateSupplierLoadingState({required this.load});
+  String load;
+}
+class UpdateSupplierErrorState extends SupplierStates{
+  UpdateSupplierErrorState({required this.error});
+  String error;
+}
+class UpdateSupplierSuccessState extends SupplierStates{
+  UpdateSupplierSuccessState({required this.success});
+  String success;
+}

@@ -8,6 +8,7 @@ class SupplierModel extends SupplierEntity{
 
   SupplierModel(
       {super.id = "",
+        required super.edited,
         required super.name,
         required super.notes,
         required super.address,
@@ -20,6 +21,7 @@ class SupplierModel extends SupplierEntity{
       :this
       (
       name: json['name'],
+      edited: json['edited'],
       notes: json['notes'],
       address: json['address'],
       city: json['city'],
@@ -34,6 +36,7 @@ class SupplierModel extends SupplierEntity{
     return {
       "id":id,
       "name":name,
+      "edited":edited,
       "notes":notes,
       "address":address,
       "city":city,
