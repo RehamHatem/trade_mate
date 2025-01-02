@@ -36,9 +36,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
     viewModel.productQuantity.addListener(calculateTotal);
     viewModel.productPrice.addListener(calculateTotal);
     viewModel.supplierViewModel.getSuppliers();
-    setState(() {
-      print(viewModel.supplierViewModel.suppliers);
-    });
 
 
   }
@@ -75,7 +72,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   Widget build(BuildContext context) {
 
     return BlocListener<AddProductViewModel, AddProductStates>(
-          bloc: viewModel,
+          bloc: viewModel..supplierViewModel.suppliers,
           listener: (context, state) {
             if (state is AddProductLoadingState){
               return DialogUtils.showLoading(context, "Loading...");
@@ -274,24 +271,36 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       SizedBox(
                         height: 25.h,
                       ),
-                      AddProductTextField(
-                        fieldName: "Supplier",
-                        hintText: "select supplier",
-                        isEnabled: true,
-                        isDropdown: true,
-                        controller: viewModel.productSup,
-                        validator: (value) {
-                          if(value==null|| viewModel.productSup.text.isEmpty ){
-                            viewModel.productCat.text = value ?? "";
-                            return("please select a supplier");
-                          }
+                      BlocListener(
+                        bloc: viewModel.supplierViewModel,
+                        listener: (context, state) {
+                          if (state is GetSupplierSuccessState){
+                            setState(() {
+                              viewModel.suppliers=state.entity;
+                            });
 
+                            print(viewModel.suppliers);
+                          }
                         },
-                        dropdownItems: viewModel.supplierViewModel.suppliers.map((supplier) => supplier.name,).toList(),
-                        onChanged: (value) {
-                          viewModel.productSup.text = value ?? "";
-                          print("Selected Supplier: $value");
-                        },
+                        child: AddProductTextField(
+                          fieldName: "Supplier",
+                          hintText: "select supplier",
+                          isEnabled: true,
+                          isDropdown: true,
+                          controller: viewModel.productSup,
+                          validator: (value) {
+                            if(value==null|| viewModel.productSup.text.isEmpty ){
+                              viewModel.productCat.text = value ?? "";
+                              return("please select a supplier");
+                            }
+
+                          },
+                          dropdownItems: viewModel.suppliers.map((supplier) => supplier.name,).toList(),
+                          onChanged: (value) {
+                            viewModel.productSup.text = value ?? "";
+                            print("Selected Supplier: $value");
+                          },
+                        ),
                       ),
                       SizedBox(
                         height: 25.h,

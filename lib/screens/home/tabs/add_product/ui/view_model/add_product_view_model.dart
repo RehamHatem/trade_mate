@@ -21,7 +21,7 @@ class AddProductViewModel extends Cubit<AddProductStates>{
   TextEditingController productPrice = TextEditingController();
   TextEditingController productNotes = TextEditingController();
   double total = 0.0;
-
+  List<SupplierEntity>suppliers=[];
   SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSupplierUseCases());
 
   void addProduct(ProductEntity product) async{
