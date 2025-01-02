@@ -9,17 +9,20 @@ import 'package:trade_mate/screens/auth/login/ui/view/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:trade_mate/screens/auth/signup/ui/view/signup_screen.dart';
 import 'package:trade_mate/screens/home/home.dart';
+import 'package:trade_mate/screens/home/tabs/add_product/domain/add_product_di.dart';
 import 'package:trade_mate/screens/home/tabs/add_product/ui/view/add_product_screen.dart';
+import 'package:trade_mate/screens/home/tabs/add_product/ui/view_model/add_product_view_model.dart';
 import 'package:trade_mate/screens/home/tabs/customers/ui/view/customers_screen.dart';
 import 'package:trade_mate/screens/home/tabs/orders/ui/view/orders_screen.dart';
 import 'package:trade_mate/screens/home/tabs/stock/ui/view/stock_screen.dart';
+import 'package:trade_mate/screens/home/tabs/suppliers/domain/supplier_di.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/add_supplier_screen.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/suplliers_screen.dart';
+import 'package:trade_mate/screens/home/tabs/suppliers/ui/view_model/supplier_view_model.dart';
 import 'package:trade_mate/screens/widgets/splash.dart';
 import 'package:trade_mate/utils/app_theme.dart';
 import 'package:trade_mate/utils/bloc_observer.dart';
 import 'firebase_options.dart';
-final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver<ModalRoute<void>>();
 
 void main() async {
   Bloc.observer = MyBlocObserver();
@@ -45,7 +48,7 @@ class MyApp extends StatelessWidget {
 
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        navigatorObservers: [routeObserver],
+
         initialRoute:Splash.routeName,
         theme: AppTheme.mainTheme,
         routes: {

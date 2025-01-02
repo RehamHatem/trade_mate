@@ -7,6 +7,9 @@ import 'package:trade_mate/screens/home/home.dart';
 import 'package:trade_mate/screens/home/tabs/add_product/domain/entity/product_entity.dart';
 import 'package:trade_mate/screens/home/tabs/add_product/ui/view_model/add_product_states.dart';
 import 'package:trade_mate/screens/home/tabs/home_tab/ui/view/home_tab.dart';
+import 'package:trade_mate/screens/home/tabs/suppliers/domain/supplier_di.dart';
+import 'package:trade_mate/screens/home/tabs/suppliers/ui/view_model/supplier_states.dart';
+import 'package:trade_mate/screens/home/tabs/suppliers/ui/view_model/supplier_view_model.dart';
 import 'package:trade_mate/utils/app_colors.dart';
 
 import '../../../../../../utils/dialog_utils.dart';
@@ -32,6 +35,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
      viewModel=AddProductViewModel(addProductUseCase:injectAddProductUseCase() );
     viewModel.productQuantity.addListener(calculateTotal);
     viewModel.productPrice.addListener(calculateTotal);
+    viewModel.supplierViewModel.getSuppliers();
+    setState(() {
+      print(viewModel.supplierViewModel.suppliers);
+    });
+
 
   }
 
@@ -62,103 +70,108 @@ class _AddProductScreenState extends State<AddProductScreen> {
     viewModel.productCat.clear();
     viewModel.productSup.clear();
   }
+
   @override
   Widget build(BuildContext context) {
-    return BlocListener(
-      bloc: viewModel,
-      listener: (context, state) {
-        if (state is AddProductLoadingState){
-          return DialogUtils.showLoading(context, "Loading...");
-        }
-        else if (state is AddProductErrorState){
-          DialogUtils.hideLoading(context);
-          return DialogUtils.showMessage(context, state.error.errorMsg.toString(),title: "Error");
 
-        }
-        else if (state  is AddProductSuccessState){
-          DialogUtils.hideLoading(context);
+    return BlocListener<AddProductViewModel, AddProductStates>(
+          bloc: viewModel,
+          listener: (context, state) {
+            if (state is AddProductLoadingState){
+              return DialogUtils.showLoading(context, "Loading...");
+            }
+            else if (state is AddProductErrorState){
+              DialogUtils.hideLoading(context);
+              return DialogUtils.showMessage(context, state.error.errorMsg.toString(),title: "Error");
 
-          showDialog(barrierDismissible: false, context: context, builder: (context) {
-            return AlertDialog(
+            }
+            else if (state  is AddProductSuccessState){
+              DialogUtils.hideLoading(context);
 
-              actions: [Row(
-              children: [
-                Icon(Icons.settings_backup_restore_rounded,size: 20.sp,color: AppColors.primaryColor
-                  ,),
-                SizedBox(width: 5.w,),
-                InkWell(
-                  onTap: () {
-                    Navigator.pushReplacementNamed(context, Home.routeName);
-                  },
-                  child: Text("back to home",style:
+              showDialog(barrierDismissible: false, context: context, builder: (context) {
+                return AlertDialog(
+
+                  actions: [Row(
+                    children: [
+                      Icon(Icons.settings_backup_restore_rounded,size: 20.sp,color: AppColors.primaryColor
+                        ,),
+                      SizedBox(width: 5.w,),
+                      InkWell(
+                        onTap: () {
+                          Navigator.pushReplacementNamed(context, Home.routeName);
+                        },
+                        child: Text("back to home",style:
+                        Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(fontSize: 16.sp,
+                            color: AppColors.primaryColor,
+                            decoration: TextDecoration.underline,decorationColor: AppColors.darkPrimaryColor),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Spacer(),
+                      ElevatedButton(onPressed: () {
+                        Navigator.pop(context);
+                        clearForm();
+                      },
+
+                        child: Text("OK",style:
+                        Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(fontSize: 16.sp,
+                          color: AppColors.whiteColor,
+                        ),
+                          textAlign: TextAlign.center,
+                        ),
+                        style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(AppColors.primaryColor),shape:
+                        WidgetStatePropertyAll(RoundedRectangleBorder
+                          (borderRadius: BorderRadius.circular(15.r),
+                        ))
+
+                        ),),
+                    ],
+                  )],backgroundColor: AppColors.lightGreyColor,shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r),side: BorderSide(color: AppColors.primaryColor)),
+                  title: Text("${state.productEntity.name}",style:
                   Theme.of(context)
                       .textTheme
-                      .titleMedium!
-                      .copyWith(fontSize: 16.sp,
-                      color: AppColors.primaryColor,
-                      decoration: TextDecoration.underline,decorationColor: AppColors.darkPrimaryColor),
+                      .titleLarge!
+                      .copyWith(color: AppColors.darkPrimaryColor),
                     textAlign: TextAlign.center,
                   ),
-                ),
-                Spacer(),
-                ElevatedButton(onPressed: () {
-Navigator.pop(context);
-clearForm();
-                },
 
-                  child: Text("OK",style:
-            Theme.of(context)
-                .textTheme
-                .titleMedium!
-                .copyWith(fontSize: 16.sp,
-            color: AppColors.whiteColor,
-            ),
-            textAlign: TextAlign.center,
-            ),
-                  style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(AppColors.primaryColor),shape:
-                  WidgetStatePropertyAll(RoundedRectangleBorder
-                    (borderRadius: BorderRadius.circular(15.r),
-                      ))
+                  alignment: Alignment.center,
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ElevatedButton(onPressed: () {
 
-                  ),),
-              ],
-            )],backgroundColor: AppColors.lightGreyColor,shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r),side: BorderSide(color: AppColors.primaryColor)),
-            title: Text("${state.productEntity.name}",style:
-            Theme.of(context)
-                .textTheme
-                .titleLarge!
-                .copyWith(color: AppColors.darkPrimaryColor),
-              textAlign: TextAlign.center,
-            ),
+                      },
 
-              alignment: Alignment.center,
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ElevatedButton(onPressed: () {
+                          child: Icon(Icons.check,size: 30.sp,color: AppColors.whiteColor,),
+                          style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(AppColors.greenColor),shape:
+                          WidgetStatePropertyAll(RoundedRectangleBorder
+                            (borderRadius: BorderRadius.circular(50.r),
+                          )))
 
-                  },
-
-                    child: Icon(Icons.check,size: 30.sp,color: AppColors.whiteColor,),
-                    style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(AppColors.greenColor),shape:
-                    WidgetStatePropertyAll(RoundedRectangleBorder
-                      (borderRadius: BorderRadius.circular(50.r),
-                        )))
-
-                    ),
-                  SizedBox(height: 10.h,),
-                  Text("The product is added successfully",style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .copyWith(color: AppColors.primaryColor),
+                      ),
+                      SizedBox(height: 10.h,),
+                      Text("The product is added successfully",style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(color: AppColors.primaryColor),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ) ;
-          },);
+                ) ;
+              },);
 
-        }
-      },
+            }
+
+          },
+
+
       child: Scaffold(
         backgroundColor: AppColors.lightGreyColor,
       resizeToAvoidBottomInset: true,
@@ -274,7 +287,7 @@ clearForm();
                           }
 
                         },
-                        dropdownItems: ["sup1", "sup2", "sup3", "sup4", "sup5"],
+                        dropdownItems: viewModel.supplierViewModel.suppliers.map((supplier) => supplier.name,).toList(),
                         onChanged: (value) {
                           viewModel.productSup.text = value ?? "";
                           print("Selected Supplier: $value");
@@ -417,3 +430,26 @@ clearForm();
     );
   }
 }
+
+
+// BlocListener<SupplierViewModel, SupplierStates>(
+// bloc: viewModel.supplierViewModel,
+// listener: (context, state) {
+// if (state is GetSupplierLoadingState){
+// return DialogUtils.showLoading(context, "Loading...");
+// }
+// else if (state is GetSupplierErrorState){
+// DialogUtils.hideLoading(context);
+// return DialogUtils.showMessage(context, state.error.toString(),title: "Error");
+//
+// }
+// else if (state is GetSupplierSuccessState) {
+// DialogUtils.hideLoading(context);
+// setState(() {
+// viewModel.suppliers = state.entity;
+// print("Suppliers Updated: ${viewModel.suppliers}");
+// });
+// }
+// },
+//
+// )

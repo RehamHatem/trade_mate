@@ -125,8 +125,7 @@ class HomeTab extends StatelessWidget {
                 Expanded(
                   child: InkWell(
                       onTap: () {
-      
-                        Navigator.pushNamed(context,AddProductScreen. routeName);
+                        Navigator.pushNamed(context,AddProductScreen.routeName);
                       },
                       child: ContainerTextIcon(txt: 'Add Products To Shop', icn: Icon(Icons.add_shopping_cart,color: AppColors.primaryColor,size: 35.sp,))),
                 ),

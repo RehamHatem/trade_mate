@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:trade_mate/remote/fire_base_functions.dart';
 import 'package:trade_mate/utils/shared_preference.dart';
 
 class FirebaseLogin{

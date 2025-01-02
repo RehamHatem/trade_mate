@@ -52,6 +52,8 @@ class SupplierViewModel extends Cubit<SupplierStates> {
         },
             (suppliers) {
           supplierStreamController.add(suppliers);
+          this.suppliers=suppliers;
+          print("i'm in supviewmodel and this is the suppliers list ${this.suppliers}");
           emit(GetSupplierSuccessState(entity: suppliers));
         },
       );

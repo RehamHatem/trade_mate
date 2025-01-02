@@ -4,6 +4,10 @@ import 'package:trade_mate/screens/home/tabs/add_product/domain/entity/product_e
 import 'package:trade_mate/screens/home/tabs/add_product/domain/use_case/add_product_use_case.dart';
 import 'package:trade_mate/screens/home/tabs/add_product/ui/view_model/add_product_states.dart';
 
+import '../../../suppliers/domain/entity/supplier_entity.dart';
+import '../../../suppliers/domain/supplier_di.dart';
+import '../../../suppliers/ui/view_model/supplier_view_model.dart';
+
 class AddProductViewModel extends Cubit<AddProductStates>{
   AddProductViewModel({required this.addProductUseCase}):super(AddProductInitState());
   AddProductUseCase addProductUseCase;
@@ -17,6 +21,9 @@ class AddProductViewModel extends Cubit<AddProductStates>{
   TextEditingController productPrice = TextEditingController();
   TextEditingController productNotes = TextEditingController();
   double total = 0.0;
+
+  SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSupplierUseCases());
+
   void addProduct(ProductEntity product) async{
     emit(AddProductLoadingState(load: "Loadin..."));
     var either=await addProductUseCase.addProduct(product);
@@ -27,4 +34,7 @@ class AddProductViewModel extends Cubit<AddProductStates>{
     },);
 
   }
+
+
+
 }
