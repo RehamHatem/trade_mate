@@ -5,13 +5,13 @@ import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/edit_supplier.dar
 
 import '../../../../../../utils/app_colors.dart';
 
-class SupplierItem extends StatelessWidget {
-  SupplierItem(
-      {required this.supplierEntity,
+class CustomerItem extends StatelessWidget {
+  CustomerItem(
+      {required this.customerEntity,
       required this.delete,
       required this.update});
 
-  SupplierEntity supplierEntity;
+  SupplierEntity customerEntity;
   void Function(String) delete;
   void Function(String, SupplierEntity) update;
 
@@ -37,7 +37,7 @@ class SupplierItem extends StatelessWidget {
                 height: 60.h,
                 width: 60.w,
                 child: Text(
-                  "${supplierEntity.name.substring(0, 1)}",
+                  "${customerEntity.name.substring(0, 1)}",
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         color: AppColors.whiteColor,
                         fontSize: 28.sp,
@@ -57,7 +57,7 @@ class SupplierItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      supplierEntity.name,
+                      customerEntity.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleMedium!.copyWith(
@@ -69,7 +69,7 @@ class SupplierItem extends StatelessWidget {
                       height: 2.h,
                     ),
                     Text(
-                      supplierEntity.phone,
+                      customerEntity.phone,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleMedium!.copyWith(
@@ -83,7 +83,7 @@ class SupplierItem extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          supplierEntity.date,
+                          customerEntity.date,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context)
@@ -94,7 +94,7 @@ class SupplierItem extends StatelessWidget {
                                   fontSize: 16.sp,
                                   overflow: TextOverflow.ellipsis),
                         ),
-                        supplierEntity.edited == true
+                        customerEntity.edited == true
                             ? Text(
                                 "Edited",
                                 maxLines: 1,
@@ -155,7 +155,7 @@ class SupplierItem extends StatelessWidget {
                           Spacer(),
                           ElevatedButton(
                             onPressed: () {
-                              delete(supplierEntity.id);
+                              delete(customerEntity.id);
                               Navigator.pop(context);
                             },
                             child: Text(
@@ -192,7 +192,7 @@ class SupplierItem extends StatelessWidget {
                           height: 10.h,
                         ),
                         Text(
-                          "Do you want to delete ${supplierEntity.name}?",
+                          "Do you want to delete ${customerEntity.name}?",
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium!
@@ -231,7 +231,7 @@ class SupplierItem extends StatelessWidget {
                         child: EditSupplier(
 
                             update:update,
-                            supplierEntity: supplierEntity));
+                            supplierEntity: customerEntity));
                   });
             },
             color: Colors.transparent,

@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,16 +8,13 @@ import 'package:trade_mate/screens/auth/login/ui/view/login_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:trade_mate/screens/auth/signup/ui/view/signup_screen.dart';
 import 'package:trade_mate/screens/home/home.dart';
-import 'package:trade_mate/screens/home/tabs/add_product/domain/add_product_di.dart';
 import 'package:trade_mate/screens/home/tabs/add_product/ui/view/add_product_screen.dart';
-import 'package:trade_mate/screens/home/tabs/add_product/ui/view_model/add_product_view_model.dart';
-import 'package:trade_mate/screens/home/tabs/customers/ui/view/customers_screen.dart';
+import 'package:trade_mate/screens/home/tabs/cutomers/ui/view/add_customer_screen.dart';
+import 'package:trade_mate/screens/home/tabs/cutomers/ui/view/customers_screen.dart';
 import 'package:trade_mate/screens/home/tabs/orders/ui/view/orders_screen.dart';
 import 'package:trade_mate/screens/home/tabs/stock/ui/view/stock_screen.dart';
-import 'package:trade_mate/screens/home/tabs/suppliers/domain/supplier_di.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/add_supplier_screen.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/suplliers_screen.dart';
-import 'package:trade_mate/screens/home/tabs/suppliers/ui/view_model/supplier_view_model.dart';
 import 'package:trade_mate/screens/widgets/splash.dart';
 import 'package:trade_mate/utils/app_theme.dart';
 import 'package:trade_mate/utils/bloc_observer.dart';
@@ -62,6 +58,7 @@ class MyApp extends StatelessWidget {
           CustomersScreen.routeName:(context)=>CustomersScreen(),
           AddProductScreen.routeName:(context)=>AddProductScreen(),
           AddSupplierScreen.routeName:(context)=>AddSupplierScreen(),
+          AddCustomerScreen.routeName:(context)=>AddCustomerScreen(),
 
         },
       ),

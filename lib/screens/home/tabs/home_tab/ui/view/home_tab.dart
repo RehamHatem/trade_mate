@@ -3,13 +3,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trade_mate/screens/home/tabs/add_product/ui/view/add_product_screen.dart';
-import 'package:trade_mate/screens/home/tabs/customers/ui/view/customers_screen.dart';
 import 'package:trade_mate/screens/home/tabs/orders/ui/view/orders_screen.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/suplliers_screen.dart';
 import 'package:trade_mate/screens/widgets/container_text_icon.dart';
 
 import '../../../../../../utils/app_colors.dart';
 import '../../../../../widgets/container_icon_txt.dart';
+import '../../../cutomers/ui/view/customers_screen.dart';
 import '../../../stock/ui/view/stock_screen.dart';
 
 class HomeTab extends StatelessWidget {

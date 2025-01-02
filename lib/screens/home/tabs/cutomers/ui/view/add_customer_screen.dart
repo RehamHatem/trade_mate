@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:trade_mate/screens/home/tabs/cutomers/ui/view/customers_screen.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/domain/entity/supplier_entity.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/suplliers_screen.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view_model/supplier_view_model.dart';
@@ -13,44 +14,45 @@ import '../../../../../../utils/app_colors.dart';
 import '../../../../../../utils/dialog_utils.dart';
 import '../../../../../../utils/shared_preference.dart';
 import '../../../../../widgets/add_product_text_field.dart';
-import '../../domain/supplier_di.dart';
-import '../view_model/supplier_states.dart';
+import '../../domain/customer_di.dart';
+import '../view_model/customer_states.dart';
+import '../view_model/customer_view_model.dart';
 
-class AddSupplierScreen extends StatefulWidget {
-  static const String routeName="addSupplier";
-   AddSupplierScreen({super.key});
+class AddCustomerScreen extends StatefulWidget {
+  static const String routeName="addCustomer";
+  AddCustomerScreen({super.key});
 
   @override
-  State<AddSupplierScreen> createState() => _AddSupplierScreenState();
+  State<AddCustomerScreen> createState() => _AddCustomerScreenState();
 }
 
-class _AddSupplierScreenState extends State<AddSupplierScreen> {
+class _AddCustomerScreenState extends State<AddCustomerScreen> {
 
-SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSupplierUseCases());
+  CustomerViewModel customerViewModel=CustomerViewModel(customerUseCases: injectCustomerUseCases());
 
    void clearForm() {
-     supplierViewModel.formKey.currentState?.reset();
-     supplierViewModel.supplierName.clear();
-     supplierViewModel.supplierPhone.clear();
-     supplierViewModel.supplierAddress.clear();
-     supplierViewModel.supplierCity.clear();
-     supplierViewModel.supplierNotes.clear();
+     customerViewModel.formKey.currentState?.reset();
+     customerViewModel.customerName.clear();
+     customerViewModel.customerPhone.clear();
+     customerViewModel.customerAddress.clear();
+     customerViewModel.customerCity.clear();
+     customerViewModel.customerNotes.clear();
    }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener(
-      bloc: supplierViewModel,
+      bloc: customerViewModel,
       listener: (context, state) {
-        if (state is AddSupplierLoadingState){
+        if (state is AddCustomerLoadingState){
           return DialogUtils.showLoading(context, "Loading...");
         }
-        else if (state is AddSupplierErrorState){
+        else if (state is AddCustomerErrorState){
           DialogUtils.hideLoading(context);
           return DialogUtils.showMessage(context, state.error,title: "Error");
 
         }
-        else if (state  is AddSupplierSuccessState){
+        else if (state  is AddCustomerSuccessState){
           DialogUtils.hideLoading(context);
 
           showDialog(barrierDismissible: false, context: context, builder: (context) {
@@ -63,9 +65,9 @@ SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSu
                   SizedBox(width: 5.w,),
                   InkWell(
                     onTap: () {
-                      Navigator.pushReplacementNamed(context, SuplliersScreen.routeName);
+                      Navigator.pushReplacementNamed(context, CustomersScreen.routeName);
                     },
-                    child: Text("back to Suppliers",style:
+                    child: Text("back to Customers",style:
                     Theme.of(context)
                         .textTheme
                         .titleMedium!
@@ -123,10 +125,12 @@ SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSu
 
                   ),
                   SizedBox(height: 10.h,),
-                  Text("The supplier is added successfully",textAlign: TextAlign.center,style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .copyWith(color: AppColors.primaryColor),
+                  Center(
+                    child: Text("The customer is added successfully",textAlign: TextAlign.center,style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(color: AppColors.primaryColor),
+                    ),
                   ),
                 ],
               ),
@@ -142,19 +146,13 @@ SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSu
           iconTheme: IconThemeData(color: AppColors.whiteColor),
           backgroundColor: AppColors.darkPrimaryColor,
           title: Text(
-            'Add Supplier',
+            'Add Customer',
             style: Theme.of(context)
                 .textTheme
                 .titleLarge!
                 .copyWith(color: AppColors.whiteColor),
           ),
           toolbarHeight: 100.h,
-          // leading: IconButton(onPressed: () {
-          //   Navigator.pushNamedAndRemoveUntil(context, SuplliersScreen.routeName, (route) {
-          //     return false;
-          //   },);
-          //
-          // },icon: Icon(Icons.arrow_back),),
         ),
         body: Center(
           child: SingleChildScrollView(
@@ -170,7 +168,7 @@ SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSu
               ),
               child: Center(
                 child: Form(
-                  key: supplierViewModel.formKey,
+                  key: customerViewModel.formKey,
                   child: Column(
 
                     children: [
@@ -178,8 +176,8 @@ SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSu
                         height: 35.h,
                       ),
                       AddProductTextField(
-                        controller: supplierViewModel.supplierName,
-                        fieldName: "Supplier Name",
+                        controller: customerViewModel.customerName,
+                        fieldName: "Customer Name",
                         hintText: "enter name here",
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
@@ -194,13 +192,13 @@ SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSu
                       ),
                       AddProductTextField(
                         hintText: "enter phone number",
-                        controller:supplierViewModel.supplierPhone,
+                        controller:customerViewModel.customerPhone,
                         fieldName: "Phone",
                         isEnabled: true,
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (value == null || value.trim().isEmpty  ) {
-                            return 'please enter supplier number';
+                            return 'please enter customer number';
                           }
                           return null;
                         },
@@ -214,17 +212,17 @@ SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSu
                         hintText: "select City",
                         isEnabled: true,
                         isDropdown: true,
-                        controller: supplierViewModel.supplierCity,
+                        controller: customerViewModel.customerCity,
                         validator: (value) {
-                          if(value==null|| supplierViewModel.supplierCity.text.isEmpty){
-                            supplierViewModel.supplierCity.text = value ?? "";
+                          if(value==null|| customerViewModel.customerCity.text.isEmpty){
+                            customerViewModel.customerCity.text = value ?? "";
                             return("please select a city");
                           }
                           return null;
                         },
                         dropdownItems: ["Cairo", "Giza", "Alexandria"],
                         onChanged: (value) {
-                          supplierViewModel.supplierCity.text = value ?? "";
+                          customerViewModel.customerCity.text = value ?? "";
                           print("Selected city: $value");
                         },
                         // dropdownValue: "cat1",
@@ -234,13 +232,13 @@ SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSu
                       ),
                       AddProductTextField(
                         hintText: "enter address in details here",
-                        controller:supplierViewModel.supplierAddress,
+                        controller:customerViewModel.customerAddress,
                         fieldName: "Address",
                         isEnabled: true,
                         keyboardType: TextInputType.text,
                         validator: (value) {
                           if (value == null || value.trim().isEmpty  ) {
-                            return 'please enter supplier address';
+                            return 'please enter customer address';
                           }
                           return null;
                         },
@@ -250,9 +248,9 @@ SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSu
                       ),
                       AddProductTextField(
                         fieldName: "Notes",
-                        hintText: "Leave note about the supplier ...",
+                        hintText: "Leave note about the customer ...",
                         isEnabled: true,
-                        controller:supplierViewModel.supplierNotes,
+                        controller:customerViewModel.customerNotes,
                       ),
                       SizedBox(
                         height: 50.h,
@@ -291,21 +289,21 @@ SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSu
                               onPressed: () async{
                                 await SharedPreference.init();
                                 var user=SharedPreference.getData(key: 'email' );
-                    supplierViewModel.formKey.currentState!.save();
-                    print("supplier Name: ${supplierViewModel.supplierName.text}");
-                    print("supplier address: ${supplierViewModel.supplierAddress.text}");
-                    print("supplier city: ${supplierViewModel.supplierCity.text}");
-                    print("supplier phone: ${supplierViewModel.supplierPhone.text}");
-                    print("supplier notes: ${supplierViewModel.supplierNotes.text}");
-                    if (supplierViewModel.formKey.currentState!.validate()){
-                      SupplierEntity supplier=SupplierEntity(name: supplierViewModel.supplierName.text
-                          , notes: supplierViewModel.supplierNotes.text??"N/A",
+                    customerViewModel.formKey.currentState!.save();
+                    print("customer Name: ${customerViewModel.customerName.text}");
+                    print("customer address: ${customerViewModel.customerAddress.text}");
+                    print("customer city: ${customerViewModel.customerCity.text}");
+                    print("customer phone: ${customerViewModel.customerPhone.text}");
+                    print("customer notes: ${customerViewModel.customerNotes.text}");
+                    if (customerViewModel.formKey.currentState!.validate()){
+                      SupplierEntity customer=SupplierEntity(name: customerViewModel.customerName.text
+                          , notes: customerViewModel.customerNotes.text??"N/A",
                           id: user.toString(),
-                          phone: supplierViewModel.supplierPhone.text
-                          , address: supplierViewModel.supplierAddress.text
-                          , city: supplierViewModel.supplierCity.text
+                          phone: customerViewModel.customerPhone.text
+                          , address: customerViewModel.customerAddress.text
+                          , city: customerViewModel.customerCity.text
                           , date: DateFormat('dd-MM-yyyy').format(DateTime.now()), userId: FirebaseAuth.instance.currentUser!.uid);
-                      supplierViewModel.addSupplier(supplier);
+                      customerViewModel.addCustomer(customer);
                     }
 
 

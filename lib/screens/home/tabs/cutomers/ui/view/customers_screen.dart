@@ -1,33 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
+import 'package:trade_mate/screens/home/tabs/cutomers/ui/view/add_customer_screen.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/domain/entity/supplier_entity.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/supplier_item.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/supplier_view.dart';
-import 'package:trade_mate/screens/home/tabs/suppliers/ui/view_model/supplier_view_model.dart';
 
-import '../../../../../../main.dart';
 import '../../../../../../utils/app_colors.dart';
 import '../../../../../../utils/dialog_utils.dart';
 import '../../../../../../utils/text_field_item.dart';
 import '../../../../home.dart';
-import '../../../home_tab/ui/view/home_tab.dart';
-import '../../domain/supplier_di.dart';
-import '../view_model/supplier_states.dart';
-import 'add_supplier_screen.dart';
+import '../../domain/customer_di.dart';
+import '../view_model/customer_states.dart';
+import '../view_model/customer_view_model.dart';
+import 'customer_item.dart';
 
-class SuplliersScreen extends StatelessWidget {
-  static const String routeName = "supplier";
+class CustomersScreen extends StatelessWidget {
+  static const String routeName = "customer";
 
-  SuplliersScreen({super.key});
+  CustomersScreen({super.key});
 
-  SupplierViewModel supplierViewModel =
-      SupplierViewModel(supplierUseCases: injectSupplierUseCases());
+  CustomerViewModel customerViewModel =
+  CustomerViewModel(customerUseCases: injectCustomerUseCases());
 
   @override
   Widget build(BuildContext context) {
-    supplierViewModel.getSuppliers();
+    customerViewModel.getCustomer();
     return Scaffold(
       backgroundColor: AppColors.lightGreyColor,
       appBar: AppBar(
@@ -46,7 +44,7 @@ class SuplliersScreen extends StatelessWidget {
           icon: Icon(Icons.arrow_back),
         ),
         title: Text(
-          'Suppliers',
+          'Customers',
           style: Theme.of(context)
               .textTheme
               .titleLarge!
@@ -65,11 +63,11 @@ class SuplliersScreen extends StatelessWidget {
                   right: 15.w,
                 ),
                 child: TextFieldItem(
-                  controller: supplierViewModel.search,
+                  controller: customerViewModel.search,
                   change: (query) {
-                    supplierViewModel.searchSuppliers(query);
+                    customerViewModel.searchCustomers(query);
                   },
-                  hintText: "Search in suppliers ",
+                  hintText: "Search in customers ",
                   suffixIcon: Icon(
                     Icons.search,
                   ),
@@ -77,34 +75,34 @@ class SuplliersScreen extends StatelessWidget {
               )),
           Expanded(
             child: BlocListener(
-              bloc: supplierViewModel,
+              bloc: customerViewModel,
               listener: (context, state) {
-                if (state is RemoveSupplierLoadingState) {
-                  DialogUtils.showLoading(context, "Deleting supplier...");
-                } else if (state is RemoveSupplierErrorState) {
+                if (state is RemoveCustomerLoadingState) {
+                  DialogUtils.showLoading(context, "Deleting customer...");
+                } else if (state is RemoveCustomerErrorState) {
                   DialogUtils.hideLoading(context);
                   DialogUtils.showMessage(context, state.error);
-                } else if (state is RemoveSupplierSuccessState) {
+                } else if (state is RemoveCustomerSuccessState) {
                   DialogUtils.hideLoading(context);
                   DialogUtils.showMessage(
-                      context, "Supplier deleted successfully",
+                      context, "Customer deleted successfully",
                       title: "Note");
 
                 }
-                else if (state is UpdateSupplierLoadingState) {
-                  DialogUtils.showLoading(context, "Updating supplier...");
-                } else if (state is UpdateSupplierErrorState) {
+                else if (state is UpdateCustomerLoadingState) {
+                  DialogUtils.showLoading(context, "Updating Customer...");
+                } else if (state is UpdateCustomerErrorState) {
                   DialogUtils.hideLoading(context);
                   DialogUtils.showMessage(context, state.error);
-                } else if (state is UpdateSupplierSuccessState) {
+                } else if (state is UpdateCustomerSuccessState) {
                   DialogUtils.hideLoading(context);
                   DialogUtils.showMessage(
-                      context, "supplier updated successfully",
+                      context, "Customer updated successfully",
                       title: "Note");
                 }
               },
               child: StreamBuilder<List<SupplierEntity>>(
-                stream: supplierViewModel.supplierStreamController.stream,
+                stream: customerViewModel.customerStreamController.stream,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -114,9 +112,9 @@ class SuplliersScreen extends StatelessWidget {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   }
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text("No Suppliers Found"));
+                    return const Center(child: Text("No Customers Found"));
                   }
-                  final suppliers = snapshot.data!;
+                  final customers = snapshot.data!;
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: ListView.separated(
@@ -175,23 +173,23 @@ class SuplliersScreen extends StatelessWidget {
                                   ),
                                   alignment: Alignment.center,
                                   content: SupplierView(
-                                    supplierEntity: suppliers[index],
+                                    supplierEntity: customers[index],
                                   ),
                                 );
                               },
                             );
                           },
-                          child: SupplierItem(
-                            supplierEntity: suppliers[index],
+                          child: CustomerItem(
+                            customerEntity: customers[index],
                             delete: (p0) {
-                              supplierViewModel.deleteSupplier(suppliers[index].id);
+                              customerViewModel.deleteCustomer(customers[index].id);
                             },
-                            update: supplierViewModel.updateSupplier,
+                            update: customerViewModel.updateCustomer,
                           ),
                         );
                       },
                       separatorBuilder: (_, __) => SizedBox(height: 1.h),
-                      itemCount: suppliers.length,
+                      itemCount: customers.length,
                     ),
                   );
                 },
@@ -204,7 +202,7 @@ class SuplliersScreen extends StatelessWidget {
         padding: EdgeInsets.only(right: 16.w, bottom: 64.h),
         child: FloatingActionButton(
           onPressed: () {
-            Navigator.pushNamed(context, AddSupplierScreen.routeName);
+            Navigator.pushNamed(context, AddCustomerScreen.routeName);
           },
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.r)),

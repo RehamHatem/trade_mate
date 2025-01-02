@@ -17,8 +17,8 @@ class SupplierUseCases{
   Future<void>deleteSupplier(String id){
     return supplierRepository.deleteSupplier(id);
   }
-  Future<void>updateProduct(String id,SupplierEntity product){
-    return supplierRepository.updateSupplier(id, product);
+  Future<void>updateProduct(String id,SupplierEntity supplier){
+    return supplierRepository.updateSupplier(id, supplier);
   }
 
 

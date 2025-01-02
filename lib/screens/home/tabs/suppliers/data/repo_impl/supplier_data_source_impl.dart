@@ -56,8 +56,8 @@ class SupplierDataSourceImpl implements SupplierDataSource{
   }
 
   @override
-  Future<void> updateSupplier(String id, SupplierEntity product) {
-    return supplierData.updateSupplier(id, product.fromEntity(product));
+  Future<void> updateSupplier(String id, SupplierEntity supplier) {
+    return supplierData.updateSupplier(id, supplier.fromEntity(supplier));
   }
 
 

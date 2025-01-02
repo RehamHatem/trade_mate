@@ -11,7 +11,7 @@ import '../../../../../../utils/shared_preference.dart';
 
 class SupplierData {
 
-  CollectionReference<SupplierModel> getProductsCollection() {
+  CollectionReference<SupplierModel> getSuppliersCollection() {
     return FirebaseFirestore.instance
         .collection("Suppliers")
         .withConverter<SupplierModel>(
@@ -30,7 +30,7 @@ class SupplierData {
           .collection("Suppliers")
           .withConverter<SupplierModel>(
         fromFirestore: (snapshot, _) => SupplierModel.fromJson(snapshot.data()!),
-        toFirestore: (product, _) => product.toJson(),
+        toFirestore: (supplier, _) => supplier.toJson(),
       )
           .where("userId", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
           .orderBy("date")
@@ -47,7 +47,7 @@ class SupplierData {
     }
   }
   Future<void> addSupplier(SupplierModel supplier) {
-    var collection = getProductsCollection();
+    var collection = getSuppliersCollection();
     var docRef = collection.doc();
     supplier.id = docRef.id;
     return docRef.set(supplier);
@@ -56,7 +56,7 @@ class SupplierData {
 
     try {
       print("Supplier deleted successfully!");
-      return getProductsCollection().doc(id).delete();
+      return getSuppliersCollection().doc(id).delete();
 
     } catch (e) {
       print("Error deleting Supplier: $e");
@@ -66,9 +66,9 @@ class SupplierData {
 
   }
 
-  Future<void> updateSupplier(String id, SupplierModel product) async {
+  Future<void> updateSupplier(String id, SupplierModel supplier) async {
     try {
-      await getProductsCollection().doc(id).update(product.toJson());
+      await getSuppliersCollection().doc(id).update(supplier.toJson());
       print("Supplier updated successfully!");
     } catch (e) {
       print("Error updating Supplier: $e");

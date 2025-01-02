@@ -72,16 +72,16 @@ class SupplierViewModel extends Cubit<SupplierStates> {
               (failure) {
             emit(GetSupplierErrorState(error: failure.errorMsg!));
           },
-              (products) {
-            var filteredProducts = products
-                .where((product) =>
-                product.name.toLowerCase().contains(query.toLowerCase()))
+              (suppliers) {
+            var filteredSuppliers = suppliers
+                .where((supplier) =>
+                supplier.name.toLowerCase().contains(query.toLowerCase()))
                 .toList();
 
             supplierStreamController.add(
-                filteredProducts); // Add filtered list to stream.
+                filteredSuppliers); // Add filtered list to stream.
             emit(GetSupplierSuccessState(
-                entity: filteredProducts)); // Emit success state.
+                entity: filteredSuppliers)); // Emit success state.
           },
         );
       });
@@ -113,7 +113,7 @@ class SupplierViewModel extends Cubit<SupplierStates> {
       try {
         supplierUseCases.updateProduct(id, supplier);
         emit(UpdateSupplierSuccessState(success: "success"));
-        print("view model update product success");
+        print("view model update supplier success");
         // if (!isClosed) {
         //   // getProducts();
         // }

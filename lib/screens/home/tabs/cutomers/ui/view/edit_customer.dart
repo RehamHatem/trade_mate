@@ -8,39 +8,39 @@ import 'package:trade_mate/screens/home/tabs/suppliers/domain/entity/supplier_en
 import '../../../../../../utils/app_colors.dart';
 import '../../../../../widgets/add_product_text_field.dart';
 
-class EditSupplier extends StatefulWidget {
-  EditSupplier({required this.update,required this.supplierEntity}){
+class EditCustomer extends StatefulWidget {
+  EditCustomer({required this.update,required this.customerEntity}){
 
   }
   void Function(String,SupplierEntity)update;
-  SupplierEntity supplierEntity;
+  SupplierEntity customerEntity;
 
   @override
-  State<EditSupplier> createState() => _EditSupplierState();
+  State<EditCustomer> createState() => _EditCustomerState();
 }
 
-class _EditSupplierState extends State<EditSupplier> {
-  TextEditingController supplierName = TextEditingController();
+class _EditCustomerState extends State<EditCustomer> {
+  TextEditingController customerName = TextEditingController();
 
   var formKey = GlobalKey<FormState>();
 
-  TextEditingController supplierPhone= TextEditingController();
+  TextEditingController customerPhone= TextEditingController();
 
-  TextEditingController supplierAddress = TextEditingController();
+  TextEditingController customerAddress = TextEditingController();
 
-  TextEditingController supplierCity = TextEditingController();
+  TextEditingController customerCity = TextEditingController();
 
-  TextEditingController supplierNotes = TextEditingController();
+  TextEditingController customerNotes = TextEditingController();
 
 
   double total = 0.0;
   void initState() {
     super.initState();
-    supplierName.text = widget.supplierEntity.name;
-    supplierPhone.text = widget.supplierEntity.phone;
-    supplierAddress.text = widget.supplierEntity.address ;
-    supplierCity.text = widget.supplierEntity.city ;
-    supplierNotes.text = widget.supplierEntity.notes ?? "";
+    customerName.text = widget.customerEntity.name;
+    customerPhone.text = widget.customerEntity.phone;
+    customerAddress.text = widget.customerEntity.address ;
+    customerCity.text = widget.customerEntity.city ;
+    customerNotes.text = widget.customerEntity.notes ?? "";
   }
 
   @override
@@ -52,12 +52,12 @@ class _EditSupplierState extends State<EditSupplier> {
           mainAxisSize: MainAxisSize.min,
           children: [
             AddProductTextField(
-              controller: supplierName,
-              fieldName: "Supplier Name",
+              controller: customerName,
+              fieldName: "Customer Name",
               hintText: "ex: reham",
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'please enter supplier name';
+                  return 'please enter customer name';
                 }
                 return null;
               },
@@ -68,13 +68,13 @@ class _EditSupplierState extends State<EditSupplier> {
             ),
             AddProductTextField(
               hintText: "0111565585",
-              controller: supplierPhone,
+              controller: customerPhone,
               fieldName: "Phone",
               isEnabled: true,
 
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'please enter supplier phone';
+                  return 'please enter customer phone';
                 }
                 return null;
               },
@@ -90,18 +90,18 @@ class _EditSupplierState extends State<EditSupplier> {
                     hintText: "select city",
                     isEnabled: true,
                     isDropdown: true,
-                    controller: supplierCity,
-                    dropdownValue:supplierCity.text=="N/A"? null : supplierCity.text,
+                    controller: customerCity,
+                    dropdownValue:customerCity.text=="N/A"? null : customerCity.text,
                     validator: (value) {
-                      if (value == null || supplierCity.text.isEmpty ) {
-                        supplierCity.text = value ?? "";
+                      if (value == null || customerCity.text.isEmpty ) {
+                        customerCity.text = value ?? "";
                         return ("please select a city");
                       }
                       return null;
                     },
                     dropdownItems: ["Cairo", "Giza", "Alexandria"],
                     onChanged: (value) {
-                      supplierCity.text = value ?? "";
+                      customerCity.text = value ?? "";
                       print("Selected city: $value");
                     },
                     // dropdownValue: "cat1",
@@ -114,11 +114,11 @@ class _EditSupplierState extends State<EditSupplier> {
                     child: AddProductTextField(
                       fieldName: "Address",
                       hintText: "address",
-                      controller: supplierAddress,
+                      controller: customerAddress,
                       isEnabled: true,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'please enter supplier address';
+                          return 'please enter customer address';
                         }
                         return null;
                       },
@@ -133,9 +133,9 @@ class _EditSupplierState extends State<EditSupplier> {
             ),
             AddProductTextField(
               fieldName: "Notes",
-              hintText: "Leave note about the supplier ...",
+              hintText: "Leave note about the customer ...",
               isEnabled: true,
-              controller: supplierNotes,
+              controller: customerNotes,
             ),
             SizedBox(
               height: 20.h,
@@ -174,16 +174,16 @@ class _EditSupplierState extends State<EditSupplier> {
                     onPressed: () {
                       if (formKey.currentState!.validate()) {
                         formKey.currentState!.save();
-                        final updatedSupplier = SupplierEntity(id:widget.supplierEntity.id,
-                            name: supplierName.text,
+                        final updatedCustomer = SupplierEntity(id:widget.customerEntity.id,
+                            name: customerName.text,
                             edited: true,
-                            notes: supplierNotes.text,
-                            phone: supplierPhone.text,
-                            address: supplierAddress.text,
-                            city: supplierCity.text,
+                            notes: customerNotes.text,
+                            phone: customerPhone.text,
+                            address: customerAddress.text,
+                            city: customerCity.text,
                             date: DateFormat('dd-MM-yyyy').format(DateTime.now()),
                             userId: FirebaseAuth.instance.currentUser!.uid);
-                        widget.update(widget.supplierEntity.id, updatedSupplier);
+                        widget.update(widget.customerEntity.id, updatedCustomer);
                         Navigator.pop(context);
 
                       }
