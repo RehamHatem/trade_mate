@@ -8,6 +8,7 @@ class UserLoginModel extends UserLoginEntity {
   UserLoginModel({
     required super.password,
     required super.email,
+    super.balance
   });
 
 
@@ -35,6 +36,7 @@ class UserLoginModel extends UserLoginEntity {
       : this(
     password: json['password'],
     email: json['email'],
+    balance: json['balance'],
 
   );
 
@@ -42,6 +44,7 @@ class UserLoginModel extends UserLoginEntity {
     return {
       "password": password,
       "email": email,
+      "balance": balance,
 
     };
   }

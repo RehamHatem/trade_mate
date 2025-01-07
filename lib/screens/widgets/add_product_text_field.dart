@@ -19,7 +19,7 @@ class AddProductTextField extends StatelessWidget {
  void Function(String?)? onChanged;
   AddProductTextField(
       {
-        required this.fieldName,
+       this.fieldName="",
         required this.hintText,
         this.suffix,
         this.isEnabled=true ,
@@ -38,7 +38,7 @@ class AddProductTextField extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        fieldName==""?SizedBox.shrink():Text(
           fieldName,
           style: Theme.of(context)
               .textTheme
@@ -101,6 +101,8 @@ class AddProductTextField extends StatelessWidget {
             :
         TextFormField(
   keyboardType: keyboardType,
+
+
 controller: controller,
           decoration: InputDecoration(
             // fillColor: Color(0xfffcfafa),

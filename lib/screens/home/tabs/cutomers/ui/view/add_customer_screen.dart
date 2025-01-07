@@ -121,9 +121,11 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                       style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(AppColors.greenColor),shape:
                       WidgetStatePropertyAll(RoundedRectangleBorder
                         (borderRadius: BorderRadius.circular(50.r),
-                      )))
+                      ))),
+
 
                   ),
+
                   SizedBox(height: 10.h,),
                   Center(
                     child: Text("The customer is added successfully",textAlign: TextAlign.center,style: Theme.of(context)

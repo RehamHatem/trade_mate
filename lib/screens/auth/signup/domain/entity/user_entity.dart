@@ -4,7 +4,7 @@ class UserEntity{
   String email;
   String phone;
   String userName;
-
+  double balance;
   bool emailVerified;
 
   UserEntity({
@@ -13,6 +13,8 @@ class UserEntity{
     this.phone = "",
     this.emailVerified = false,
     required this.userName,
+    this.balance=0,
+
   });
 
 }

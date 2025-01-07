@@ -181,7 +181,7 @@ class _EditCustomerState extends State<EditCustomer> {
                             phone: customerPhone.text,
                             address: customerAddress.text,
                             city: customerCity.text,
-                            date: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+                            date: widget.customerEntity.date,
                             userId: FirebaseAuth.instance.currentUser!.uid);
                         widget.update(widget.customerEntity.id, updatedCustomer);
                         Navigator.pop(context);

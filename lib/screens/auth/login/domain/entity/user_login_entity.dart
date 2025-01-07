@@ -6,8 +6,10 @@ class UserLoginEntity   {
   UserLoginEntity({
     required this.password,
     required this. email,
+    this.balance=0
   });
   String password;
   String email;
+  double balance;
 
 }

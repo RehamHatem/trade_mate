@@ -181,7 +181,7 @@ class _EditSupplierState extends State<EditSupplier> {
                             phone: supplierPhone.text,
                             address: supplierAddress.text,
                             city: supplierCity.text,
-                            date: DateFormat('dd-MM-yyyy').format(DateTime.now()),
+                            date:widget.supplierEntity.date ,
                             userId: FirebaseAuth.instance.currentUser!.uid);
                         widget.update(widget.supplierEntity.id, updatedSupplier);
                         Navigator.pop(context);
