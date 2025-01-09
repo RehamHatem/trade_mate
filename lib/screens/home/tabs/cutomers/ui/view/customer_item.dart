@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trade_mate/screens/home/tabs/cutomers/ui/view/edit_customer.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/domain/entity/supplier_entity.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/edit_supplier.dart';
 
@@ -117,8 +118,8 @@ class CustomerItem extends StatelessWidget {
           ),
         ),
         Positioned(
-          bottom: 88.h,
-          left: 350.w,
+          bottom: 80.h,
+          left: 340.w,
           child: IconButton(
             onPressed: () {
               showDialog(
@@ -220,7 +221,7 @@ class CustomerItem extends StatelessWidget {
                   builder: (context) {
                     return Container(
                         margin: EdgeInsets.only(
-                            left: 16.h, right: 16.h, bottom: 16.w, top: 16.w),
+                            left: 20.h, right: 20.h, bottom: 30.w, top: 30.w),
                         padding: EdgeInsets.only(
                             bottom: MediaQuery.of(context).viewInsets.bottom),
                         decoration: BoxDecoration(
@@ -228,10 +229,10 @@ class CustomerItem extends StatelessWidget {
                             borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(15.r),
                                 topRight: Radius.circular(15.r))),
-                        child: EditSupplier(
+                        child: EditCustomer(
 
                             update:update,
-                            supplierEntity: customerEntity));
+                            customerEntity: customerEntity));
                   });
             },
             color: Colors.transparent,

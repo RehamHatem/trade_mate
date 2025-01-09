@@ -252,10 +252,11 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                         fieldName: "Notes",
                         hintText: "Leave note about the customer ...",
                         isEnabled: true,
+                        maxLen: 100,
                         controller:customerViewModel.customerNotes,
                       ),
                       SizedBox(
-                        height: 50.h,
+                        height: 40.h,
                       ),
                       Row(
                         children: [
@@ -299,12 +300,12 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                     print("customer notes: ${customerViewModel.customerNotes.text}");
                     if (customerViewModel.formKey.currentState!.validate()){
                       SupplierEntity customer=SupplierEntity(name: customerViewModel.customerName.text
-                          , notes: customerViewModel.customerNotes.text??"N/A",
+                          , notes:customerViewModel.customerNotes.text!=""? customerViewModel.customerNotes.text:"N/A",
                           id: user.toString(),
                           phone: customerViewModel.customerPhone.text
                           , address: customerViewModel.customerAddress.text
                           , city: customerViewModel.customerCity.text
-                          , date: DateFormat('dd-MM-yyyy').format(DateTime.now()), userId: FirebaseAuth.instance.currentUser!.uid);
+                          , date: DateFormat.yMd().add_jm().format(DateTime.now()), userId: FirebaseAuth.instance.currentUser!.uid);
                       customerViewModel.addCustomer(customer);
                     }
 

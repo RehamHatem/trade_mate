@@ -45,6 +45,7 @@ class _SignupScreenState extends State<SignupScreen> {
           color: Colors.white,
           height: double.infinity,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
                 padding: EdgeInsets.only(
@@ -53,21 +54,25 @@ class _SignupScreenState extends State<SignupScreen> {
                   'assets/images/logo2.png',
                 ),
               ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal:20.w,vertical: 15.h),
+                child: Text(
+                  'SignUp',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(fontSize: 26.sp),
+                ),
+              ),
           
               Expanded(
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w,vertical: 15.h),
+                    padding: EdgeInsets.symmetric(horizontal:20.w),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          'SignUp',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .copyWith(fontSize: 26.sp),
-                        ),
+
                         Padding(
                           padding: EdgeInsets.only(top: 20.h),
                           child: Form(
@@ -218,12 +223,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                       .titleLarge!
                                       .copyWith(
                                       color: AppColors.primaryColor,
-                                      fontSize: 20.sp),
+                                      fontSize: 30.sp),
                                 ),
                               ),
                             ),
                           ),
                         ),
+                        SafeArea(child: SizedBox(height: 20.h,))
                       ],
                     ),
                   ),

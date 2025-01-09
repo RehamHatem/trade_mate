@@ -117,9 +117,10 @@ class SupplierItem extends StatelessWidget {
           ),
         ),
         Positioned(
-          bottom: 88.h,
-          left: 350.w,
+          bottom: 80.h,
+          left: 340.w,
           child: IconButton(
+
             onPressed: () {
               showDialog(
                 context: context,
@@ -220,8 +221,7 @@ class SupplierItem extends StatelessWidget {
                   builder: (context) {
                     return Container(
                         margin: EdgeInsets.only(
-                            left: 16.h, right: 16.h, bottom: 16.w, top: 16.w),
-                        padding: EdgeInsets.only(
+                            left: 20.h, right: 20.h, bottom: 30.w, top: 30.w),                        padding: EdgeInsets.only(
                             bottom: MediaQuery.of(context).viewInsets.bottom),
                         decoration: BoxDecoration(
                             color: AppColors.lightGreyColor,

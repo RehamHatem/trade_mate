@@ -10,6 +10,7 @@ class AddProductTextField extends StatelessWidget {
   String hintText;
   Widget? suffix;
   bool isEnabled;
+  int maxLen;
   TextInputType? keyboardType;
   String? Function(String?)? validator;
   TextEditingController controller;
@@ -20,6 +21,7 @@ class AddProductTextField extends StatelessWidget {
   AddProductTextField(
       {
        this.fieldName="",
+        this.maxLen=0,
         required this.hintText,
         this.suffix,
         this.isEnabled=true ,
@@ -101,12 +103,15 @@ class AddProductTextField extends StatelessWidget {
             :
         TextFormField(
   keyboardType: keyboardType,
+maxLength:maxLen!=0?maxLen:null,
+
 
 
 controller: controller,
           decoration: InputDecoration(
             // fillColor: Color(0xfffcfafa),
             // filled: true,
+
             enabled: isEnabled,
             errorStyle: Theme.of(context)
                 .textTheme
@@ -116,6 +121,8 @@ controller: controller,
                 fontSize: 12.sp),
 
 suffix: suffix,
+
+
             disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15.r),
               borderSide:

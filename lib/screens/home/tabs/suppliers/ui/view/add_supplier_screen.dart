@@ -201,6 +201,8 @@ SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSu
                         validator: (value) {
                           if (value == null || value.trim().isEmpty  ) {
                             return 'please enter supplier number';
+                          }else if(value.length<11||value.length>11){
+                            return'please enter a valid number';
                           }
                           return null;
                         },
@@ -250,12 +252,13 @@ SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSu
                       ),
                       AddProductTextField(
                         fieldName: "Notes",
+                        maxLen: 100,
                         hintText: "Leave note about the supplier ...",
                         isEnabled: true,
                         controller:supplierViewModel.supplierNotes,
                       ),
                       SizedBox(
-                        height: 50.h,
+                        height: 40.h,
                       ),
                       Row(
                         children: [
@@ -299,12 +302,12 @@ SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSu
                     print("supplier notes: ${supplierViewModel.supplierNotes.text}");
                     if (supplierViewModel.formKey.currentState!.validate()){
                       SupplierEntity supplier=SupplierEntity(name: supplierViewModel.supplierName.text
-                          , notes: supplierViewModel.supplierNotes.text??"N/A",
+                          , notes: supplierViewModel.supplierNotes.text!=""?supplierViewModel.supplierNotes.text:"N/A",
                           id: user.toString(),
                           phone: supplierViewModel.supplierPhone.text
                           , address: supplierViewModel.supplierAddress.text
                           , city: supplierViewModel.supplierCity.text
-                          , date: DateFormat('dd-MM-yyyy').format(DateTime.now()), userId: FirebaseAuth.instance.currentUser!.uid);
+                          , date: DateFormat.yMd().add_jm().format(DateTime.now()), userId: FirebaseAuth.instance.currentUser!.uid);
                       supplierViewModel.addSupplier(supplier);
                     }
 

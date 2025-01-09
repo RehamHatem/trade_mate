@@ -76,6 +76,10 @@ class _EditSupplierState extends State<EditSupplier> {
                 if (value == null || value.trim().isEmpty) {
                   return 'please enter supplier phone';
                 }
+                else if(value.length!=11){
+                  return'please enter a valid number';
+
+                }
                 return null;
               },
             ),
@@ -134,6 +138,7 @@ class _EditSupplierState extends State<EditSupplier> {
             AddProductTextField(
               fieldName: "Notes",
               hintText: "Leave note about the supplier ...",
+              maxLen: 100,
               isEnabled: true,
               controller: supplierNotes,
             ),

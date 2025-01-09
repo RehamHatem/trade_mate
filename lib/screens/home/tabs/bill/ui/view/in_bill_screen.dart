@@ -48,6 +48,7 @@ var productController=TextEditingController();
                           hintText: "ex: USB-C",
                           isDropdown: true,
 
+
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return 'please choose a product';

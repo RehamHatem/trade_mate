@@ -74,7 +74,11 @@ class _EditCustomerState extends State<EditCustomer> {
 
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return 'please enter customer phone';
+                  return 'please enter customer number';
+                }
+                else if(value.length!=11){
+                  return'please enter a valid number';
+
                 }
                 return null;
               },

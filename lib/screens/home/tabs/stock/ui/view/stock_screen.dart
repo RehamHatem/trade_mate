@@ -52,6 +52,7 @@ stockViewModel.getProducts();
                 ),
                 child: TextFieldItem(
                   controller: stockViewModel.search,
+
                   change: (query) {
                     stockViewModel.searchProducts(query);
                   },
@@ -116,7 +117,7 @@ stockViewModel.getProducts();
 
 
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding:  EdgeInsets.symmetric(horizontal: 14.h),
                       child: ListView.separated(
                         itemBuilder: (context, index) {
                           final product = products[index];

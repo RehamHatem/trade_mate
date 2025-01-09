@@ -35,18 +35,19 @@ class TextFieldItem extends StatelessWidget {
           style: Theme.of(context)
               .textTheme
               .titleMedium!
-              .copyWith(fontSize: 18.sp),
+              .copyWith(fontSize: 18.sp,color: AppColors.darkPrimaryColor),
           textAlign: TextAlign.start,
         ): SizedBox(),
         Padding(
           padding: EdgeInsets.only(top: 15.h, bottom: 24.h),
           child: TextFormField(
             decoration: InputDecoration(
-                fillColor: Color(0xfffcfafa),
+                fillColor: AppColors.whiteColor,
                 filled: true,
 
                 enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15.r)),
+                    borderRadius: BorderRadius.circular(15.r),
+                  borderSide: BorderSide(color: AppColors.greyColor),),
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: AppColors.primaryColor),
                     borderRadius: BorderRadius.circular(15.r)),
@@ -59,6 +60,7 @@ class TextFieldItem extends StatelessWidget {
                     .copyWith(color: AppColors.greyColor),
                 suffixIcon: suffixIcon),
             style: const TextStyle(color: AppColors.blackColor),
+
             validator: validator,
             controller: controller,
             obscureText: isObscure,

@@ -339,7 +339,7 @@ homeTabViewModel.getBalance(currentUser.uid);
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge!
-                                .copyWith(color: Color(0xff7a725c)),
+                                .copyWith(color: AppColors.coffeColor),
                           ),
                           StreamBuilder(
                             stream: homeTabViewModel.balanceee.stream,
@@ -352,7 +352,7 @@ homeTabViewModel.getBalance(currentUser.uid);
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleLarge!
-                                      .copyWith(color: Color(0xff7a725c),overflow: TextOverflow.ellipsis),
+                                      .copyWith(color: AppColors.coffeColor,overflow: TextOverflow.ellipsis),
                                 ),
                               );
                             },

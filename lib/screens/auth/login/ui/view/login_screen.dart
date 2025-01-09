@@ -59,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -84,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Column(
                             children: [
                               TextFieldItem(
-                                fieldName: 'E-mail address',
+                                fieldName: 'Email',
                                 hintText: 'enter your email address',
                                 controller: loginViewModel.emailController,
                                 validator: (value) {
@@ -164,7 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     .titleLarge!
                                     .copyWith(
                                     color: AppColors.primaryColor,
-                                    fontSize: 20.sp),
+                                    fontSize: 30.sp),
                               ),
                             ),
                           ),
@@ -186,7 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                               child: Text(
                                 'Create Account',
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith( decoration: TextDecoration.underline,decorationColor: AppColors.primaryColor),
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith( decoration: TextDecoration.underline,decorationColor: AppColors.primaryColor,color: AppColors.primaryColor),
 
                               ),
                             )
