@@ -22,6 +22,7 @@ class HomeTabViewModel extends Cubit<HomeTabStates>{
       emit( UpdateUserBalanceSuccessState(balance:balance));
     }
     catch(e){
+      print(e.toString());
       emit(UpdateUserBalanceErrorState(error: e.toString()));
     }
   }
@@ -34,6 +35,7 @@ class HomeTabViewModel extends Cubit<HomeTabStates>{
       print(myBalance);
       emit(GetUserBalanceSuccessState(balance: userBalance));
     } catch (e) {
+      print(e.toString());
       emit(GetUserBalanceErrorState(error: e.toString()));
     }
   }

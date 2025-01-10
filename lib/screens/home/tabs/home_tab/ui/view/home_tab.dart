@@ -17,6 +17,7 @@ import '../../../../../auth/login/data/model/user_login_model.dart';
 import '../../../../../widgets/add_product_text_field.dart';
 import '../../../../../widgets/container_icon_txt.dart';
 import '../../../bill/ui/view/add_bill_screen.dart';
+import '../../../bill/ui/view/bill_screen.dart';
 import '../../../cutomers/ui/view/customers_screen.dart';
 import '../../../stock/ui/view/stock_screen.dart';
 import '../../domain/home_tab_di.dart';
@@ -42,7 +43,7 @@ HomeTabViewModel homeTabViewModel=HomeTabViewModel(homeTabUseCases: injectHomeTa
 
             InkWell(
               onTap: () {
-                Navigator.pushNamed(context, AddBillScreen.routeName);
+                Navigator.pushNamed(context, BillScreen.routeName);
               },
               child: Container(
                         margin: EdgeInsets.only(left: 10.w, right: 10.w),
