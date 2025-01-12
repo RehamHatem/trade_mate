@@ -8,6 +8,7 @@ class ProductModel extends ProductEntity{
   {super.id = "",
   required super.name,
     required super.notes,
+    required super.quantityType,
   required super.quantity,
   required super.price,
   required super.total,
@@ -24,6 +25,7 @@ class ProductModel extends ProductEntity{
       notes: json['notes'] as String,
       category: json['category'] as String,
       supplier: json['supplier'] as String,
+      quantityType: json['quantityType'] as String,
       quantity: (json['quantity'] is int)
           ? (json['quantity'] as int).toDouble()
           : json['quantity'] as double,
@@ -45,6 +47,7 @@ class ProductModel extends ProductEntity{
   "name":name,
   "notes":notes,
   "quantity":quantity,
+  "quantityType":quantityType,
   "price":price,
   "total":total,
   "supplier":supplier,

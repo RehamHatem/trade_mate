@@ -15,6 +15,7 @@ class AddProductViewModel extends Cubit<AddProductStates>{
   TextEditingController productName = TextEditingController();
 
   TextEditingController productQuantity = TextEditingController();
+  TextEditingController productQuantityType = TextEditingController();
   TextEditingController productCat = TextEditingController();
   TextEditingController productSup = TextEditingController();
   TextEditingController productTotal = TextEditingController();

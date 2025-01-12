@@ -22,6 +22,7 @@ class StockDataSourceImpl implements StockDataSource{
             final entityList = snapshot.docs.map((doc) {
               final model = doc.data();
               return ProductEntity(
+                quantityType: model.quantityType,
                 id: doc.id,
                 name: model.name,
                 notes: model.notes,

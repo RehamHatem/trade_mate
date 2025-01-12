@@ -77,89 +77,78 @@ class _BillScreenState extends State<BillScreen>  with TickerProviderStateMixin 
 
           Padding(
             padding:  EdgeInsets.only(right: 10.w,left: 10.w),
-            child: Stack(
+            child: Row(
+
               children: [
-                Positioned(
-                  bottom: 1,
-                  left: 0,
-                  right: 0,
-                  child: Divider(
-                    height:1.h,
-                    thickness:2 ,
+                Expanded(
+                  child: TabBar(
+                    isScrollable: true,
 
+                    controller: _tabController,
 
-                    color: AppColors.darkPrimaryColor, // Divider color
+                    unselectedLabelColor: AppColors.primaryColor,
+                    unselectedLabelStyle: Theme.of(context)
+                        .textTheme
+                        .titleLarge!
+                        .copyWith(
+                        fontSize: 20.sp,
+                        color: AppColors.darkPrimaryColor ),
+                    labelStyle: Theme.of(context)
+                        .textTheme
+                        .titleLarge!
+                        .copyWith(
+                        fontSize: 20.sp,
+                        color: AppColors.whiteColor),
+                    indicatorColor: AppColors.darkPrimaryColor,
+                    indicatorWeight: 0,
+                    dividerColor:  AppColors.darkPrimaryColor,
+                    padding: EdgeInsets.zero,
+                    indicatorPadding: EdgeInsets.zero,
+
+                    labelPadding:EdgeInsets.zero,
+                    overlayColor: WidgetStatePropertyAll(WidgetStateColor.transparent),
+                                indicator: BoxDecoration(),
+                    onTap: (value) {
+                      setState(() {
+                        selectedindex=value;
+
+                      });
+                    },
+
+                    tabs: bills
+                        .map(
+                            (bill) {
+                          return Tab(
+                            child:Row(
+                              children: [
+
+                                TabBarItem(bill: bill,isSelected: bills.elementAt(selectedindex)==bill,removeBill:_removeBill,),
+                                SizedBox(width: 6.w,),
+                              ],
+                            ),
+                          );}
+                    )
+                        .toList(),
                   ),
                 ),
 
-                Row(
+                InkWell(
 
-                  children: [
-                    Expanded(
-                      child: TabBar(
-                        isScrollable: true,
-
-                        controller: _tabController,
-
-                        unselectedLabelColor: AppColors.primaryColor,
-                        unselectedLabelStyle: Theme.of(context)
-                            .textTheme
-                            .titleLarge!
-                            .copyWith(
-                            fontSize: 20.sp,
-                            color: AppColors.darkPrimaryColor ),
-                        labelStyle: Theme.of(context)
-                            .textTheme
-                            .titleLarge!
-                            .copyWith(
-                            fontSize: 20.sp,
-                            color: AppColors.whiteColor),
-                        indicatorColor: Colors.transparent,
-                        indicatorWeight: 1,
-                        padding: EdgeInsets.zero,
-                        indicatorPadding: EdgeInsets.zero,
-
-                        labelPadding:EdgeInsets.zero,
-                        overlayColor: WidgetStatePropertyAll(WidgetStateColor.transparent),
-                                    indicator: BoxDecoration(),
-                        onTap: (value) {
-                          setState(() {
-                            selectedindex=value;
-
-                          });
-                        },
-
-                        tabs: bills
-                            .map(
-                                (bill) {
-                              return Tab(
-                                child:Row(
-                                  children: [
-
-                                    TabBarItem(bill: bill,isSelected: bills.elementAt(selectedindex)==bill,removeBill:_removeBill,),
-                                    SizedBox(width: 6.w,),
-                                  ],
-                                ),
-                              );}
-                        )
-                            .toList(),
-                      ),
-                    ),
-
-                    InkWell(
-
-                      child: Container(
+                  child: Column(
+                    children: [
+                      Container(
                           width: 35.w,
-                          height: 48.h,
+                          height:53.h,
                           decoration: BoxDecoration(borderRadius:BorderRadius.only(
                               topLeft: Radius.circular(15.r) ),
                               color: AppColors.darkPrimaryColor),
                           child: Icon(Icons.add,color: AppColors.whiteColor, size: 20.sp,)),
-                      onTap: _addNewBill,
-                    ),
-
-                  ],
+                      Container(height: 1.7.h,width: 35.h,decoration: BoxDecoration(color: AppColors.darkPrimaryColor,),)
+                    ],
+                  ),
+                  onTap: _addNewBill,
                 ),
+
               ],
             ),
           ),

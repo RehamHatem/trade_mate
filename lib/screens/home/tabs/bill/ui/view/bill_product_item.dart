@@ -17,9 +17,9 @@ class BillProductItem extends StatelessWidget {
           ),
         ],
       ),
-      margin: EdgeInsets.only(left: 5.w, right: 5.w, top: 5.h),
+      margin: EdgeInsets.only(left: 5.w, right: 5.w,),
       padding:
-          EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h),
+          EdgeInsets.only(left: 10.w, right: 10.w, top: 5.h),
       child: Column(
         children: [
           Row(

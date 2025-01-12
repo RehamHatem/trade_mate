@@ -8,6 +8,7 @@ class ProductEntity{
   String category;
   String supplier;
   double quantity;
+  String quantityType;
   double price;
   double total;
 
@@ -19,6 +20,7 @@ class ProductEntity{
   required this.name,
   required this.notes,
   required this.quantity,
+  required this.quantityType,
   required this.price,
   required this.total, required this.supplier,
     required this.category,
@@ -35,6 +37,7 @@ class ProductEntity{
       total:total,
       price:price,
       quantity:quantity,
+      quantityType:quantityType,
       id:id,
       name:name,
       userId:userId,
@@ -49,6 +52,7 @@ class ProductEntity{
         total:entity.total,
         price:entity.price,
         quantity:entity.quantity,
+        quantityType:entity.quantityType,
         id:entity.id,
         name:entity.name,
         userId:entity.userId,

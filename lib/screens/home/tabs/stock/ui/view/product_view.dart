@@ -54,7 +54,7 @@ children: [
         copyWith(color: AppColors.greyColor
             ,fontSize: 20.sp),),
       Expanded(
-        child: Text("${productEntity.quantity}",
+        child: Text("${productEntity.quantity} ${productEntity.quantityType}",
           maxLines: 3,overflow:TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.titleMedium!.
           copyWith(color: AppColors.primaryColor
@@ -62,6 +62,7 @@ children: [
       ),
     ],
   ),
+
   Row(
     mainAxisAlignment:MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trade_mate/screens/home/tabs/add_product/ui/view/add_product_screen.dart';
+import 'package:trade_mate/screens/home/tabs/bill/ui/view_model/bill_view_model.dart';
 import 'package:trade_mate/screens/home/tabs/stock/ui/view_model/stock_view_model.dart';
 
 import '../../../../../../utils/app_colors.dart';
@@ -21,31 +22,56 @@ class AddBillScreen extends StatefulWidget {
 }
 
 class _AddBillScreenState extends State<AddBillScreen> {
-  var formKey=GlobalKey<FormState>();
-
-  var productController=TextEditingController();
-  var priceController=TextEditingController();
-  var quantityController=TextEditingController();
-  var discountController=TextEditingController();
-  var totalController=TextEditingController();
 
   BillType? bill = BillType.inBill;
-  StockViewModel stockViewModel=StockViewModel(stockUseCases: injectStockUseCases());
-  List <ProductEntity>products=[];
-  ProductEntity? selectedProduct;
+  BillViewModel billViewModel=BillViewModel();
+
+
 @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    stockViewModel.getProducts();
-    quantityController.addListener(() {
-      if (formKey.currentState != null) {
-        formKey.currentState!.validate();
+    billViewModel. stockViewModel.getProducts();
+    billViewModel.discountTypeController.text="%";
+    billViewModel.quantityController.addListener(calculateTotal);
+    billViewModel.priceController.addListener(calculateTotal);
+    billViewModel.discountController.addListener(calculateTotal);
+    billViewModel.discountTypeController.addListener(calculateTotal);
+    billViewModel.quantityController.addListener(() {
+      if (billViewModel.formKey.currentState != null) {
+        billViewModel.formKey.currentState!.validate();
       }
     });
 
 
   }
+  void calculateTotal() {
+    double quantity = double.tryParse(billViewModel.quantityController.text) ?? 0.0;
+    double price = double.tryParse(billViewModel.priceController.text) ?? 0;
+    double discount = double.tryParse(billViewModel.discountController.text) ?? 0;
+
+
+    setState(() {
+      discount!=0&&billViewModel.discountTypeController.text=="%"?
+      billViewModel.total = (price * quantity)-(price * quantity*discount)/100:
+      discount!=0&&billViewModel.discountTypeController.text=="EGP"?
+      billViewModel.total = (price * quantity)-(discount)
+          :
+      billViewModel.total = (price * quantity);
+      print('Updated Total: ${billViewModel.total}');
+    });
+
+  }
+
+  // void clearForm() {
+  //   billViewModel.formKey.currentState?.reset();
+  //   billViewModel.selectedProduct=null;
+  //   billViewModel.quantityController.clear();
+  //   billViewModel.priceController.clear();
+  //   billViewModel.productController.clear();
+  //   billViewModel.discountController.clear();
+  //
+  // }
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -56,7 +82,7 @@ class _AddBillScreenState extends State<AddBillScreen> {
 
           backgroundColor: AppColors.darkPrimaryColor,
           title: Text(
-            'New Bill',
+            'Out Bill',
             style: Theme.of(context)
                 .textTheme
                 .titleLarge!
@@ -153,7 +179,7 @@ body: Padding(
           child: SingleChildScrollView(
             child: Center(
               child: Form(
-                key: formKey,
+                key: billViewModel.formKey,
                 child: Column(
 
                   children: [
@@ -165,26 +191,28 @@ body: Padding(
                       children: [
                         ClipRRect(
                             borderRadius: BorderRadius.circular(15.r),
-                            child: Image.asset("assets/images/product_preview_rev_1.png",width: 100.w,height: 100.h,fit: BoxFit.cover,)),
+                            child: Image.asset(
+                              "assets/images/product_preview_rev_1.png",width:
+                            100.w,height: 100.h,fit: BoxFit.cover,)),
                         SizedBox(
                           width: 5.w,
                         ),
                         BlocBuilder(
-                          bloc: stockViewModel,
+                          bloc: billViewModel.stockViewModel,
                           builder: (context, state) {
                             if (state is StockSuccessState){
-                              products=state.products;
-                              print("Products loaded: ${products.map((e) => e.name)}");
-                              if (products.isNotEmpty){
+                              billViewModel.products=state.products;
+                              print("Products loaded: ${billViewModel.products.map((e) => e.name)}");
+                              if (billViewModel.products.isNotEmpty){
                                 return Expanded(
                                   flex: 2,
                                   child: AddProductTextField(
-                                    controller: productController,
+                                    controller: billViewModel.productController,
 
                                     fieldName: "Product",
                                     hintText: "ex: USB-C",
                                     isDropdown: true,
-                                    dropdownItems: products.map((e) => e.name).toList(),
+                                    dropdownItems:billViewModel. products.map((e) => e.name).toList(),
                                     validator: (value) {
                                       if (value == null || value.trim().isEmpty) {
                                         return 'please choose a product';
@@ -193,16 +221,16 @@ body: Padding(
                                     },
                                     onChanged: (value) {
                                       setState(() {
-                                        productController.text = value ?? "";
+                                        billViewModel. productController.text = value ?? "";
                                         // Find the selected product and set its price in the price controller
-                                        var selectedProduct = products.firstWhere(
+                                        var selectedProduct = billViewModel.products.firstWhere(
                                               (product) => product.name == value,
 
                                         );
-                                        this.selectedProduct=selectedProduct;
+                                        billViewModel.selectedProduct=selectedProduct;
 
-                                        priceController.text = selectedProduct.price.toString();
-                                        quantityController.text = "1.0";
+                                        billViewModel. priceController.text = selectedProduct.price.toString();
+                                        billViewModel.quantityController.text = "1.0";
                                         print("Selected product: $value, Price: ${selectedProduct.price}");
                                       }
                                       );
@@ -219,7 +247,7 @@ body: Padding(
                                   child: Expanded(
                                     flex: 2,
                                     child: AddProductTextField(
-                                      controller: productController,
+                                      controller: billViewModel.productController,
                                       fieldName: "Product",
                                       hintText: "ex: USB-C",
 
@@ -309,8 +337,8 @@ body: Padding(
                             child: AddProductTextField(
                               fieldName: "Price",
                               hintText: "for one item",
-                              controller: priceController,
-                              isEnabled: selectedProduct==null?false:true,
+                              controller: billViewModel.priceController,
+                              isEnabled: billViewModel.selectedProduct==null?false:true,
                               validator: (value) {
                                 if (value == null || value.trim().isEmpty) {
                                   return 'please enter product price';
@@ -333,20 +361,29 @@ body: Padding(
                         ),
                         Expanded(
                           child: AddProductTextField(
-                            hintText: selectedProduct==null?"0.0":"1.0",
-                            controller:quantityController,
+                            hintText: billViewModel.selectedProduct==null?"0.0":"1.0",
+                            controller:billViewModel.quantityController,
+                            suffix:  Text(
+                              billViewModel.selectedProduct?.quantityType??"piece",
+                              style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(
+                                color: AppColors.primaryColor,
+                                fontSize: 16.sp),
+                            ),
                             fieldName: "Quantity",
-                            isEnabled: selectedProduct==null?false:true,
+                            isEnabled: billViewModel.selectedProduct==null?false:true,
                             keyboardType: TextInputType.number,
                             onChanged: (value) {
-                              print(selectedProduct);
-                              if (selectedProduct != null) {
+                              print(billViewModel.selectedProduct);
+                              if (billViewModel.selectedProduct != null) {
                                 double enteredQuantity = double.tryParse(value!) ?? 0.0;
-                                if (enteredQuantity > selectedProduct!.quantity) {
+                                if (enteredQuantity > billViewModel.selectedProduct!.quantity) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                        'Entered quantity exceeds available stock (${selectedProduct!.quantity})',
+                                        'Entered quantity exceeds available stock (${billViewModel.selectedProduct!.quantity})',
                                         style: TextStyle(color: AppColors.whiteColor),
                                       ),
                                       backgroundColor: AppColors.redColor,
@@ -362,8 +399,8 @@ body: Padding(
                                 return 'please enter product quantity';
                               }
                               double? enteredQuantity = double.tryParse(value)??1.0;
-                              if (selectedProduct != null && enteredQuantity > selectedProduct!.quantity) {
-                                return 'exceeds available stock (${selectedProduct!.quantity})';
+                              if (billViewModel.selectedProduct != null && enteredQuantity >billViewModel. selectedProduct!.quantity) {
+                                return 'exceeds available stock (${billViewModel.selectedProduct!.quantity})';
                               }
                               return null;
                             },
@@ -386,63 +423,63 @@ body: Padding(
                       height: 10.h,
                     ),
                     Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(
+                            flex: 2,
                             child: AddProductTextField(
                               fieldName: "Discount",
                               hintText: "ex: 20%",
-                              controller: discountController,
-                              isEnabled: selectedProduct==null?false:true,
+                              controller:billViewModel. discountController,
+                              isEnabled: billViewModel.selectedProduct==null?false:true,
                               keyboardType: TextInputType.number,
-                              suffix: Text(
-                                "%",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium!
-                                    .copyWith(
-                                    color: AppColors.primaryColor,
-                                    fontSize: 20.sp),
-                              ),
+
                             )),
+
                         SizedBox(
                           width: 5.w,
                         ),
                         Expanded(
                           flex: 2,
                           child: AddProductTextField(
-                            hintText: selectedProduct==null?"0.0":"1.0",
-                            controller:totalController,
-                            fieldName: "Total",
-                            isEnabled: selectedProduct==null?false:true,
-                            keyboardType: TextInputType.number,
-                            onChanged: (value) {
-                              print(selectedProduct);
-                              if (selectedProduct != null) {
-                                double enteredQuantity = double.tryParse(value!) ?? 0.0;
-                                if (enteredQuantity > selectedProduct!.quantity) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        'Entered quantity exceeds available stock (${selectedProduct!.quantity})',
-                                        style: TextStyle(color: AppColors.whiteColor),
-                                      ),
-                                      backgroundColor: AppColors.redColor,
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
-                                }
-                              }
-                            },
+                            fieldName: " ",
+                            hintText: "%",
+                            isEnabled: true,
+                            isDropdown: true,
+                            dropdownValue: "%",
+                            controller: billViewModel.discountTypeController,
                             validator: (value) {
-
-                              if (value == null  ) {
-                                return 'please enter product quantity';
-                              }
-                              double? enteredQuantity = double.tryParse(value)??1.0;
-                              if (selectedProduct != null && enteredQuantity > selectedProduct!.quantity) {
-                                return 'exceeds available stock (${selectedProduct!.quantity})';
+                              if(value==null|| billViewModel.discountTypeController.text.isEmpty){
+                                billViewModel.discountTypeController.text = value ?? "piece";
+                                return("please select a type");
                               }
                               return null;
+                            },
+                            dropdownItems: ["%", "EGP"],
+                            onChanged: (value) {
+                              billViewModel.discountTypeController.text = value ?? "";
+                              print("Selected Type: $value");
+                            },
+                            // dropdownValue: "cat1",
+                          ),
+                        ),
+
+                        SizedBox(
+                          width: 5.w,
+                        ),
+                        Expanded(
+                          flex: 3,
+
+                          child: AddProductTextField(
+                            hintText: billViewModel.selectedProduct==null?"0.0":billViewModel.total.toStringAsFixed(2),
+                            controller:billViewModel.totalController,
+                            fieldName: "Total",
+                            isEnabled: false,
+                            // billViewModel.selectedProduct==null?false:true,
+                            keyboardType: TextInputType.number,
+                            onChanged: (value) {
+                            },
+                            validator: (value) {
                             },
                           ),
                         ),
@@ -562,6 +599,7 @@ body: Padding(
             child: ElevatedButton(
                 onPressed: () {
                   // clearForm();
+                  Navigator.pop(context);
 
                 },
 
@@ -575,7 +613,7 @@ body: Padding(
                           borderRadius: BorderRadius.circular(15.r)),
                     )),
                 child: Text(
-                  "Clear",
+                  "Cancel",
                   style: Theme.of(context)
                       .textTheme
                       .titleMedium!

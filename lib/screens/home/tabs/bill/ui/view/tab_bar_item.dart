@@ -14,7 +14,7 @@ class TabBarItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 5.h),
-height: 48.h,
+height: 53.h,
       width: 70.w,
       decoration: BoxDecoration(
           color: isSelected? AppColors.darkPrimaryColor:Colors.transparent,

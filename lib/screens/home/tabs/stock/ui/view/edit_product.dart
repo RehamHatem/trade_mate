@@ -1,11 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:trade_mate/screens/home/tabs/add_product/domain/entity/product_entity.dart';
+import 'package:trade_mate/screens/home/tabs/stock/domain/stock_di.dart';
+import 'package:trade_mate/screens/home/tabs/stock/ui/view_model/stock_view_model.dart';
 
 import '../../../../../../utils/app_colors.dart';
 import '../../../../../widgets/add_product_text_field.dart';
+import '../../../suppliers/ui/view/add_supplier_screen.dart';
+import '../../../suppliers/ui/view_model/supplier_states.dart';
 
 class EditProduct extends StatefulWidget {
    EditProduct({required this.update,required this.productEntity}){
@@ -20,10 +25,12 @@ class EditProduct extends StatefulWidget {
 
 class _EditProductState extends State<EditProduct> {
   TextEditingController productName = TextEditingController();
+  StockViewModel stockViewModel=StockViewModel(stockUseCases: injectStockUseCases());
 
    var formKey = GlobalKey<FormState>();
 
   TextEditingController productQuantity = TextEditingController();
+  TextEditingController productQuantityType = TextEditingController();
 
   TextEditingController productCat = TextEditingController();
 
@@ -40,6 +47,7 @@ class _EditProductState extends State<EditProduct> {
     super.initState();
     productName.text = widget.productEntity.name;
     productQuantity.text = widget.productEntity.quantity.toString();
+    productQuantityType.text = widget.productEntity.quantityType.toString();
     productCat.text = widget.productEntity.category ;
     productSup.text = widget.productEntity.supplier ;
     productPrice.text = widget.productEntity.price.toString();
@@ -47,6 +55,7 @@ class _EditProductState extends State<EditProduct> {
     productNotes.text = widget.productEntity.notes ?? "";
     productQuantity.addListener(calculateTotal);
     productPrice.addListener(calculateTotal);
+    stockViewModel.supplierViewModel.getSuppliers();
 
   }
    DateTime selectedDate=DateTime.now();
@@ -72,7 +81,7 @@ class _EditProductState extends State<EditProduct> {
           Row(
             children: [
               Expanded(
-                flex: 2,
+
                 child: AddProductTextField(
                   controller: productName,
                   fieldName: "Product Name",
@@ -90,20 +99,54 @@ class _EditProductState extends State<EditProduct> {
                 width: 5.w,
               ),
               Expanded(
-                child: AddProductTextField(
-                  hintText: "1.0",
-                  controller: productQuantity,
-                  fieldName: "Quantity",
-                  isEnabled: true,
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'please enter product quantity';
-                    }
-                    return null;
-                  },
+                child: Row(
+                  children: [
+                    Expanded(
+
+                      child: AddProductTextField(
+                        hintText: "1.0",
+                        controller: productQuantity,
+                        fieldName: "Quantity",
+                        isEnabled: true,
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'please enter product quantity';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      width: 5.w,
+                    ),
+                    Expanded(
+                      child: AddProductTextField(
+                        fieldName: " ",
+                        hintText: "piece",
+                        isEnabled: true,
+                        isDropdown: true,
+                        dropdownValue: "piece",
+                        controller: productQuantityType,
+                        validator: (value) {
+                          if(value==null|| productQuantityType.text.isEmpty){
+                           productQuantityType.text = value ?? "piece";
+                            return("please select a type");
+                          }
+                          return null;
+                        },
+                        dropdownItems: ["piece", "kg", "litre", "ton"],
+                        onChanged: (value) {
+                          productQuantityType.text = value ?? "";
+                          print("Selected Type: $value");
+                        },
+                        // dropdownValue: "cat1",
+                      ),
+                    ),
+                  ],
                 ),
               ),
+
             ],
           ),
           SizedBox(
@@ -134,24 +177,64 @@ class _EditProductState extends State<EditProduct> {
           SizedBox(
             height: 10.h,
           ),
-          AddProductTextField(
-            fieldName: "Supplier",
-            hintText: "select supplier",
-            isEnabled: true,
-            isDropdown: true,
-            dropdownValue: productSup.text=="N/A"?null:productSup.text,
-            controller: productSup,
-            validator: (value) {
-              if (value == null || productSup.text.isEmpty) {
-                productCat.text = value ?? "";
-                return ("please select a supplier");
+          BlocBuilder(
+            bloc: stockViewModel.supplierViewModel,
+            builder: (context, state) {
+              if (state is GetSupplierSuccessState){
+
+                stockViewModel.suppliers=state.entity;
+
+                if(stockViewModel.suppliers.isNotEmpty){
+                  return AddProductTextField(
+                    fieldName: "Supplier",
+                    hintText: "select supplier",
+                    isEnabled: true,
+                    isDropdown: true,
+                    controller: productSup,
+                    validator: (value) {
+                      if(value==null|| productSup.text.isEmpty ){
+                       productCat.text = value ?? "";
+                        return("please select a supplier");
+                      }
+
+                    },
+                    dropdownItems: stockViewModel.suppliers.map((supplier) => supplier.name,).toList(),
+                    onChanged: (value) {
+                      productSup.text = value ?? "";
+                      print("Selected Supplier: $value");
+                    },
+                  );
+
+                }else{
+                  return InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, AddSupplierScreen.routeName);
+                    },
+                    child: Expanded(
+                      flex: 2,
+                      child: AddProductTextField(
+                        controller: productSup,
+                        fieldName: "Supplier",
+                        hintText: "enter supplier",
+
+                        validator: (value) {
+                          if(value==null|| productSup.text.isEmpty ){
+                            productCat.text = value ?? "";
+                            return("please select a supplier");
+                          }
+
+                        },
+                        isEnabled: false,
+                      ),
+                    ),
+                  );
+                }
+
+                print(stockViewModel.suppliers);
               }
+              return SizedBox.shrink();
             },
-            dropdownItems: ["sup1", "sup2", "sup3", "sup4", "sup5"],
-            onChanged: (value) {
-              productSup.text = value ?? "";
-              print("Selected Supplier: $value");
-            },
+
           ),
           SizedBox(
             height: 10.h,
@@ -239,6 +322,7 @@ class _EditProductState extends State<EditProduct> {
                       formKey.currentState!.save();
                       final updatedProduct = ProductEntity(
                         date: widget.productEntity.date,
+                        quantityType: productQuantityType.text,
                         userId: FirebaseAuth.instance.currentUser!.uid,
                         id: widget.productEntity.id,
                         name: productName.text,

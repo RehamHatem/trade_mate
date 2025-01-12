@@ -9,12 +9,18 @@ import 'package:trade_mate/screens/home/tabs/stock/domain/use_case/stock_use_cas
 import 'package:trade_mate/screens/home/tabs/stock/ui/view_model/stock_states.dart';
 
 import '../../../../../../utils/failures.dart';
+import '../../../suppliers/domain/entity/supplier_entity.dart';
+import '../../../suppliers/domain/supplier_di.dart';
+import '../../../suppliers/ui/view_model/supplier_view_model.dart';
 
 class StockViewModel extends Cubit<StockStates>{
   StockViewModel({required this.stockUseCases}):super(StockInitState());
   StockUseCases stockUseCases;
   var search= TextEditingController();
    StreamController<List<ProductEntity>> productStreamController = StreamController.broadcast();
+  List<SupplierEntity>suppliers=[];
+  SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSupplierUseCases());
+
   void getProducts() async {
 
     emit(StockLoadingState(load: "loading..."));

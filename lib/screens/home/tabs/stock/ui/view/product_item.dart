@@ -52,7 +52,7 @@ void Function (String,ProductEntity)update;
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text("quantity: ${double.parse(productModel.quantity.toString()).toStringAsFixed(2)
-                        ??"0.00"}",
+                        ??"0.00"} ${productModel.quantityType}",
                       maxLines: 1,overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleMedium!.
                         copyWith(color: AppColors.greyColor
