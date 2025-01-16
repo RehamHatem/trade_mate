@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trade_mate/screens/auth/login/ui/view/login_screen.dart';
 import 'package:trade_mate/screens/home/tabs/bill/ui/view/add_bill_screen.dart';
+import 'package:trade_mate/screens/home/tabs/bill/ui/view/bill_screen.dart';
 import 'package:trade_mate/screens/home/tabs/home_tab/ui/view/home_tab.dart';
 import 'package:trade_mate/screens/home/tabs/more_tab/ui/view/more_tab.dart';
 import 'package:trade_mate/utils/app_colors.dart';
@@ -65,7 +66,8 @@ class _HomeState extends State<Home> {
 
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.sp)),
         onPressed: () {
-          Navigator.pushNamed(context, AddBillScreen.routeName);
+          Navigator.pushNamed(context, BillScreen.routeName);
+
 
         },
         child: Text("bill",textAlign: TextAlign.center,style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.whiteColor)),

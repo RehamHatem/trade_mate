@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:trade_mate/screens/home/tabs/add_product/domain/entity/product_entity.dart';
 import 'package:trade_mate/utils/app_colors.dart';
 
 class BillProductItem extends StatelessWidget {
-  const BillProductItem({super.key});
+   BillProductItem({super.key,required this.productEntity});
+  ProductEntity productEntity;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +19,7 @@ class BillProductItem extends StatelessWidget {
           ),
         ],
       ),
-      margin: EdgeInsets.only(left: 5.w, right: 5.w,),
+      margin: EdgeInsets.only(left: 5.w, right: 5.w,bottom: 10.w),
       padding:
           EdgeInsets.only(left: 10.w, right: 10.w, top: 5.h),
       child: Column(
@@ -47,9 +49,9 @@ class BillProductItem extends StatelessWidget {
                     ),
                     SizedBox(height: 2.h),
                     Text(
-                      'Pringles Original 107 g',
+                      '${productEntity.name}',
                       style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                            fontSize: 16.sp,
+                            fontSize: 22.sp,
                           ),
                     ),
                   ],
@@ -59,13 +61,13 @@ class BillProductItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    'Rs. 230',
+                    '${productEntity.totalAfterDiscount}',
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
                           fontSize: 16.sp,
                         ),
                   ),
                   Text(
-                    'Rs. 240',
+                    '${productEntity.total}',
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
                           fontSize: 14.sp,
                           color: AppColors.greyColor,
@@ -125,7 +127,9 @@ class BillProductItem extends StatelessWidget {
                 child: Row(
                   children: [
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        productEntity.quantity=productEntity.quantity-1;
+                      },
                       child: Container(
                           width: 50.w,
                           child: Icon(
@@ -145,7 +149,7 @@ class BillProductItem extends StatelessWidget {
                       ]),
                       child: Center(
                         child: Text(
-                          "2",
+                          "${productEntity.quantity}",
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium!
@@ -156,7 +160,9 @@ class BillProductItem extends StatelessWidget {
                       ),
                     ),
                     InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        productEntity.quantity=productEntity.quantity+1;
+                      },
                       child: Container(
                           width: 50.w,
                           child: Icon(
@@ -176,7 +182,8 @@ class BillProductItem extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          "Pc",
+                          productEntity.quantityType=="piece"?"Pc":productEntity.quantityType=="litre"?"L":productEntity.quantityType==
+                          "ton"?"ton":productEntity.quantityType,
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium!

@@ -10,9 +10,10 @@ import '../../../../../widgets/add_product_text_field.dart';
 import '../../../add_product/domain/entity/product_entity.dart';
 import '../../../stock/domain/stock_di.dart';
 import '../../../stock/ui/view_model/stock_states.dart';
+import '../../domain/bill_di.dart';
+import 'bill_tab.dart';
 
 
-enum BillType { inBill, outBill }
 class AddBillScreen extends StatefulWidget {
   static const String routeName="addBill";
    AddBillScreen({super.key});
@@ -24,7 +25,7 @@ class AddBillScreen extends StatefulWidget {
 class _AddBillScreenState extends State<AddBillScreen> {
 
   BillType? bill = BillType.inBill;
-  BillViewModel billViewModel=BillViewModel();
+  BillViewModel billViewModel=BillViewModel(billUseCases: injectBillUseCases());
 
 
 @override

@@ -19,12 +19,16 @@ class AddProductViewModel extends Cubit<AddProductStates>{
   TextEditingController productCat = TextEditingController();
   TextEditingController productSup = TextEditingController();
   TextEditingController productTotal = TextEditingController();
+  TextEditingController productTotalAfterDiscount = TextEditingController();
   TextEditingController productPrice = TextEditingController();
   TextEditingController productNotes = TextEditingController();
+  TextEditingController discountController = TextEditingController();
+  TextEditingController discountTypeController = TextEditingController();
   double total = 0.0;
+  double totalAfterDiscount = 0.0;
   List<SupplierEntity>suppliers=[];
   SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSupplierUseCases());
-
+List<ProductEntity>productsInBill=[];
   void addProduct(ProductEntity product) async{
     emit(AddProductLoadingState(load: "Loadin..."));
     var either=await addProductUseCase.addProduct(product);

@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:trade_mate/screens/home/home.dart';
 import 'package:trade_mate/screens/home/tabs/add_product/domain/entity/product_entity.dart';
 import 'package:trade_mate/screens/home/tabs/add_product/ui/view_model/add_product_states.dart';
+import 'package:trade_mate/screens/home/tabs/bill/ui/view_model/bill_view_model.dart';
 import 'package:trade_mate/screens/home/tabs/home_tab/ui/view/home_tab.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/domain/supplier_di.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/add_supplier_screen.dart';
@@ -16,12 +17,14 @@ import 'package:trade_mate/utils/app_colors.dart';
 import '../../../../../../utils/dialog_utils.dart';
 import '../../../../../../utils/text_field_item.dart';
 import '../../../../../widgets/add_product_text_field.dart';
+import '../../../bill/domain/bill_di.dart';
 import '../../../suppliers/domain/entity/supplier_entity.dart';
 import '../../domain/add_product_di.dart';
 import '../view_model/add_product_view_model.dart';
 
 class AddProductScreen extends StatefulWidget {
   static const String routeName = "addPro";
+
 
   AddProductScreen({super.key});
 
@@ -31,13 +34,19 @@ class AddProductScreen extends StatefulWidget {
 
 class _AddProductScreenState extends State<AddProductScreen> {
   late AddProductViewModel viewModel;
+  BillViewModel billViewModel=BillViewModel(billUseCases: injectBillUseCases());
+
 
   @override
   void initState() {
     super.initState();
      viewModel=AddProductViewModel(addProductUseCase:injectAddProductUseCase() );
+    viewModel.totalAfterDiscount=viewModel.total;
     viewModel.productQuantity.addListener(calculateTotal);
     viewModel.productPrice.addListener(calculateTotal);
+    // viewModel.productTotalAfterDiscount.addListener(calculateTotalAfterDiscount);
+    viewModel.productTotal.addListener(calculateTotalAfterDiscount);
+    viewModel.discountController.addListener(calculateTotalAfterDiscount);
     viewModel.supplierViewModel.getSuppliers();
 
 
@@ -51,14 +60,35 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   void calculateTotal() {
+
     double quantity = double.tryParse(viewModel.productQuantity.text) ?? 0.0;
     double price = double.tryParse(viewModel.productPrice.text) ?? 0.0;
 
     setState(() {
       viewModel.total = price * quantity;
       print('Updated Total: ${viewModel.total}');
+      viewModel.totalAfterDiscount=viewModel.total;
     });
 
+  }
+  void calculateTotalAfterDiscount() {
+    double total = double.tryParse(viewModel.total.toString()) ?? 0.0;
+    double discount = double.tryParse(viewModel.discountController.text) ?? 0.0;
+    String discountType = viewModel.discountTypeController.text;
+
+
+    setState(() {
+      viewModel.totalAfterDiscount=total;
+      if (discount != 0 && discountType == "%") {
+        viewModel.totalAfterDiscount = total - (total * discount / 100);
+      } else if (discount != 0 && discountType == "EGP") {
+        viewModel.totalAfterDiscount = total - discount;
+      } else {
+        viewModel.totalAfterDiscount = total;
+      }
+
+      print('Updated Total After Discount: ${viewModel.totalAfterDiscount}');
+    });
   }
 
   void clearForm() {
@@ -69,10 +99,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
     viewModel.productNotes.clear();
     viewModel.productCat.clear();
     viewModel.productSup.clear();
+    viewModel.discountController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
+    var  bill= ModalRoute.of(context)!.settings.arguments;
+    print(bill);
 
     return BlocListener<AddProductViewModel, AddProductStates>(
           bloc: viewModel..supplierViewModel.suppliers,
@@ -179,7 +212,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
           iconTheme: IconThemeData(color: AppColors.whiteColor),
 
           backgroundColor: AppColors.darkPrimaryColor,
-          title: Text(
+          title:bill=="bill"?  Text(
+            'In Bill',
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge!
+                .copyWith(color: AppColors.whiteColor),
+          ):
+          Text(
             'Add Product To Stock',
             style: Theme.of(context)
                 .textTheme
@@ -187,6 +227,15 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 .copyWith(color: AppColors.whiteColor),
           ),
           toolbarHeight: 100.h,
+         leading: IconButton(icon:Icon(Icons.arrow_back,color: AppColors.whiteColor,) ,onPressed: () {
+           if(bill=="bill"){
+             Navigator.pop(context,viewModel.productsInBill);
+
+           }else{
+             Navigator.pop(context);
+           }
+
+         },),
 
         ),
         body: Column(
@@ -310,12 +359,135 @@ class _AddProductScreenState extends State<AddProductScreen> {
                             SizedBox(
                               height: 25.h,
                             ),
+
+                            Row(
+                              children: [
+                                Expanded(
+                                    child: AddProductTextField(
+                                      fieldName: "Price",
+                                      hintText: "for one item",
+                                      controller: viewModel.productPrice,
+                                      isEnabled: true,
+                                      validator: (value) {
+                                        if (value == null || value.trim().isEmpty) {
+                                          return 'please enter product name';
+                                        }
+                                        return null;
+                                      },
+                                      keyboardType: TextInputType.number,
+                                      suffix: Text(
+                                        "EGP",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium!
+                                            .copyWith(
+                                            color: AppColors.primaryColor,
+                                            fontSize: 16.sp),
+                                      ),
+                                    )),
+                                SizedBox(
+                                  width: 5.w,
+                                ),
+                                Expanded(
+                                    child: AddProductTextField(
+                                      controller: viewModel.productTotal,
+                                      fieldName: "Total",
+                                      isEnabled: false,
+                                      hintText: "${viewModel.total.toStringAsFixed(2)} EGP",
+                                    )),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 25.h,
+                            ),
+                            bill=="bill"?
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                    flex: 2,
+                                    child: AddProductTextField(
+                                      fieldName: "Discount",
+                                      hintText: "ex: 20%",
+                                      controller:viewModel. discountController,
+                                      isEnabled: true,
+                                      keyboardType: TextInputType.number,
+
+                                    )),
+
+                                SizedBox(
+                                  width: 5.w,
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: AddProductTextField(
+                                    fieldName: " ",
+                                    hintText: "%",
+                                    isEnabled: true,
+                                    isDropdown: true,
+                                    dropdownValue: "%",
+                                    controller: viewModel.discountTypeController,
+                                    validator: (value) {
+                                      if(value==null|| viewModel.discountTypeController.text.isEmpty){
+                                        viewModel.discountTypeController.text = value ?? "piece";
+                                        return("please select a type");
+                                      }
+                                      return null;
+                                    },
+                                    dropdownItems: ["%", "EGP"],
+                                    onChanged: (value) {
+                                      viewModel.discountTypeController.text = value ?? "";
+                                      print("Selected Type: $value");
+                                    },
+                                    // dropdownValue: "cat1",
+                                  ),
+                                ),
+
+                                SizedBox(
+                                  width: 5.w,
+                                ),
+                                Expanded(
+                                  flex: 3,
+
+                                  child: AddProductTextField(
+
+                                    controller:viewModel.discountController.text.isEmpty? viewModel.productTotal: viewModel.productTotalAfterDiscount,
+                                    fieldName: "Total After Discount",
+                                    isEnabled: false,
+                                    hintText: "${viewModel.totalAfterDiscount.toStringAsFixed(2)} EGP",
+                                    // billViewModel.selectedProduct==null?false:true,
+                                    keyboardType: TextInputType.number,
+                                    onChanged: (value) {
+                                    },
+                                    validator: (value) {
+                                    },
+                                  ),
+                                ),
+
+
+                                // Expanded(
+                                //     child: AddProductTextField(
+                                //       controller: totalPriceController,
+                                //       fieldName: "Total",
+                                //       isEnabled: false,
+                                //       hintText:
+                                //       // "${viewModel.total.toStringAsFixed(2)} "
+                                //           "EGP",
+                                //     )),
+                              ],
+                            ):
+                            SizedBox.shrink(),
+                            bill=="bill"?  SizedBox(
+                              height: 25.h,
+                            ):SizedBox.shrink(),
+                            bill=="bill"?
+                            SizedBox.shrink():
                             BlocBuilder(
                               bloc: viewModel.supplierViewModel,
                               builder: (context, state) {
                                 if (state is GetSupplierSuccessState){
 
-                                    viewModel.suppliers=state.entity;
+                                  viewModel.suppliers=state.entity;
 
                                   if(viewModel.suppliers.isNotEmpty){
                                     return AddProductTextField(
@@ -369,49 +541,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
                               },
 
                             ),
-                            SizedBox(
+                            bill=="bill"?
+                            SizedBox.shrink():  SizedBox(
                               height: 25.h,
                             ),
-                            Row(
-                              children: [
-                                Expanded(
-                                    child: AddProductTextField(
-                                      fieldName: "Price",
-                                      hintText: "for one item",
-                                      controller: viewModel.productPrice,
-                                      isEnabled: true,
-                                      validator: (value) {
-                                        if (value == null || value.trim().isEmpty) {
-                                          return 'please enter product name';
-                                        }
-                                        return null;
-                                      },
-                                      keyboardType: TextInputType.number,
-                                      suffix: Text(
-                                        "EGP",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium!
-                                            .copyWith(
-                                            color: AppColors.primaryColor,
-                                            fontSize: 16.sp),
-                                      ),
-                                    )),
-                                SizedBox(
-                                  width: 5.w,
-                                ),
-                                Expanded(
-                                    child: AddProductTextField(
-                                      controller: viewModel.productTotal,
-                                      fieldName: "Total",
-                                      isEnabled: false,
-                                      hintText: "${viewModel.total.toStringAsFixed(2)} EGP",
-                                    )),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 25.h,
-                            ),
+
                             AddProductTextField(
                               fieldName: "Notes",
                               hintText: "Leave note about the product ...",
@@ -467,25 +601,118 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        viewModel.formKey.currentState!.save();
-                        print("Product Name: ${viewModel.productName.text}");
-                        print("Product Quantity: ${viewModel.productQuantity.text}");
-                        print("Product Price: ${viewModel.productPrice.text}");
-                        print("Product Category: ${viewModel.productCat.text}");
-                        print("Product Supplier: ${viewModel.productSup.text}");
-                        if (viewModel.formKey.currentState!.validate()){
-                          ProductEntity product=ProductEntity(name: viewModel.productName.text,
-                              quantity: double.tryParse(viewModel.productQuantity.text)??0.0,
-                              quantityType: viewModel.productQuantityType.text,
-                              price: double.tryParse(viewModel.productPrice.text)??0.0,
-                              total: viewModel.total,
-                              notes: viewModel.productNotes.text==""?"N/A":viewModel.productNotes.text,
-                              supplier: viewModel.productSup.text==""?"N/A":viewModel.productSup.text,
-                              category: viewModel.productCat.text==""?"N/A":viewModel.productCat.text,
-                              date: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
-                              userId: FirebaseAuth.instance.currentUser!.uid);
-                          viewModel.addProduct(product);
+                        if(bill != "bill"){
+                          viewModel.formKey.currentState!.save();
+                          print("Product Name: ${viewModel.productName.text}");
+                          print("Product Quantity: ${viewModel.productQuantity.text}");
+                          print("Product Price: ${viewModel.productPrice.text}");
+                          print("Product Category: ${viewModel.productCat.text}");
+                          print("Product Supplier: ${viewModel.productSup.text}");
+                          if (viewModel.formKey.currentState!.validate()){
+                            ProductEntity product=ProductEntity(name: viewModel.productName.text,
+                                quantity: double.tryParse(viewModel.productQuantity.text)??0.0,
+                                quantityType: viewModel.productQuantityType.text,
+                                price: double.tryParse(viewModel.productPrice.text)??0.0,
+                                total: viewModel.total,
+                                discount: double.tryParse(viewModel.discountController.text)??0.0,
+                                totalAfterDiscount: double.tryParse(viewModel.productTotalAfterDiscount.text)??viewModel.total,
+                                discountType: viewModel.discountTypeController.text??"%",
+                                notes: viewModel.productNotes.text==""?"N/A":viewModel.productNotes.text,
+                                supplier: viewModel.productSup.text==""?"N/A":viewModel.productSup.text,
+                                category: viewModel.productCat.text==""?"N/A":viewModel.productCat.text,
+                                date: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+                                userId: FirebaseAuth.instance.currentUser!.uid);
+                            viewModel.addProduct(product);
                         }
+
+                        }
+                        else{
+                          viewModel.formKey.currentState!.save();
+                          print("Product Name: ${viewModel.productName.text}");
+                          print("Product Quantity: ${viewModel.productQuantity.text}");
+                          print("Product Price: ${viewModel.productPrice.text}");
+                          print("Product Category: ${viewModel.productCat.text}");
+                          print("Product Supplier: ${viewModel.productSup.text}");
+                          if (viewModel.formKey.currentState!.validate()){
+                            ProductEntity product=ProductEntity(name: viewModel.productName.text,
+                                quantity: double.tryParse(viewModel.productQuantity.text)??0.0,
+                                quantityType: viewModel.productQuantityType.text??"piece",
+                                price: double.tryParse(viewModel.productPrice.text)??0.0,
+                                total: viewModel.total,
+                                discount: double.tryParse(viewModel.discountController.text)??0.0,
+                                totalAfterDiscount: viewModel.discountController.text!=0?viewModel.totalAfterDiscount :viewModel.total,
+                                discountType: viewModel.discountTypeController.text??"%",
+                                notes: viewModel.productNotes.text==""?"N/A":viewModel.productNotes.text,
+                                supplier: viewModel.productSup.text==""?"N/A":viewModel.productSup.text,
+                                category: viewModel.productCat.text==""?"N/A":viewModel.productCat.text,
+                                date: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+                                userId: FirebaseAuth.instance.currentUser!.uid);
+                            viewModel.productsInBill.add(product);
+                            print("added");
+                            print(viewModel.productsInBill);
+                            showDialog(barrierDismissible: false, context: context, builder: (context) {
+                              return AlertDialog(
+
+                                actions: [ElevatedButton(onPressed: () {
+                                  Navigator.pop(context);
+                                  clearForm();
+                                },
+
+                                  child: Text("Continue",style:
+                                  Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(fontSize: 16.sp,
+                                    color: AppColors.whiteColor,
+                                  ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(AppColors.primaryColor),shape:
+                                  WidgetStatePropertyAll(RoundedRectangleBorder
+                                    (borderRadius: BorderRadius.circular(15.r),
+                                  ))
+
+                                  ),)],backgroundColor: AppColors.lightGreyColor,shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.r),side: BorderSide(color: AppColors.primaryColor)),
+
+
+                                alignment: Alignment.center,
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ElevatedButton(onPressed: () {
+
+                                    },
+
+                                        child: Icon(Icons.check,size: 30.sp,color: AppColors.whiteColor,),
+                                        style: ButtonStyle(backgroundColor: WidgetStatePropertyAll(AppColors.greenColor),shape:
+                                        WidgetStatePropertyAll(RoundedRectangleBorder
+                                          (borderRadius: BorderRadius.circular(50.r),
+                                        )))
+
+                                    ),
+                                    SizedBox(height: 10.h,),
+                                    Text("${viewModel.productName.text} is added to list",style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(color: AppColors.primaryColor),
+                                    ),
+                                  ],
+                                ),
+                              ) ;
+                            });
+                            // SnackBar(width: 100.h,backgroundColor: Colors.grey,content:Text(
+                            //   "${viewModel.productName.text} is added to list",
+                            //   style: Theme.of(context)
+                            //       .textTheme
+                            //       .titleMedium!
+                            //       .copyWith(
+                            //       color: AppColors.greenColor,
+                            //       fontSize: 25.sp),
+                            // ) );
+                          }
+
+                        }
+
 
                       },
                       style: ButtonStyle(

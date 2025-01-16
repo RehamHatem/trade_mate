@@ -11,6 +11,9 @@ class ProductEntity{
   String quantityType;
   double price;
   double total;
+  double discount;
+  double totalAfterDiscount;
+  String discountType;
 
   String date;
   String userId;
@@ -20,7 +23,10 @@ class ProductEntity{
   required this.name,
   required this.notes,
   required this.quantity,
-  required this.quantityType,
+    this.discount=0,
+    this.discountType="%",
+    this.totalAfterDiscount=0,
+    required this.quantityType,
   required this.price,
   required this.total, required this.supplier,
     required this.category,
@@ -29,6 +35,24 @@ class ProductEntity{
 
 
 
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "name": name,
+      "notes": notes,
+      "category": category,
+      "supplier": supplier,
+      "quantity": quantity,
+      "quantityType": quantityType,
+      "price": price,
+      "total": total,
+      "discount": discount,
+      "totalAfterDiscount": totalAfterDiscount,
+      "discountType": discountType,
+      "date": date,
+      "userId": userId,
+    };
+  }
 
   ProductEntity toEntity() {
   return ProductEntity(
@@ -36,6 +60,9 @@ class ProductEntity{
       supplier:supplier,
       total:total,
       price:price,
+      discount:discount,
+      totalAfterDiscount:totalAfterDiscount,
+      discountType:discountType,
       quantity:quantity,
       quantityType:quantityType,
       id:id,
@@ -51,6 +78,9 @@ class ProductEntity{
         supplier:entity.supplier,
         total:entity.total,
         price:entity.price,
+        discount:entity.discount,
+        totalAfterDiscount:entity.totalAfterDiscount,
+        discountType:entity.discountType,
         quantity:entity.quantity,
         quantityType:entity.quantityType,
         id:entity.id,
