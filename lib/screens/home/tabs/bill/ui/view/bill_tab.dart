@@ -861,6 +861,7 @@ double totalBill=0;
                             final product = billViewModel.productsInBill[index];
                             return BillProductItem(
                               productEntity: product,
+                              remove: billViewModel.removeProductFromBill,
                             );
                           },
                         );
@@ -896,6 +897,7 @@ double totalBill=0;
                         final product = billViewModel.productsInBill[index];
                         return BillProductItem(
                           productEntity: product,
+                          remove:  billViewModel.removeProductFromBill,
                         );
                       },
                     );

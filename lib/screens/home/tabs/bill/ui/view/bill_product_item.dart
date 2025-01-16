@@ -4,8 +4,9 @@ import 'package:trade_mate/screens/home/tabs/add_product/domain/entity/product_e
 import 'package:trade_mate/utils/app_colors.dart';
 
 class BillProductItem extends StatelessWidget {
-   BillProductItem({super.key,required this.productEntity});
+   BillProductItem({super.key,required this.productEntity,required this.remove});
   ProductEntity productEntity;
+  Function(ProductEntity) remove;
 
   @override
   Widget build(BuildContext context) {
@@ -199,7 +200,9 @@ class BillProductItem extends StatelessWidget {
               const Spacer(),
               // Delete Button
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  remove(productEntity);
+                },
                 child:  Icon(Icons.delete, color: AppColors.redColor,size: 28.sp,),
               ),
             ],

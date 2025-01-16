@@ -54,6 +54,18 @@ void addProductToBill(List <ProductEntity>products){
     emit(AddProductsInBillErrorState(error: e.toString()));
   }
 }
+  void removeProductFromBill(ProductEntity product) {
+    emit(RemoveProductFromBillLoadingState(load: "removing"));
+    try {
+      productsInBill.remove(product);
+      totalBill = productsInBill.fold(0, (sum, item) => sum + item.totalAfterDiscount);
+
+      emit(RemoveProductFromBillSuccessState(products: productsInBill));
+    } catch (e) {
+      emit(RemoveProductFromBillErrorState(error: e.toString()));
+    }
+  }
+
   void addBill(BillEntity bill) async {
     emit(AddBillLoadingState(load: "Loadin..."));
     var either = await billUseCases.addBill(bill);
