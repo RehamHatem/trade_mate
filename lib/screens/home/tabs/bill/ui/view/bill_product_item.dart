@@ -47,7 +47,7 @@ class BillProductItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Mrp: egp.${productEntity.price} | Sp: egp.${productEntity.totalAfterDiscount/productEntity.quantity}',
+                      'Mrp: egp.${(productEntity.price).toStringAsFixed(2)} | Sp: egp.${(productEntity.totalAfterDiscount/productEntity.quantity).toStringAsFixed(2)}',
                       style: Theme.of(context).textTheme.titleMedium!.copyWith(
                           fontSize: 14.sp, color: AppColors.greyColor),
                     ),
@@ -160,7 +160,12 @@ class BillProductItem extends StatelessWidget {
                   children: [
                     InkWell(
                       onTap: () {
-                        productEntity.quantity=productEntity.quantity-1;
+                        productEntity.quantity = productEntity.quantity -1 ;
+                        productEntity.total=productEntity.quantity*productEntity.price;
+
+                       productEntity.discountType=="%"? productEntity.totalAfterDiscount=productEntity.total-(productEntity.total*productEntity.discount)/100
+                       :productEntity.totalAfterDiscount=productEntity.total-productEntity.discount;
+                        update(productEntity);
                       },
                       child: Container(
                           width: 50.w,
@@ -193,7 +198,11 @@ class BillProductItem extends StatelessWidget {
                     ),
                     InkWell(
                       onTap: () {
-                        productEntity.quantity=productEntity.quantity+1;
+                        productEntity.quantity = productEntity.quantity +1 ;
+                        productEntity.total=productEntity.quantity*productEntity.price;
+                        productEntity.discountType=="%"? productEntity.totalAfterDiscount=productEntity.total-(productEntity.total*productEntity.discount)/100
+                            :productEntity.totalAfterDiscount=productEntity.total-productEntity.discount;
+                        update(productEntity);
                       },
                       child: Container(
                           width: 50.w,
