@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trade_mate/screens/home/tabs/add_product/domain/add_product_di.dart';
+import 'package:trade_mate/screens/home/tabs/add_product/ui/view_model/add_product_view_model.dart';
 import 'package:trade_mate/screens/home/tabs/bill/domain/entity/bill_entity.dart';
 import 'package:trade_mate/screens/home/tabs/bill/domain/use_case/bill_use_cases.dart';
 import 'package:trade_mate/screens/home/tabs/bill/ui/view_model/bill_states.dart';
@@ -42,6 +44,7 @@ class BillViewModel extends Cubit<BillStates>{
   List <ProductEntity>productsInBill=[];
   double totalBill=0;
   double totalBillAfterDiscount=0;
+  AddProductViewModel addProductViewModel =AddProductViewModel(addProductUseCase: injectAddProductUseCase());
 
 void addProductToBill(List <ProductEntity>products){
   emit(AddProductsInBillLoadingState(load: "load"));
@@ -65,6 +68,23 @@ void addProductToBill(List <ProductEntity>products){
       emit(RemoveProductFromBillErrorState(error: e.toString()));
     }
   }
+  void updateProductInBill(int index, ProductEntity updatedProduct) {
+    emit(UpdateProductInBillLoadingState(load: "updating"));
+    try {
+      if (index >= 0 && index < productsInBill.length) {
+        productsInBill[index] = updatedProduct;
+        totalBill = productsInBill.fold(0, (sum, item) => sum + item.totalAfterDiscount);
+        print(productsInBill[index].name);
+        emit(UpdateProductInBillSuccessState(products: productsInBill));
+      } else {
+        emit(UpdateProductInBillErrorState(error: "Invalid index"));
+      }
+    } catch (e) {
+      emit(UpdateProductInBillErrorState(error: e.toString()));
+    }
+  }
+
+
 
   void addBill(BillEntity bill) async {
     emit(AddBillLoadingState(load: "Loadin..."));

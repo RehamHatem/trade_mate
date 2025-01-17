@@ -3,10 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trade_mate/screens/home/tabs/add_product/domain/entity/product_entity.dart';
 import 'package:trade_mate/utils/app_colors.dart';
 
+import 'edit_product_in_bill.dart';
+
 class BillProductItem extends StatelessWidget {
-   BillProductItem({super.key,required this.productEntity,required this.remove});
+   BillProductItem({super.key,required this.productEntity,required this.remove,required this.update});
   ProductEntity productEntity;
   Function(ProductEntity) remove;
+  Function(ProductEntity) update;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +47,7 @@ class BillProductItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Mrp: Rs.120.0 | Sp: Rs.115.0',
+                      'Mrp: egp.${productEntity.price} | Sp: egp.${productEntity.totalAfterDiscount/productEntity.quantity}',
                       style: Theme.of(context).textTheme.titleMedium!.copyWith(
                           fontSize: 14.sp, color: AppColors.greyColor),
                     ),
@@ -83,7 +86,35 @@ class BillProductItem extends StatelessWidget {
           Row(
             children: [
               ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+
+                    showModalBottomSheet(
+                      backgroundColor: AppColors.lightGreyColor,
+                      scrollControlDisabledMaxHeightRatio: .7,
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) {
+                        return Container(
+                            margin: EdgeInsets.only(
+                                left: 16.h,right: 16.h,bottom: 16.w,top:16.w
+                            ),
+
+
+                            padding: EdgeInsets.only(
+
+                                bottom: MediaQuery.of(context).viewInsets.bottom),
+                            decoration: BoxDecoration(color: AppColors.lightGreyColor,borderRadius:
+                            BorderRadius.only(topLeft: Radius.circular(15.r),topRight:
+                            Radius.circular(15.r))),
+                            child:EditProductInBill(
+                              edit:(p0) {
+                              update(p0);
+                              print(p0.name);
+                            },productEntity: productEntity,));
+                      },
+                    );
+
+                  },
                   style: ButtonStyle(
                     minimumSize: WidgetStatePropertyAll(Size(50.w, 30.h)),
                     backgroundColor: WidgetStateColor.transparent,

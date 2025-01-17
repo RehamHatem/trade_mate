@@ -33,6 +33,19 @@ class RemoveProductFromBillSuccessState extends BillStates{
   RemoveProductFromBillSuccessState({required this.products});
 }
 
+class UpdateProductInBillLoadingState extends BillStates{
+  String? load;
+  UpdateProductInBillLoadingState({required this.load});
+}
+class UpdateProductInBillErrorState extends BillStates{
+  String? error;
+  UpdateProductInBillErrorState({required this.error});
+}
+class UpdateProductInBillSuccessState extends BillStates{
+  List<ProductEntity> products;
+  UpdateProductInBillSuccessState({required this.products});
+}
+
 
 class AddBillLoadingState extends BillStates{
   String? load;
