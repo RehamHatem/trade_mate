@@ -5,6 +5,8 @@ import 'package:trade_mate/screens/home/tabs/add_product/ui/view_model/add_produ
 import 'package:trade_mate/screens/home/tabs/bill/domain/entity/bill_entity.dart';
 import 'package:trade_mate/screens/home/tabs/bill/domain/use_case/bill_use_cases.dart';
 import 'package:trade_mate/screens/home/tabs/bill/ui/view_model/bill_states.dart';
+import 'package:trade_mate/screens/home/tabs/home_tab/domain/home_tab_di.dart';
+import 'package:trade_mate/screens/home/tabs/home_tab/ui/view_model/home_tab_view_model.dart';
 
 import '../../../add_product/domain/entity/product_entity.dart';
 import '../../../cutomers/domain/customer_di.dart';
@@ -41,12 +43,17 @@ class BillViewModel extends Cubit<BillStates>{
   var discountFormKey=GlobalKey<FormState>();
   var discountTypeControllerTotalBill=TextEditingController();
   var discountTotalBill=TextEditingController();
+  var paidController=TextEditingController();
+  double remain=0;
   List <ProductEntity>productsInBill=[];
   double totalBill=0;
   double totalBillAfterDiscount=0;
+  double newBalance=0;
   AddProductViewModel addProductViewModel =AddProductViewModel(addProductUseCase: injectAddProductUseCase());
+HomeTabViewModel homeTabViewModel=HomeTabViewModel(homeTabUseCases: injectHomeTabUseCases());
 
 void addProductToBill(List <ProductEntity>products){
+
   emit(AddProductsInBillLoadingState(load: "load"));
   try{
     productsInBill.addAll(products);

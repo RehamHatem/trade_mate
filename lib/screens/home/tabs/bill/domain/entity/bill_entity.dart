@@ -16,6 +16,8 @@ class BillEntity{
   String date;
   String userId;
   double totalBill;
+  double paid;
+  double remain;
   double discountBill;
 
   List<ProductEntity>products;
@@ -28,6 +30,8 @@ class BillEntity{
         required this.paymentMethod,
         required this.retailOrWholesale,
         required this.products,
+        required this.paid,
+        required this.remain,
         required this.discountBill,
         required this.totalBill,
 
@@ -46,6 +50,8 @@ class BillEntity{
       products: json['products'],
       discountBill: json['discountBill'],
       totalBill: json['totalBill'],
+      paid: json['paid'],
+      remain: json['remain'],
       date: json['date'],
       id: json['id'],
       userId: json['userId'],
@@ -59,6 +65,8 @@ class BillEntity{
         billType:billType,
         discountBill:discountBill,
         totalBill:totalBill,
+        remain:remain,
+        paid:paid,
         id:id,
         paymentMethod:paymentMethod,
         products:products,
@@ -74,6 +82,8 @@ class BillEntity{
         billType:entity.billType,
         paymentMethod:entity.paymentMethod,
         totalBill:entity.totalBill,
+        remain:entity.remain,
+        paid:entity.paid,
         discountBill:entity.discountBill,
         id:entity.id,
         products:entity.products,

@@ -10,6 +10,8 @@ class BillModel extends BillEntity {
     required super.billType,
     required super.paymentMethod,
     required super.products,
+    required super.paid,
+    required super.remain,
     required super.retailOrWholesale,
     required super.supplierName,
     required super.customerName,
@@ -33,6 +35,12 @@ class BillModel extends BillEntity {
     totalBill: (json['totalBill'] is int)
         ? (json['totalBill'] as int).toDouble()
         : json['totalBill'] as double,
+    paid: (json['paid'] is int)
+        ? (json['paid'] as int).toDouble()
+        : json['paid'] as double,
+    remain: (json['remain'] is int)
+        ? (json['remain'] as int).toDouble()
+        : json['remain'] as double,
     paymentMethod: json['paymentMethod'] as String,
     billType: BillType.values.firstWhere(
             (e) => e.toString().split('.').last == json['billType']),
@@ -49,6 +57,8 @@ class BillModel extends BillEntity {
       "retailOrWholesale": retailOrWholesale,
       "products": products.map((product) => product.toJson()).toList(),
       "totalBill": totalBill,
+      "remain": remain,
+      "paid": paid,
       "discountBill": discountBill,
       "paymentMethod": paymentMethod,
       "billType": billType.toString().split('.').last,

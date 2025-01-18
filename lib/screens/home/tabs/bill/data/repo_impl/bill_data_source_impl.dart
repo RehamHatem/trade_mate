@@ -30,6 +30,8 @@ class BillDataSourceImpl implements BillDataSource{
               return BillEntity(
                 id: doc.id,
                 totalBill: model.totalBill,
+                paid: model.paid,
+                remain: model.remain,
                 discountBill: model.discountBill,
                 products: model.products,
                 customerName: model.customerName,
