@@ -48,47 +48,36 @@ class BillViewModel extends Cubit<BillStates>{
   var totalController=TextEditingController();
   var balance=TextEditingController();
   var discountFormKey=GlobalKey<FormState>();
-  var discountTypeControllerTotalBill=TextEditingController();
-  var discountTotalBill=TextEditingController();
-  var paidController=TextEditingController();
+  var discountTypeControllerTotalInBill=TextEditingController();
+  var discountTotalInBill=TextEditingController();
+  var discountTypeControllerTotalOutBill=TextEditingController();
+  var discountTotalOutBill=TextEditingController();
+
+  var paidInController=TextEditingController();
+  var paidOutController=TextEditingController();
   double remain=0;
   List <ProductEntity>productsInBill=[];
   List <ProductEntity>productsOutBill=[];
-  double totalBill=0;
-  double totalBillAfterDiscount=0;
+  double totalInBill=0;
+  double totalInBillAfterDiscount=0;
+  double totalOutBill=0;
+  double totalOutBillAfterDiscount=0;
   double newBalance=0;
   AddProductViewModel addProductViewModel =AddProductViewModel(addProductUseCase: injectAddProductUseCase());
 HomeTabViewModel homeTabViewModel=HomeTabViewModel(homeTabUseCases: injectHomeTabUseCases());
-  void addProducttToBill(ProductEntity product,BillType bill){
-
-    emit(AddProductsInBillLoadingState(load: "load"));
-    try{
-      if(bill==BillType.inBill){
-        productsInBill.add(product);
-        totalBill = productsInBill.fold(0, (sum, product) => sum + product.totalAfterDiscount);
-        emit(AddProductsInBillSuccessState(products: productsInBill));
-      }else if(bill==BillType.outBill){
-        productsOutBill.add(product);
-        totalBill = productsOutBill.fold(0, (sum, product) => sum + product.totalAfterDiscount);
-        emit(AddProductsInBillSuccessState(products: productsOutBill));
-      }
 
 
-    }catch(e){
-      emit(AddProductsInBillErrorState(error: e.toString()));
-    }
-  }
 void addProductToBill(List <ProductEntity>products,BillType bill){
 
   emit(AddProductsInBillLoadingState(load: "load"));
   try{
     if(bill==BillType.inBill){
       productsInBill.addAll(products);
-      totalBill = productsInBill.fold(0, (sum, product) => sum + product.totalAfterDiscount);
+      totalInBill = productsInBill.fold(0, (sum, product) =>product.discount==0? sum + product.total: sum +product.totalAfterDiscount);
       emit(AddProductsInBillSuccessState(products: productsInBill));
     }else if(bill==BillType.outBill){
       productsOutBill.addAll(products);
-      totalBill = productsOutBill.fold(0, (sum, product) => sum + product.totalAfterDiscount);
+      totalOutBill = productsOutBill.fold(0, (sum, product) => product.discount==0? sum + product.total: sum +product.totalAfterDiscount);
       emit(AddProductsInBillSuccessState(products: productsOutBill));
     }
 
@@ -102,11 +91,11 @@ void addProductToBill(List <ProductEntity>products,BillType bill){
     try {
       if(bill==BillType.inBill){
         productsInBill.remove(product);
-        totalBill = productsInBill.fold(0, (sum, item) => sum + item.totalAfterDiscount);
+        totalInBill = productsInBill.fold(0, (sum, item) => item.discount==0?sum + item.total:sum + item.totalAfterDiscount);
         emit(RemoveProductFromBillSuccessState(products: productsInBill));
       }else if(bill==BillType.outBill){
         productsOutBill.remove(product);
-        totalBill = productsOutBill.fold(0, (sum, item) => sum + item.totalAfterDiscount);
+        totalOutBill = productsOutBill.fold(0, (sum, item) =>  item.discount==0?sum + item.total:sum + item.totalAfterDiscount);
         emit(RemoveProductFromBillSuccessState(products: productsOutBill));
       }
 
@@ -122,7 +111,7 @@ void addProductToBill(List <ProductEntity>products,BillType bill){
       if(bill==BillType.inBill){
         if (index >= 0 && index < productsInBill.length) {
           productsInBill[index] = updatedProduct;
-          totalBill = productsInBill.fold(0, (sum, item) => sum + item.totalAfterDiscount);
+          totalInBill = productsInBill.fold(0, (sum, item) =>  item.discount==0?sum + item.total:sum + item.totalAfterDiscount);
           print(productsInBill[index].name);
           emit(UpdateProductInBillSuccessState(products: productsInBill));
         } else {
@@ -131,7 +120,7 @@ void addProductToBill(List <ProductEntity>products,BillType bill){
       }else if(bill==BillType.outBill){
         if (index >= 0 && index < productsOutBill.length) {
           productsOutBill[index] = updatedProduct;
-          totalBill = productsOutBill.fold(0, (sum, item) => sum + item.totalAfterDiscount);
+          totalOutBill = productsOutBill.fold(0, (sum, item) =>  item.discount==0?sum + item.total:sum + item.totalAfterDiscount);
           print(productsOutBill[index].name);
           emit(UpdateProductInBillSuccessState(products: productsOutBill));
         } else {
@@ -157,37 +146,73 @@ void addProductToBill(List <ProductEntity>products,BillType bill){
       emit(AddBillSuccessState(bill: bill));
     },);
   }
-  void updateTotalBill() {
-    double discount = double.tryParse(discountTotalBill.text) ?? 0;
-    totalBillAfterDiscount = totalBill;
-    String type=discountTypeControllerTotalBill.text;
-    print(discount);
-    print(totalBillAfterDiscount);
-    print(type);
-try{
-  if (discount != 0) {
-    if (discountTypeControllerTotalBill.text == "%") {
-      totalBillAfterDiscount = totalBill-(totalBill * discount) / 100;
 
-    } else if (discountTypeControllerTotalBill.text == "EGP") {
-      totalBillAfterDiscount = totalBill-discount;
+  void updateTotalBill(BillType bill) {
+  if(bill==BillType.inBill){
+    double discount = double.tryParse(discountTotalInBill.text) ?? 0;
+    totalInBillAfterDiscount = totalInBill;
+    String type=discountTypeControllerTotalInBill.text;
+    print(discount);
+    print(totalInBillAfterDiscount);
+    print(type);
+    try{
+      if (discount != 0) {
+        if (discountTypeControllerTotalInBill.text == "%") {
+          totalInBillAfterDiscount = totalInBill-(totalInBill * discount) / 100;
+
+        } else if (discountTypeControllerTotalInBill.text == "EGP") {
+          totalInBillAfterDiscount = totalInBill-discount;
+
+        }
+      }
+
+      print(totalInBillAfterDiscount);
+      emit(UpdateTotalBillSuccessState(total: totalInBillAfterDiscount));
+    }catch(e){
+      print(e.toString());
+
+    }
+  }else if(bill ==BillType.outBill){
+    double discount = double.tryParse(discountTotalOutBill.text) ?? 0;
+    totalOutBillAfterDiscount = totalOutBill;
+    String type=discountTypeControllerTotalOutBill.text;
+    print(discount);
+    print(totalOutBillAfterDiscount);
+    print(type);
+    try{
+      if (discount != 0) {
+        if (discountTypeControllerTotalOutBill.text == "%") {
+          totalOutBillAfterDiscount = totalOutBill-(totalOutBill * discount) / 100;
+
+        } else if (discountTypeControllerTotalOutBill.text == "EGP") {
+          totalOutBillAfterDiscount = totalOutBill-discount;
+
+        }
+      }
+
+      print(totalOutBillAfterDiscount);
+      emit(UpdateTotalBillSuccessState(total: totalOutBillAfterDiscount));
+    }catch(e){
+      print(e.toString());
 
     }
   }
 
-    print(totalBillAfterDiscount);
-    emit(UpdateTotalBillSuccessState(total: totalBillAfterDiscount));
-  }catch(e){
-  print(e.toString());
-
-  }
 
 }
-  void removeDiscountTotalBill() {
-    discountTotalBill.clear();
-    discountTypeControllerTotalBill.clear();
-    totalBillAfterDiscount = totalBill; // Reset to original bill
-    emit(RemoveDiscountTotalBillSuccessState(total: totalBill));
+  void removeDiscountTotalBill(BillType bill) {
+  if(bill ==BillType.inBill){
+    discountTotalInBill.clear();
+    discountTypeControllerTotalInBill.clear();
+    totalInBillAfterDiscount = totalInBill;
+    emit(RemoveDiscountTotalBillSuccessState(total: totalInBill));
+  }else if(bill==BillType.outBill){
+    discountTotalOutBill.clear();
+    discountTypeControllerTotalOutBill.clear();
+    totalOutBillAfterDiscount = totalOutBill;
+    emit(RemoveDiscountTotalBillSuccessState(total: totalOutBill));
+  }
+
   }
 
 

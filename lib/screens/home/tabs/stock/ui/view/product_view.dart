@@ -78,6 +78,28 @@ children: [
     mainAxisAlignment:MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
+      Text("Discount: ",style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.greyColor
+        ,fontSize: 20.sp,overflow: TextOverflow.ellipsis,),),
+      Text("${double.parse(productEntity.discount.toStringAsFixed(2))
+          ??"0.00"} ${productEntity.discountType}",style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.primaryColor
+        ,fontSize: 20.sp,overflow: TextOverflow.ellipsis,),),
+    ],
+  ),
+  Row(
+    mainAxisAlignment:MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text("Total after discount: ",style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.greyColor
+        ,fontSize: 20.sp,overflow: TextOverflow.ellipsis,),),
+      Text("${double.parse(productEntity.totalAfterDiscount==0?productEntity.total.toStringAsFixed(2):productEntity.totalAfterDiscount.toString()).toStringAsFixed(2)
+          ??"0.00"} EGP",style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.primaryColor
+        ,fontSize: 20.sp,overflow: TextOverflow.ellipsis,),),
+    ],
+  ),
+  Row(
+    mainAxisAlignment:MainAxisAlignment.start,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
       Text("Category: ",style: Theme.of(context)
           .textTheme.titleMedium!.copyWith(color: AppColors.greyColor
           ,fontSize: 20.sp),),

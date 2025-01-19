@@ -9,6 +9,7 @@ import 'package:trade_mate/screens/home/tabs/add_product/ui/view/add_product_scr
 import 'package:trade_mate/screens/home/tabs/bill/domain/entity/bill_entity.dart';
 import 'package:trade_mate/screens/home/tabs/bill/ui/view/add_bill_screen.dart';
 import 'package:trade_mate/screens/home/tabs/bill/ui/view/bill_product_item.dart';
+import 'package:trade_mate/screens/home/tabs/bill/ui/view/product_item_in_search.dart';
 import 'package:trade_mate/screens/home/tabs/bill/ui/view_model/bill_states.dart';
 import 'package:trade_mate/screens/home/tabs/bill/ui/view_model/bill_view_model.dart';
 import 'package:trade_mate/screens/home/tabs/cutomers/ui/view/add_customer_screen.dart';
@@ -19,6 +20,7 @@ import 'package:trade_mate/utils/app_colors.dart';
 import '../../../../../../utils/text_field_item.dart';
 import '../../../add_product/domain/entity/product_entity.dart';
 import '../../../cutomers/ui/view_model/customer_states.dart';
+import '../../../stock/ui/view_model/stock_view_model.dart';
 import '../../../suppliers/ui/view/add_supplier_screen.dart';
 import '../../../suppliers/ui/view_model/supplier_states.dart';
 import '../../domain/bill_di.dart';
@@ -530,215 +532,429 @@ class _BillTabState extends State<BillTab> {
                           },
                           child: InkWell(
                             onTap: () {
-                              if (billViewModel.totalBill != 0) {
-                                showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      backgroundColor: AppColors.lightGreyColor,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15.r),
-                                      ),
-                                      title: Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text(
-                                                "Add Bill Discount ",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleLarge!
-                                                    .copyWith(
-                                                        color: AppColors
-                                                            .darkPrimaryColor,
-                                                        fontSize: 27.sp),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                              Spacer(),
-                                              IconButton(
-                                                style: ButtonStyle(
-                                                    backgroundColor:
-                                                        WidgetStatePropertyAll(
-                                                            AppColors
-                                                                .darkPrimaryColor),
-                                                    shape: WidgetStatePropertyAll(
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              50.r),
-                                                    ))),
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                },
-                                                icon: Icon(Icons.close,
-                                                    size: 25.sp,
-                                                    color:
-                                                        AppColors.whiteColor),
-                                              ),
-                                            ],
-                                          ),
-                                          Divider(
-                                            color: AppColors.darkPrimaryColor,
-                                          )
-                                        ],
-                                      ),
-                                      alignment: Alignment.center,
-                                      content: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Form(
-                                            key: billViewModel.discountFormKey,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
+                              if(bill==BillType.inBill){
+                                if (billViewModel.totalInBill != 0) {
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        backgroundColor: AppColors.lightGreyColor,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(15.r),
+                                        ),
+                                        title: Column(
+                                          children: [
+                                            Row(
                                               children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    "discount: ",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .titleLarge!
-                                                        .copyWith(
-                                                            color: AppColors
-                                                                .darkPrimaryColor,
-                                                            fontSize: 25.sp),
-                                                    textAlign: TextAlign.center,
-                                                  ),
+                                                Text(
+                                                  "Add Bill Discount ",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleLarge!
+                                                      .copyWith(
+                                                      color: AppColors
+                                                          .darkPrimaryColor,
+                                                      fontSize: 27.sp),
+                                                  textAlign: TextAlign.center,
                                                 ),
-                                                Expanded(
-                                                  child: AddProductTextField(
-                                                    controller: billViewModel
-                                                        .discountTotalBill,
-                                                    hintText: "0.00",
-                                                    keyboardType:
-                                                        TextInputType.number,
-                                                    validator: (value) {
-                                                      if (value == null ||
-                                                          value
-                                                              .trim()
-                                                              .isEmpty) {
-                                                        return 'please enter  discount';
-                                                      }
-                                                      return null;
-                                                    },
-                                                    isEnabled: true,
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: 5.w,
-                                                ),
-                                                Expanded(
-                                                  child: AddProductTextField(
-                                                    hintText: "%",
-                                                    isEnabled: true,
-                                                    isDropdown: true,
-                                                    dropdownValue: billViewModel
-                                                                .discountTypeControllerTotalBill
-                                                                .text !=
-                                                            ""
-                                                        ? billViewModel
-                                                            .discountTypeControllerTotalBill
-                                                            .text
-                                                        : "%",
-                                                    controller: billViewModel
-                                                        .discountTypeControllerTotalBill,
-                                                    validator: (value) {
-                                                      if (value == null ||
-                                                          billViewModel
-                                                              .discountTypeControllerTotalBill
-                                                              .text
-                                                              .isEmpty) {
-                                                        billViewModel
-                                                            .discountTypeControllerTotalBill
-                                                            .text = value ?? "%";
-                                                        return ("please select a type");
-                                                      }
-                                                      return null;
-                                                    },
-                                                    dropdownItems: ["%", "EGP"],
-                                                    onChanged: (value) {
-                                                      billViewModel
-                                                          .discountTypeControllerTotalBill
-                                                          .text = value ?? "%";
-                                                      print(
-                                                          "Selected Type: $value");
-                                                    },
-                                                    // dropdownValue: "cat1",
-                                                  ),
+                                                Spacer(),
+                                                IconButton(
+                                                  style: ButtonStyle(
+                                                      backgroundColor:
+                                                      WidgetStatePropertyAll(
+                                                          AppColors
+                                                              .darkPrimaryColor),
+                                                      shape: WidgetStatePropertyAll(
+                                                          RoundedRectangleBorder(
+                                                            borderRadius:
+                                                            BorderRadius.circular(
+                                                                50.r),
+                                                          ))),
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  icon: Icon(Icons.close,
+                                                      size: 25.sp,
+                                                      color:
+                                                      AppColors.whiteColor),
                                                 ),
                                               ],
                                             ),
-                                          ),
-                                          SizedBox(
-                                            height: 10.h,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            crossAxisAlignment:
+                                            Divider(
+                                              color: AppColors.darkPrimaryColor,
+                                            )
+                                          ],
+                                        ),
+                                        alignment: Alignment.center,
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            Form(
+                                              key: billViewModel.discountFormKey,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                                crossAxisAlignment:
                                                 CrossAxisAlignment.center,
-                                            children: [
-                                              ElevatedButton(
-                                                onPressed: () {
-                                                  if (billViewModel
-                                                      .discountFormKey
-                                                      .currentState!
-                                                      .validate()) {
-                                                    billViewModel
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      "discount: ",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleLarge!
+                                                          .copyWith(
+                                                          color: AppColors
+                                                              .darkPrimaryColor,
+                                                          fontSize: 25.sp),
+                                                      textAlign: TextAlign.center,
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: AddProductTextField(
+                                                      controller: billViewModel
+                                                          .discountTotalInBill,
+                                                      hintText: "0.00",
+                                                      keyboardType:
+                                                      TextInputType.number,
+                                                      validator: (value) {
+                                                        if (value == null ||
+                                                            value
+                                                                .trim()
+                                                                .isEmpty) {
+                                                          return 'please enter  discount';
+                                                        }
+                                                        return null;
+                                                      },
+                                                      isEnabled: true,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5.w,
+                                                  ),
+                                                  Expanded(
+                                                    child: AddProductTextField(
+                                                      hintText: "%",
+                                                      isEnabled: true,
+                                                      isDropdown: true,
+                                                      dropdownValue: billViewModel
+                                                          .discountTypeControllerTotalInBill
+                                                          .text !=
+                                                          ""
+                                                          ? billViewModel
+                                                          .discountTypeControllerTotalInBill
+                                                          .text
+                                                          : "%",
+                                                      controller: billViewModel
+                                                          .discountTypeControllerTotalInBill,
+                                                      validator: (value) {
+                                                        if (value == null ||
+                                                            billViewModel
+                                                                .discountTypeControllerTotalInBill
+                                                                .text
+                                                                .isEmpty) {
+                                                          billViewModel
+                                                              .discountTypeControllerTotalInBill
+                                                              .text = value ?? "%";
+                                                          return ("please select a type");
+                                                        }
+                                                        return null;
+                                                      },
+                                                      dropdownItems: ["%", "EGP"],
+                                                      onChanged: (value) {
+                                                        billViewModel
+                                                            .discountTypeControllerTotalInBill
+                                                            .text = value ?? "%";
+                                                        print(
+                                                            "Selected Type: $value");
+                                                      },
+                                                      // dropdownValue: "cat1",
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 10.h,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                              children: [
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    if (billViewModel
                                                         .discountFormKey
                                                         .currentState!
-                                                        .save();
-                                                    billViewModel
-                                                        .updateTotalBill();
+                                                        .validate()) {
+                                                      billViewModel
+                                                          .discountFormKey
+                                                          .currentState!
+                                                          .save();
+                                                      billViewModel
+                                                          .updateTotalBill(bill!);
 
-                                                    print(
-                                                        'Updated Total: ${totalBill}');
-                                                    Navigator.pop(context);
-                                                  }
-                                                },
-                                                style: ButtonStyle(
-                                                    padding:
-                                                        WidgetStatePropertyAll(
-                                                            EdgeInsets.only(
-                                                                bottom: 5.h,
-                                                                top: 5.h)),
-                                                    backgroundColor:
-                                                        WidgetStatePropertyAll(
-                                                            AppColors
-                                                                .darkPrimaryColor),
-                                                    shape:
-                                                        WidgetStatePropertyAll(
-                                                      RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      15.r)),
-                                                    )),
-                                                child: Text(
-                                                  "Save",
+                                                      print(
+                                                          'Updated Total: ${totalBill}');
+                                                      Navigator.pop(context);
+                                                    }
+                                                  },
+                                                  style: ButtonStyle(
+                                                      padding:
+                                                      WidgetStatePropertyAll(
+                                                          EdgeInsets.only(
+                                                              bottom: 5.h,
+                                                              top: 5.h)),
+                                                      backgroundColor:
+                                                      WidgetStatePropertyAll(
+                                                          AppColors
+                                                              .darkPrimaryColor),
+                                                      shape:
+                                                      WidgetStatePropertyAll(
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                15.r)),
+                                                      )),
+                                                  child: Text(
+                                                    "Save",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleMedium!
+                                                        .copyWith(
+                                                        color: AppColors
+                                                            .whiteColor,
+                                                        fontSize: 25.sp),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }
+                              }
+                              else if (bill ==BillType.outBill){
+                                if (billViewModel.totalOutBill != 0) {
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        backgroundColor: AppColors.lightGreyColor,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                          BorderRadius.circular(15.r),
+                                        ),
+                                        title: Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  "Add Bill Discount ",
                                                   style: Theme.of(context)
                                                       .textTheme
-                                                      .titleMedium!
+                                                      .titleLarge!
                                                       .copyWith(
-                                                          color: AppColors
-                                                              .whiteColor,
-                                                          fontSize: 25.sp),
+                                                      color: AppColors
+                                                          .darkPrimaryColor,
+                                                      fontSize: 27.sp),
+                                                  textAlign: TextAlign.center,
                                                 ),
+                                                Spacer(),
+                                                IconButton(
+                                                  style: ButtonStyle(
+                                                      backgroundColor:
+                                                      WidgetStatePropertyAll(
+                                                          AppColors
+                                                              .darkPrimaryColor),
+                                                      shape: WidgetStatePropertyAll(
+                                                          RoundedRectangleBorder(
+                                                            borderRadius:
+                                                            BorderRadius.circular(
+                                                                50.r),
+                                                          ))),
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  icon: Icon(Icons.close,
+                                                      size: 25.sp,
+                                                      color:
+                                                      AppColors.whiteColor),
+                                                ),
+                                              ],
+                                            ),
+                                            Divider(
+                                              color: AppColors.darkPrimaryColor,
+                                            )
+                                          ],
+                                        ),
+                                        alignment: Alignment.center,
+                                        content: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            Form(
+                                              key: billViewModel.discountFormKey,
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      "discount: ",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleLarge!
+                                                          .copyWith(
+                                                          color: AppColors
+                                                              .darkPrimaryColor,
+                                                          fontSize: 25.sp),
+                                                      textAlign: TextAlign.center,
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    child: AddProductTextField(
+                                                      controller: billViewModel
+                                                          .discountTotalOutBill,
+                                                      hintText: "0.00",
+                                                      keyboardType:
+                                                      TextInputType.number,
+                                                      validator: (value) {
+                                                        if (value == null ||
+                                                            value
+                                                                .trim()
+                                                                .isEmpty) {
+                                                          return 'please enter  discount';
+                                                        }
+                                                        return null;
+                                                      },
+                                                      isEnabled: true,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5.w,
+                                                  ),
+                                                  Expanded(
+                                                    child: AddProductTextField(
+                                                      hintText: "%",
+                                                      isEnabled: true,
+                                                      isDropdown: true,
+                                                      dropdownValue: billViewModel
+                                                          .discountTypeControllerTotalOutBill
+                                                          .text !=
+                                                          ""
+                                                          ? billViewModel
+                                                          .discountTypeControllerTotalOutBill
+                                                          .text
+                                                          : "%",
+                                                      controller: billViewModel
+                                                          .discountTypeControllerTotalOutBill,
+                                                      validator: (value) {
+                                                        if (value == null ||
+                                                            billViewModel
+                                                                .discountTypeControllerTotalOutBill
+                                                                .text
+                                                                .isEmpty) {
+                                                          billViewModel
+                                                              .discountTypeControllerTotalOutBill
+                                                              .text = value ?? "%";
+                                                          return ("please select a type");
+                                                        }
+                                                        return null;
+                                                      },
+                                                      dropdownItems: ["%", "EGP"],
+                                                      onChanged: (value) {
+                                                        billViewModel
+                                                            .discountTypeControllerTotalOutBill
+                                                            .text = value ?? "%";
+                                                        print(
+                                                            "Selected Type: $value");
+                                                      },
+                                                      // dropdownValue: "cat1",
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                );
+                                            ),
+                                            SizedBox(
+                                              height: 10.h,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                              children: [
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    if (billViewModel
+                                                        .discountFormKey
+                                                        .currentState!
+                                                        .validate()) {
+                                                      billViewModel
+                                                          .discountFormKey
+                                                          .currentState!
+                                                          .save();
+                                                      billViewModel
+                                                          .updateTotalBill(bill!);
+
+                                                      print(
+                                                          'Updated Total: ${totalBill}');
+                                                      Navigator.pop(context);
+                                                    }
+                                                  },
+                                                  style: ButtonStyle(
+                                                      padding:
+                                                      WidgetStatePropertyAll(
+                                                          EdgeInsets.only(
+                                                              bottom: 5.h,
+                                                              top: 5.h)),
+                                                      backgroundColor:
+                                                      WidgetStatePropertyAll(
+                                                          AppColors
+                                                              .darkPrimaryColor),
+                                                      shape:
+                                                      WidgetStatePropertyAll(
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                15.r)),
+                                                      )),
+                                                  child: Text(
+                                                    "Save",
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleMedium!
+                                                        .copyWith(
+                                                        color: AppColors
+                                                            .whiteColor,
+                                                        fontSize: 25.sp),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }
                               }
+
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(
@@ -755,7 +971,7 @@ class _BillTabState extends State<BillTab> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "Total (${billViewModel.productsInBill.length})",
+                                    "Total (${bill==BillType.inBill?billViewModel.productsInBill.length:billViewModel.productsOutBill.length})",
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: Theme.of(context)
@@ -766,7 +982,8 @@ class _BillTabState extends State<BillTab> {
                                             color: AppColors.whiteColor),
                                   ),
                                   Text(
-                                    "  ${billViewModel.discountTotalBill.text.isEmpty ? billViewModel.totalBill : billViewModel.totalBillAfterDiscount} EGP",
+                                    "  ${bill==BillType.inBill?(billViewModel.discountTotalInBill.text.isEmpty ? billViewModel.totalInBill : billViewModel.totalInBillAfterDiscount):
+                                    (billViewModel.discountTotalOutBill.text.isEmpty ? billViewModel.totalOutBill : billViewModel.totalOutBillAfterDiscount)} EGP",
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: Theme.of(context)
@@ -776,9 +993,9 @@ class _BillTabState extends State<BillTab> {
                                             fontSize: 20.sp,
                                             color: AppColors.whiteColor),
                                   ),
-                                  billViewModel.discountTotalBill.text != ""
+                                  bill==BillType.inBill && billViewModel.discountTotalInBill.text != ""
                                       ? Text(
-                                          "${billViewModel.totalBill} EGP",
+                                          "${billViewModel.totalInBill} EGP",
                                           style: Theme.of(context)
                                               .textTheme
                                               .titleMedium!
@@ -788,8 +1005,20 @@ class _BillTabState extends State<BillTab> {
                                                       .lineThrough,
                                                   color: AppColors.whiteColor),
                                         )
-                                      : SizedBox.shrink(),
-                                  billViewModel.discountTotalBill.text == ""
+                                      :bill==BillType.outBill && billViewModel.discountTotalOutBill.text != ""
+                                      ? Text(
+                                    "${billViewModel.totalOutBill} EGP",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                        fontSize: 14.sp,
+                                        decoration: TextDecoration
+                                            .lineThrough,
+                                        color: AppColors.whiteColor),
+                                  ):
+                                  SizedBox.shrink(),
+                                  (bill==BillType.inBill && billViewModel.discountTotalInBill.text == "")||( bill==BillType.outBill && billViewModel.discountTotalOutBill.text == "")
                                       ? Text(
                                           "+ tab to add Discount",
                                           style: Theme.of(context)
@@ -806,8 +1035,8 @@ class _BillTabState extends State<BillTab> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              "discount: ${billViewModel.discountTotalBill.text} "
-                                              "${billViewModel.discountTypeControllerTotalBill.text}",
+                                              "discount: ${bill==BillType.inBill?billViewModel.discountTotalInBill.text:billViewModel.discountTotalOutBill.text} "
+                                              "${bill==BillType.inBill?billViewModel.discountTypeControllerTotalInBill.text:billViewModel.discountTypeControllerTotalOutBill.text}",
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               style: Theme.of(context)
@@ -824,7 +1053,7 @@ class _BillTabState extends State<BillTab> {
                                             InkWell(
                                                 onTap: () {
                                                   billViewModel
-                                                      .removeDiscountTotalBill();
+                                                      .removeDiscountTotalBill(bill!);
                                                 },
                                                 child: Icon(
                                                   Icons
@@ -862,8 +1091,8 @@ class _BillTabState extends State<BillTab> {
                                   listener: (context, state) {
                                     if (state is UpdateProductInBillSuccessState) {
                                       print(state.products);
-                                      billViewModel.updateTotalBill();
-                                      billViewModel.totalBillAfterDiscount;
+                                      billViewModel.updateTotalBill(bill!);
+                                      bill==BillType.inBill?billViewModel.totalInBillAfterDiscount:billViewModel.totalOutBillAfterDiscount;
                                     }
                                   },
                                   child: BillProductItem(
@@ -892,8 +1121,8 @@ class _BillTabState extends State<BillTab> {
                                   listener: (context, state) {
                                     if (state is UpdateProductInBillSuccessState) {
                                       print(state.products);
-                                      billViewModel.updateTotalBill();
-                                      billViewModel.totalBillAfterDiscount;
+                                      billViewModel.updateTotalBill(bill!);
+                                      bill==BillType.inBill?billViewModel.totalInBillAfterDiscount:billViewModel.totalOutBillAfterDiscount;
                                     }
                                   },
                                   child: BillProductItem(
@@ -939,13 +1168,13 @@ class _BillTabState extends State<BillTab> {
                         if (bill == BillType.inBill &&
                             (state is UpdateProductInBillSuccessState ||
                                 state is UpdateTotalBillSuccessState ||
-                                state is RemoveDiscountTotalBillSuccessState)) {
+                                state is RemoveDiscountTotalBillSuccessState||state is RemoveProductFromBillSuccessState)) {
                           return BlocListener(
                             bloc: billViewModel,
                             listener: (context, state) {
                               if (state is UpdateProductInBillSuccessState) {
                                 print(state.products);
-                                billViewModel.updateTotalBill();
+                                billViewModel.updateTotalBill(bill!);
                               }
                             },
                             child: ListView.builder(
@@ -970,7 +1199,7 @@ class _BillTabState extends State<BillTab> {
                          if(bill == BillType.outBill &&
                             (state is UpdateProductInBillSuccessState ||
                                 state is UpdateTotalBillSuccessState ||
-                                state is RemoveDiscountTotalBillSuccessState)){
+                                state is RemoveDiscountTotalBillSuccessState||state is RemoveProductFromBillSuccessState)){
                           return ListView.builder(
                             itemCount: billViewModel.productsOutBill.length,
                             itemBuilder: (context, index) {
@@ -981,8 +1210,8 @@ class _BillTabState extends State<BillTab> {
                                 listener: (context, state) {
                                   if (state is UpdateProductInBillSuccessState) {
                                     print(state.products);
-                                    billViewModel.updateTotalBill();
-                                    billViewModel.totalBillAfterDiscount;
+                                    billViewModel.updateTotalBill(bill!);
+                                    billViewModel.totalInBillAfterDiscount;
                                   }
                                 },
                                 child: BillProductItem(
@@ -1021,16 +1250,22 @@ class _BillTabState extends State<BillTab> {
                       padding:
                           EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
                       child: ValueListenableBuilder(
-                        valueListenable: billViewModel.paidController,
+                        valueListenable:bill==BillType.inBill? billViewModel.paidInController:billViewModel.paidOutController,
                         builder: (context, paidValue, child) {
                           double paid = paidValue.text.isEmpty
                               ? 0
                               : double.parse(paidValue.text);
-                          double remain =
-                              billViewModel.discountTotalBill.text.isEmpty
-                                  ? billViewModel.totalBill - paid
-                                  : billViewModel.totalBillAfterDiscount - paid;
-                          billViewModel.remain=remain;
+                          double remain = bill==BillType.inBill?billViewModel.totalInBill :billViewModel.totalOutBill;
+                          if(bill ==BillType.inBill){
+                             remain = billViewModel.discountTotalInBill.text.isEmpty ? billViewModel.totalInBill - paid
+                                : billViewModel.totalInBillAfterDiscount - paid;
+                            billViewModel.remain=remain;
+                          }else if(bill==BillType.outBill){
+                             remain = billViewModel.discountTotalOutBill.text.isEmpty ? billViewModel.totalOutBill - paid
+                                : billViewModel.totalOutBillAfterDiscount - paid;
+                            billViewModel.remain=remain;
+                          }
+
                           print(billViewModel.remain);
 
                           return Row(
@@ -1058,8 +1293,8 @@ class _BillTabState extends State<BillTab> {
                                         cursorHeight: 15.h,
                                         cursorColor: AppColors.primaryColor,
                                         keyboardType: TextInputType.number,
-                                        controller: billViewModel.paidController,
-                                        enabled: (bill==BillType.inBill&&billViewModel.productsInBill.isEmpty ) ||(bill==BillType.outBill && billViewModel.productsOutBill.isEmpty)
+                                        controller: bill==BillType.inBill?billViewModel.paidInController:billViewModel.paidOutController,
+                                        enabled: (bill==BillType.inBill&&billViewModel.productsInBill.isEmpty&&billViewModel.totalInBill!=0 ) ||(bill==BillType.outBill && billViewModel.productsOutBill.isEmpty&&billViewModel.totalOutBill!=0)
                                             ? false
                                             : true,
                                         decoration: InputDecoration(
@@ -1213,7 +1448,7 @@ class _BillTabState extends State<BillTab> {
                                   var bill = BillEntity(
                                       id: "",
                                       remain: billViewModel.remain,
-                                      paid: double.tryParse(billViewModel.paidController.text)??0,
+                                      paid: double.tryParse(billViewModel.paidInController.text)??0,
                                       supplierName: this.bill == BillType.inBill
                                           ? supplier!
                                           : "",
@@ -1226,8 +1461,8 @@ class _BillTabState extends State<BillTab> {
                                           ? "Retail"
                                           : "Wholesale",
                                       products: billViewModel.productsInBill,
-                                      discountBill: double.tryParse(billViewModel.discountTotalBill.text)??0,
-                                      totalBill: billViewModel.totalBill,
+                                      discountBill: double.tryParse(billViewModel.discountTotalInBill.text)??0,
+                                      totalBill: billViewModel.totalInBill,
                                       date: DateFormat('yyyy-MM-dd HH:mm:ss')
                                           .format(DateTime.now()),
                                       userId:
@@ -1238,7 +1473,7 @@ class _BillTabState extends State<BillTab> {
                                     if (supplier != null &&
                                         billViewModel.productsInBill.isNotEmpty) {
                                       billViewModel.addBill(bill);
-                                      billViewModel.newBalance=billViewModel.homeTabViewModel.myBalance-double.parse(billViewModel.paidController.text);
+                                      billViewModel.newBalance=billViewModel.homeTabViewModel.myBalance-double.parse(billViewModel.paidInController.text);
 
                                       billViewModel.homeTabViewModel.updateBalance(FirebaseAuth.instance.currentUser!.uid, billViewModel.newBalance);
                                       for (int i = 0;
@@ -1268,21 +1503,21 @@ class _BillTabState extends State<BillTab> {
                                   var bill = BillEntity(
                                       id: "",
                                       remain: billViewModel.remain,
-                                      paid: double.tryParse(billViewModel.paidController.text)??0,
+                                      paid: double.tryParse(billViewModel.paidOutController.text)??0,
                                       supplierName: this.bill == BillType.inBill
                                           ? supplier!
                                           : "",
                                       customerName: this.bill == BillType.inBill
                                           ? ""
                                           : customer!,
-                                      billType: this.bill ?? BillType.inBill,
+                                      billType: this.bill ?? BillType.outBill,
                                       paymentMethod: paymentMethod,
                                       retailOrWholesale: selectedIndex == 0
                                           ? "Retail"
                                           : "Wholesale",
                                       products: billViewModel.productsOutBill,
-                                      discountBill: double.tryParse(billViewModel.discountTotalBill.text)??0,
-                                      totalBill: billViewModel.totalBill,
+                                      discountBill: double.tryParse(billViewModel.discountTotalOutBill.text)??0,
+                                      totalBill: billViewModel.totalOutBill,
                                       date: DateFormat('yyyy-MM-dd HH:mm:ss')
                                           .format(DateTime.now()),
                                       userId:
@@ -1293,7 +1528,7 @@ class _BillTabState extends State<BillTab> {
                                     if (customer != null &&
                                         billViewModel.productsOutBill.isNotEmpty) {
                                       billViewModel.addBill(bill);
-                                      billViewModel.newBalance=billViewModel.homeTabViewModel.myBalance+double.parse(billViewModel.paidController.text);
+                                      billViewModel.newBalance=billViewModel.homeTabViewModel.myBalance+double.parse(billViewModel.paidOutController.text);
 
                                       billViewModel.homeTabViewModel.updateBalance(FirebaseAuth.instance.currentUser!.uid, billViewModel.newBalance);
 
@@ -1365,15 +1600,152 @@ class _BillTabState extends State<BillTab> {
                           left: 15.w,
                           right: 15.w,
                         ),
-                        child: TextFieldItem(
-                          controller: searchController,
+                        child: InkWell(
+                          onTap: () {
+                            billViewModel.stockViewModel.getProducts();
+                            searchController.clear();
+                            showDialog(
+                              context: context,
+                              barrierColor: Colors.black.withOpacity(0.5), // Dim background
+                              builder: (context) {
+                                return Dialog(
+                                  backgroundColor: Colors.transparent, // Make dialog transparent
+                                  insetPadding: EdgeInsets.only(top: 20.w), // Padding for the dialog
+                                  child: Scaffold(backgroundColor: Colors.transparent,
+                                  appBar:AppBar(
+                                    backgroundColor: AppColors.darkPrimaryColor,
+                                    toolbarHeight: 150.h,
+                                    iconTheme: IconThemeData(color: AppColors.whiteColor),
 
-                          // change: (query) {
-                          //   stockViewModel.searchProducts(query);
-                          // },
-                          hintText: "Search name ",
-                          suffixIcon: Icon(
-                            Icons.search,
+                                    title: TextFieldItem(
+                                      controller: searchController,
+
+                                      change: (query) {
+                                        billViewModel.stockViewModel.searchProducts(query);
+                                      },
+                                      hintText: "Search name ",
+                                      suffixIcon: Icon(
+                                        Icons.search,
+                                      ),
+                                    ),
+                                  ) ,
+                                  body: Padding(
+                                    padding:  EdgeInsets.only(left: 10.w,right: 10.w,top:10.h ),
+                                    child: Column(
+
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+
+                                      Text(
+                                        "My Stock ",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium!
+                                            .copyWith(
+                                          fontSize: 25.sp,
+                                          color:
+                                          AppColors.whiteColor.withOpacity(.8)
+                                          ,
+                                        ),
+                                      ),
+                                      SizedBox(height: 10.h,),
+
+                                      Expanded(
+                                        child: StreamBuilder<List<ProductEntity>>(
+                                            stream:billViewModel. stockViewModel.productStreamController.stream,
+                                            builder: (context, snapshot) {
+                                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                                return Center(child: CircularProgressIndicator());
+                                              }
+
+                                              if (snapshot.hasError) {
+                                                return Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    const Text("Something went wrong"),
+                                                    ElevatedButton(
+                                                      onPressed: () =>
+                                                          context.read<StockViewModel>().getProducts(),
+                                                      child: const Text("Try Again"),
+                                                    ),
+                                                  ],
+                                                );
+                                              }
+                                              final products = snapshot.data ?? [];
+                                              if (products.isEmpty) {
+                                                return Center(child: Text("No Products Found"));
+                                              }
+
+                                              if(searchController.text.isNotEmpty)
+                                              return ListView.separated(
+                                                itemBuilder: (context, index) {
+                                                  final product = products[index];
+                                                  List<ProductEntity>proddd=[];
+                                                  proddd.add(product);
+                                                  return ProductItemInSearch(productEntity: product,
+                                                    bill: bill!,
+                                                    add: (proddd, bill) {
+                                                    billViewModel.addProductToBill(proddd, bill);
+                                                  },);
+                                                },
+                                                separatorBuilder: (_, __) => SizedBox(height: 5.h),
+                                                itemCount: products.length,
+                                              );
+                                              return SizedBox.shrink();
+                                            }
+
+
+                                        ),
+                                      ),
+
+                                    ],),
+                                  ),
+                                  ),
+
+                                );
+                              },
+                            );
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(top: 20.w,bottom: 20.w),
+                            padding: EdgeInsets.only(right: 15.h,left: 20.h),
+
+                            decoration: BoxDecoration(
+                              color: AppColors.whiteColor,
+                              borderRadius: BorderRadius.circular(10.r)
+                            ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "Search name ",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleMedium!
+                                      .copyWith(
+                                    fontSize: 25.sp,
+                                    color:
+                                         AppColors.greyColor
+                                        ,
+                                  ),
+                                ),
+                                Spacer(),
+                                // TextFieldItem(
+                                //   controller: searchController,
+                                //
+                                //
+                                //   // change: (query) {
+                                //   //   stockViewModel.searchProducts(query);
+                                //   // },
+                                //   hintText: "Search name ",
+                                //   suffixIcon: Icon(
+                                //     Icons.search,
+                                //   ),
+                                // ),
+                            Icon(
+                                  Icons.search,color: AppColors.greyColor,size: 25.sp,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       )),
@@ -1443,7 +1815,8 @@ class _BillTabState extends State<BillTab> {
                         height: 10.h,
                       ),
                       Text(
-                        'Total Bill Amount : ${billViewModel.discountController.text.isEmpty ? billViewModel.totalBill : billViewModel.totalBillAfterDiscount} EGP',
+                        'Total Bill Amount : ${bill==BillType.inBill?billViewModel.discountTotalInBill.text.isEmpty ? billViewModel.totalInBill : billViewModel.totalInBillAfterDiscount:
+                        billViewModel.discountTotalOutBill.text.isEmpty ? billViewModel.totalOutBill : billViewModel.totalOutBillAfterDiscount} EGP',
                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
                             fontSize: 20.sp, color: AppColors.blackColor),
                       ),

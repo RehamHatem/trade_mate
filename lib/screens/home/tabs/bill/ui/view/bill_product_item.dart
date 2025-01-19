@@ -47,7 +47,7 @@ class BillProductItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Mrp: egp.${(productEntity.price).toStringAsFixed(2)} | Sp: egp.${(productEntity.totalAfterDiscount/productEntity.quantity).toStringAsFixed(2)}',
+                      'Mrp: egp.${(productEntity.price).toStringAsFixed(2)} | Sp: egp.${productEntity.discount==0?productEntity.price:(productEntity.totalAfterDiscount/productEntity.quantity).toStringAsFixed(2)}',
                       style: Theme.of(context).textTheme.titleMedium!.copyWith(
                           fontSize: 14.sp, color: AppColors.greyColor),
                     ),
@@ -65,7 +65,7 @@ class BillProductItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '${productEntity.totalAfterDiscount}',
+                    '${productEntity.discount==0?productEntity.total:productEntity.totalAfterDiscount}',
                     style: Theme.of(context).textTheme.titleLarge!.copyWith(
                           fontSize: 16.sp,
                         ),
