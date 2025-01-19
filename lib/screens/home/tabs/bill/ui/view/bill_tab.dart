@@ -56,6 +56,10 @@ class _BillTabState extends State<BillTab> {
     super.initState();
     billViewModel.supplierViewModel.getSuppliers();
     billViewModel.customerViewModel.getCustomer();
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      billViewModel.homeTabViewModel.getBalance(currentUser.uid);
+    }
   }
 
   @override
@@ -866,14 +870,47 @@ class _BillTabState extends State<BillTab> {
                                     productEntity: product,
                                     update: (p0) {
                                       billViewModel.updateProductInBill(
-                                          index, p0);
+                                          index, p0,bill!);
                                     },
-                                    remove: billViewModel.removeProductFromBill,
+                                    remove: (p0) {
+                                      billViewModel.removeProductFromBill(p0,bill!);
+                                    },
                                   ),
                                 );
                               },
                             );
-                          } else
+                          }
+                          else if(state.products.isNotEmpty &&
+                              bill == BillType.outBill ){
+                            return ListView.builder(
+                              itemCount: billViewModel.productsOutBill.length,
+                              itemBuilder: (context, index) {
+                                final product =
+                                billViewModel.productsOutBill[index];
+                                return BlocListener(
+                                  bloc: billViewModel,
+                                  listener: (context, state) {
+                                    if (state is UpdateProductInBillSuccessState) {
+                                      print(state.products);
+                                      billViewModel.updateTotalBill();
+                                      billViewModel.totalBillAfterDiscount;
+                                    }
+                                  },
+                                  child: BillProductItem(
+                                    productEntity: product,
+                                    update: (p0) {
+                                      billViewModel.updateProductInBill(
+                                          index, p0,bill!);
+                                    },
+                                    remove: (p0) {
+                                      billViewModel.removeProductFromBill(p0,bill!);
+                                    },
+                                  ),
+                                );
+                              },
+                            );
+                          }
+                          else
                             return Center(
                               child: Text(
                                 "No products in bill",
@@ -918,14 +955,48 @@ class _BillTabState extends State<BillTab> {
                                     billViewModel.productsInBill[index];
                                 return BillProductItem(
                                   productEntity: product,
-                                  remove: billViewModel.removeProductFromBill,
                                   update: (p0) {
                                     billViewModel.updateProductInBill(
-                                        index, p0);
+                                        index, p0,bill!);
+                                  },
+                                  remove: (p0) {
+                                    billViewModel.removeProductFromBill(p0,bill!);
                                   },
                                 );
                               },
                             ),
+                          );
+                        }
+                         if(bill == BillType.outBill &&
+                            (state is UpdateProductInBillSuccessState ||
+                                state is UpdateTotalBillSuccessState ||
+                                state is RemoveDiscountTotalBillSuccessState)){
+                          return ListView.builder(
+                            itemCount: billViewModel.productsOutBill.length,
+                            itemBuilder: (context, index) {
+                              final product =
+                              billViewModel.productsOutBill[index];
+                              return BlocListener(
+                                bloc: billViewModel,
+                                listener: (context, state) {
+                                  if (state is UpdateProductInBillSuccessState) {
+                                    print(state.products);
+                                    billViewModel.updateTotalBill();
+                                    billViewModel.totalBillAfterDiscount;
+                                  }
+                                },
+                                child: BillProductItem(
+                                  productEntity: product,
+                                  update: (p0) {
+                                    billViewModel.updateProductInBill(
+                                        index, p0,bill!);
+                                  },
+                                  remove: (p0) {
+                                    billViewModel.removeProductFromBill(p0,bill!);
+                                  },
+                                ),
+                              );
+                            },
                           );
                         }
                         return Center(
@@ -977,7 +1048,7 @@ class _BillTabState extends State<BillTab> {
                                           .copyWith(
                                             fontSize: 20.sp,
                                             color:
-                                                billViewModel.productsInBill.isEmpty
+                                            (bill==BillType.inBill&&billViewModel.productsInBill.isEmpty ) ||(bill==BillType.outBill && billViewModel.productsOutBill.isEmpty)
                                                     ? AppColors.greyColor
                                                     : AppColors.greenColor,
                                           ),
@@ -988,7 +1059,7 @@ class _BillTabState extends State<BillTab> {
                                         cursorColor: AppColors.primaryColor,
                                         keyboardType: TextInputType.number,
                                         controller: billViewModel.paidController,
-                                        enabled: billViewModel.productsInBill.isEmpty
+                                        enabled: (bill==BillType.inBill&&billViewModel.productsInBill.isEmpty ) ||(bill==BillType.outBill && billViewModel.productsOutBill.isEmpty)
                                             ? false
                                             : true,
                                         decoration: InputDecoration(
@@ -1067,9 +1138,24 @@ class _BillTabState extends State<BillTab> {
                           child: ElevatedButton(
                               onPressed: () async {
                                 if (bill == BillType.outBill) {
-                                  Navigator.pushNamed(
-                                      context, AddBillScreen.routeName);
-                                } else if (bill == BillType.inBill) {
+                                  final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AddBillScreen(),
+
+                                    ),
+                                  );
+                                  if (result is List<ProductEntity>) {
+                                    setState(() {
+                                      productsInBill = result;
+                                      print(productsInBill);
+                                      billViewModel
+                                          .addProductToBill(productsInBill,bill!);
+                                    });
+                                  }
+                                }
+
+                                else if (bill == BillType.inBill) {
                                   // Navigator.pushNamed(context, AddProductScreen.routeName,arguments:"bill");
                                   final result = await Navigator.push(
                                     context,
@@ -1084,7 +1170,7 @@ class _BillTabState extends State<BillTab> {
                                       productsInBill = result;
                                       print(productsInBill);
                                       billViewModel
-                                          .addProductToBill(productsInBill);
+                                          .addProductToBill(productsInBill,bill!);
                                     });
                                   }
                                 }
@@ -1123,63 +1209,111 @@ class _BillTabState extends State<BillTab> {
                           flex: 2,
                           child: ElevatedButton(
                               onPressed: () {
-                                var bill = BillEntity(
-                                    id: "",
-                                    remain: billViewModel.remain,
-                                    paid: double.tryParse(billViewModel.paidController.text)??0,
-                                    supplierName: this.bill == BillType.inBill
-                                        ? supplier!
-                                        : "",
-                                    customerName: this.bill == BillType.inBill
-                                        ? ""
-                                        : customer!,
-                                    billType: this.bill ?? BillType.inBill,
-                                    paymentMethod: paymentMethod,
-                                    retailOrWholesale: selectedIndex == 0
-                                        ? "Retail"
-                                        : "Wholesale",
-                                    products: billViewModel.productsInBill,
-                                    discountBill: double.tryParse(billViewModel.discountTotalBill.text)??0,
-                                    totalBill: billViewModel.totalBill,
-                                    date: DateFormat('yyyy-MM-dd HH:mm:ss')
-                                        .format(DateTime.now()),
-                                    userId:
-                                        FirebaseAuth.instance.currentUser!.uid);
-                                final currentUser = FirebaseAuth.instance.currentUser;
+                                if(bill==BillType.inBill){
+                                  var bill = BillEntity(
+                                      id: "",
+                                      remain: billViewModel.remain,
+                                      paid: double.tryParse(billViewModel.paidController.text)??0,
+                                      supplierName: this.bill == BillType.inBill
+                                          ? supplier!
+                                          : "",
+                                      customerName: this.bill == BillType.inBill
+                                          ? ""
+                                          : customer!,
+                                      billType: this.bill ?? BillType.inBill,
+                                      paymentMethod: paymentMethod,
+                                      retailOrWholesale: selectedIndex == 0
+                                          ? "Retail"
+                                          : "Wholesale",
+                                      products: billViewModel.productsInBill,
+                                      discountBill: double.tryParse(billViewModel.discountTotalBill.text)??0,
+                                      totalBill: billViewModel.totalBill,
+                                      date: DateFormat('yyyy-MM-dd HH:mm:ss')
+                                          .format(DateTime.now()),
+                                      userId:
+                                      FirebaseAuth.instance.currentUser!.uid);
 
-                                if (currentUser != null) {
-                                  billViewModel.homeTabViewModel.getBalance(currentUser.uid);
-                                }
-                                print(billViewModel.homeTabViewModel.myBalance);
-                                if(billViewModel.homeTabViewModel.myBalance!=0){
-                                  if (supplier != null &&
-                                      billViewModel.productsInBill.isNotEmpty) {
-                                    billViewModel.addBill(bill);
-                                    billViewModel.newBalance=billViewModel.homeTabViewModel.myBalance-double.parse(billViewModel.paidController.text);
+                                  print(billViewModel.homeTabViewModel.myBalance);
+                                  if(billViewModel.homeTabViewModel.myBalance!=0){
+                                    if (supplier != null &&
+                                        billViewModel.productsInBill.isNotEmpty) {
+                                      billViewModel.addBill(bill);
+                                      billViewModel.newBalance=billViewModel.homeTabViewModel.myBalance-double.parse(billViewModel.paidController.text);
 
-                                    billViewModel.homeTabViewModel.updateBalance(currentUser!.uid, billViewModel.newBalance);
-                                    for (int i = 0;
-                                    i < billViewModel.productsInBill.length;
-                                    i++) {
-                                      billViewModel.addProductViewModel
-                                          .addProduct(productsInBill[i]);
+                                      billViewModel.homeTabViewModel.updateBalance(FirebaseAuth.instance.currentUser!.uid, billViewModel.newBalance);
+                                      for (int i = 0;
+                                      i < billViewModel.productsInBill.length;
+                                      i++) {
+                                        billViewModel.addProductViewModel
+                                            .addProduct(productsInBill[i]);
 
+                                      }
+                                    } else {
+                                      print("enter supplier or products");
+                                      SnackBar(
+                                        content: Text(
+                                          "enter supplier or products",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium!
+                                              .copyWith(
+                                              color: AppColors.darkPrimaryColor,
+                                              fontSize: 20.sp),
+                                        ),
+                                      );
                                     }
-                                  } else {
-                                    print("enter supplier or products");
-                                    SnackBar(
-                                      content: Text(
-                                        "enter supplier or products",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium!
-                                            .copyWith(
-                                            color: AppColors.darkPrimaryColor,
-                                            fontSize: 20.sp),
-                                      ),
-                                    );
                                   }
                                 }
+                                else if(bill==BillType.outBill){
+                                  var bill = BillEntity(
+                                      id: "",
+                                      remain: billViewModel.remain,
+                                      paid: double.tryParse(billViewModel.paidController.text)??0,
+                                      supplierName: this.bill == BillType.inBill
+                                          ? supplier!
+                                          : "",
+                                      customerName: this.bill == BillType.inBill
+                                          ? ""
+                                          : customer!,
+                                      billType: this.bill ?? BillType.inBill,
+                                      paymentMethod: paymentMethod,
+                                      retailOrWholesale: selectedIndex == 0
+                                          ? "Retail"
+                                          : "Wholesale",
+                                      products: billViewModel.productsOutBill,
+                                      discountBill: double.tryParse(billViewModel.discountTotalBill.text)??0,
+                                      totalBill: billViewModel.totalBill,
+                                      date: DateFormat('yyyy-MM-dd HH:mm:ss')
+                                          .format(DateTime.now()),
+                                      userId:
+                                      FirebaseAuth.instance.currentUser!.uid);
+
+                                  print(billViewModel.homeTabViewModel.myBalance);
+                                  if(billViewModel.homeTabViewModel.myBalance!=0){
+                                    if (customer != null &&
+                                        billViewModel.productsOutBill.isNotEmpty) {
+                                      billViewModel.addBill(bill);
+                                      billViewModel.newBalance=billViewModel.homeTabViewModel.myBalance+double.parse(billViewModel.paidController.text);
+
+                                      billViewModel.homeTabViewModel.updateBalance(FirebaseAuth.instance.currentUser!.uid, billViewModel.newBalance);
+
+                                    } else {
+                                      print("enter supplier or products");
+                                      SnackBar(
+                                        content: Text(
+                                          "enter supplier or products",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium!
+                                              .copyWith(
+                                              color: AppColors.darkPrimaryColor,
+                                              fontSize: 20.sp),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                }
+
 
                               },
                               style: ButtonStyle(

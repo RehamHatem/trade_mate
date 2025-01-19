@@ -464,16 +464,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                   ),
                                 ),
 
-
-                                // Expanded(
-                                //     child: AddProductTextField(
-                                //       controller: totalPriceController,
-                                //       fieldName: "Total",
-                                //       isEnabled: false,
-                                //       hintText:
-                                //       // "${viewModel.total.toStringAsFixed(2)} "
-                                //           "EGP",
-                                //     )),
                               ],
                             ):
                             SizedBox.shrink(),
