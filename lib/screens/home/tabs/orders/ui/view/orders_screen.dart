@@ -244,7 +244,9 @@ OrdersViewModel ordersViewModel=OrdersViewModel(ordersUseCases: injectOrdersUseC
                                 },
                               );
                             },
-                            child: OrderItem(billEntity:orders[index] ,),
+                            child: OrderItem(billEntity:orders[index] ,delete: (p0) {
+                              ordersViewModel.deleteOrder(p0);
+                            },),
                           );
                         },
                         separatorBuilder: (_, __) => SizedBox(height: 1.h),

@@ -5,8 +5,9 @@ import 'package:trade_mate/screens/home/tabs/bill/domain/entity/bill_entity.dart
 import '../../../../../../utils/app_colors.dart';
 
 class OrderItem extends StatelessWidget {
-   OrderItem({super.key,required this.billEntity});
+   OrderItem({super.key,required this.billEntity,required this.delete});
   BillEntity billEntity;
+   void Function(String) delete;
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +24,8 @@ class OrderItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(8.r),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
+
         children: [
           Expanded(
             child: Column(
@@ -140,31 +141,124 @@ class OrderItem extends StatelessWidget {
               ],
             ),
           ),
-          Container(
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              SizedBox(height: 50.h,),
+              Container(
 
-            padding: EdgeInsets.only(right: 15.h,left: 15.h),
-            margin: EdgeInsets.only(right: 5.h,left: 5.h),
-            height: 30.h,
-            width: 100.w,
+                padding: EdgeInsets.only(right: 15.h,left: 15.h),
+                margin: EdgeInsets.only(right: 5.h,left: 5.h),
+                height: 30.h,
+                width: 100.w,
 
-            decoration: BoxDecoration(
-                color: AppColors.lightGreyColor,
-                borderRadius: BorderRadius.circular(5.r)
-            ),
-            child: Text(
-              billEntity.paymentMethod,
-              textAlign: TextAlign.center,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium!
-                  .copyWith(
-                fontSize: 25.sp,
-                color:
-                AppColors.primaryColor,
+                decoration: BoxDecoration(
+                    color: AppColors.lightGreyColor,
+                    borderRadius: BorderRadius.circular(5.r)
+                ),
+                child: Text(
+                  billEntity.paymentMethod,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(
+                    fontSize: 25.sp,
+                    color:
+                    AppColors.primaryColor,
 
 
+                  ),
+                ),
               ),
-            ),
+              SizedBox(height: 50.h,),
+              IconButton(onPressed: () {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) {
+                    return AlertDialog(
+                      actions: [
+                        Row(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                "Cancel",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                  fontSize: 16.sp,
+                                  color: AppColors.whiteColor,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              style: ButtonStyle(
+                                  backgroundColor: WidgetStatePropertyAll(
+                                      AppColors.primaryColor),
+                                  shape: WidgetStatePropertyAll(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15.r),
+                                      ))),
+                            ),
+                            Spacer(),
+                            ElevatedButton(
+                              onPressed: () {
+                                delete(billEntity.id);
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                "Delete",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(
+                                  fontSize: 16.sp,
+                                  color: AppColors.whiteColor,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                  WidgetStatePropertyAll(AppColors.redColor),
+                                  shape: WidgetStatePropertyAll(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15.r),
+                                      ))),
+                            ),
+                          ],
+                        )
+                      ],
+                      backgroundColor: AppColors.lightGreyColor,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.r),
+                          side: BorderSide(color: AppColors.primaryColor)),
+                      alignment: Alignment.center,
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            height: 10.h,
+                          ),
+                          Text(
+                            "Do you want to delete ${billEntity.supplierName==""?billEntity.customerName:billEntity.supplierName}?",
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(color: AppColors.primaryColor),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+
+              }, icon: Icon(Icons.delete,color: AppColors.redColor,))
+            ],
           ),
         ],
       ),
