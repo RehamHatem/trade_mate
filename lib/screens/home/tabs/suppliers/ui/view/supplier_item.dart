@@ -24,11 +24,11 @@ class SupplierItem extends StatelessWidget {
           width: double.infinity,
           height: 110.h,
           margin:
-              EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h, bottom: 10.h),
+              EdgeInsets.only(left: 10.w, right: 10.w, top: 10.h, bottom: 2.h),
           padding: EdgeInsets.only(left: 20.w),
           decoration: BoxDecoration(
             color: AppColors.whiteColor,
-            borderRadius: BorderRadius.circular(15.r),
+            borderRadius: BorderRadius.circular(10.r),
           ),
           child: Row(
             children: [
@@ -77,9 +77,7 @@ class SupplierItem extends StatelessWidget {
                           fontSize: 22.sp,
                           overflow: TextOverflow.ellipsis),
                     ),
-                    SizedBox(
-                      height: 2.h,
-                    ),
+
                     Row(
                       children: [
                         Text(
@@ -117,8 +115,8 @@ class SupplierItem extends StatelessWidget {
           ),
         ),
         Positioned(
-          bottom: 80.h,
-          left: 340.w,
+          bottom: 72.h,
+          left: 361.w,
           child: IconButton(
 
             onPressed: () {

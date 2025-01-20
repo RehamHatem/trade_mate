@@ -7,6 +7,13 @@ import '../../../suppliers/data/model/supplier_model.dart';
 import '../model/bill_model.dart';
 
 class BillData{
+  Future<void> addBill(BillModel bill) async{
+    var collection = getBillsCollection();
+    var docRef = collection.doc();
+    bill.id = docRef.id;
+    print("Generated Bill ID: ${bill.id}");
+    return await docRef.set(bill);
+  }
   CollectionReference<BillModel> getBillsCollection() {
     return FirebaseFirestore.instance
         .collection("Bills")
@@ -20,56 +27,7 @@ class BillData{
     );
   }
 
-  Stream<Either<Failures, QuerySnapshot<BillModel>>> getBills() {
-    try {
-      final customersStream = FirebaseFirestore.instance
-          .collection("Bills")
-          .withConverter<BillModel>(
-        fromFirestore: (snapshot, _) => BillModel.fromJson(snapshot.data()!),
-        toFirestore: (bill, _) => bill.toJson(),
-      )
-          .where("userId", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
-          .orderBy("date")
-          .snapshots();
-      return customersStream.map<Either<Failures, QuerySnapshot<BillModel>>>(
-            (snapshot) => right(snapshot),
-      ).handleError(
-            (error) {
-          return left(Failures(errorMsg: error.toString()));
-        },
-      );
-    } catch (e) {
-      return Stream.value(left(Failures(errorMsg: e.toString())));
-    }
-  }
-  Future<void> addBill(BillModel bill) async{
-    var collection = getBillsCollection();
-    var docRef = collection.doc();
-    bill.id = docRef.id;
-    print("Generated Bill ID: ${bill.id}");
-    return await docRef.set(bill);
-  }
-  Future<void> deleteBill(String id) {
-
-    try {
-      print("Bill deleted successfully!");
-      return getBillsCollection().doc(id).delete();
-
-    } catch (e) {
-      print("Error deleting bill: $e");
-      throw Exception("Failed to update bill: ${e.toString()}");
-    }
 
 
-  }
 
-  Future<void> updateBill(String id, BillModel bill) async {
-    try {
-      await getBillsCollection().doc(id).update(bill.toJson());
-      print("bill updated successfully!");
-    } catch (e) {
-      print("Error updating bill: $e");
-      throw Exception("Failed to update bill: ${e.toString()}");
-    }
-  }
 }

@@ -17,20 +17,7 @@ class BillRepoImpl implements BillRepository{
       return left(Failures(errorMsg: e.toString()));
     }
   }
-  @override
-  Future<void> deleteBill(String id) {
-    return billDataSource.deleteBill(id);
-  }
 
-  @override
-  Stream<Either<Failures, List<BillEntity>>> getBills() {
-    return billDataSource.getBills();
-  }
-
-  @override
-  Future<void> updateBill(String id, BillEntity bill) {
-    return billDataSource.updateBill(id, bill);
-  }
 
 
 }

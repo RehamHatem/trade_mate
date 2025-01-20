@@ -116,7 +116,7 @@ class CustomersScreen extends StatelessWidget {
                   }
                   final customers = snapshot.data!;
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: ListView.separated(
                       itemBuilder: (context, index) {
                         return InkWell(
