@@ -9,6 +9,10 @@ import 'package:trade_mate/screens/home/tabs/stock/ui/view_model/stock_view_mode
 
 import '../../../../../../utils/app_colors.dart';
 import '../../../../../widgets/add_product_text_field.dart';
+import '../../../categories/domain/category_di.dart';
+import '../../../categories/domain/entity/category_entity.dart';
+import '../../../categories/ui/view_model/categories_states.dart';
+import '../../../categories/ui/view_model/categories_view_model.dart';
 import '../../../suppliers/ui/view/add_supplier_screen.dart';
 import '../../../suppliers/ui/view_model/supplier_states.dart';
 
@@ -41,6 +45,8 @@ class _EditProductState extends State<EditProduct> {
   TextEditingController productPrice = TextEditingController();
 
   TextEditingController productNotes = TextEditingController();
+  List<CategoryEntity>categories=[];
+  CategoriesViewModel categoriesViewModel=CategoriesViewModel(categoryUseCases: injectCategoryUseCases());
 
   double total = 0.0;
   void initState() {
@@ -56,6 +62,7 @@ class _EditProductState extends State<EditProduct> {
     productQuantity.addListener(calculateTotal);
     productPrice.addListener(calculateTotal);
     stockViewModel.supplierViewModel.getSuppliers();
+    categoriesViewModel.getCategorys();
 
   }
    DateTime selectedDate=DateTime.now();
@@ -152,28 +159,65 @@ class _EditProductState extends State<EditProduct> {
           SizedBox(
             height: 10.h,
           ),
-          AddProductTextField(
-            fieldName: "Category",
-            hintText: "select category",
-            isEnabled: true,
-            isDropdown: true,
-            controller: productCat,
-            dropdownValue:productCat.text=="N/A"?null: productCat.text,
-            validator: (value) {
-              if (value == null || productCat.text.isEmpty ) {
+          BlocBuilder(
+            bloc:categoriesViewModel,
+            builder: (context, state) {
+              if (state is GetCategorySuccessState){
 
-                productCat.text = value ?? "";
-                return ("please select a category");
+                categories=state.entity;
+
+                if(categories.isNotEmpty){
+                  return AddProductTextField(
+                    fieldName: "Category",
+                    hintText: productCat.text,
+                    isEnabled: true,
+                    isDropdown: true,
+                    controller: productCat,
+                    validator: (value) {
+                      if(value==null|| productCat.text.isEmpty ){
+                        productCat.text = value ?? "";
+                        return("please select a category");
+                      }
+
+                    },
+                    dropdownItems: categories.map((category) => category.name,).toList(),
+                    onChanged: (value) {
+                      productCat.text = value ?? "";
+                      print("Selected Category: $value");
+                    },
+                  );
+
+                }else{
+                  return InkWell(
+                    onTap: () {
+                      // Navigator.pushNamed(context, CategoryScreen.routeName);
+                    },
+                    child: Expanded(
+                      flex: 2,
+                      child: AddProductTextField(
+                        controller: productCat,
+                        fieldName: "Category",
+                        hintText: "enter category",
+
+                        validator: (value) {
+                          if(value==null|| productCat.text.isEmpty ){
+                            productCat.text = value ?? "";
+                            return("please select a category");
+                          }
+
+                        },
+                        isEnabled: false,
+                      ),
+                    ),
+                  );
+                }
+
               }
-              return null;
+              return SizedBox.shrink();
             },
-            dropdownItems: ["cat1", "cat2", "cat3", "cat4", "cat5"],
-            onChanged: (value) {
-              productCat.text = value ?? "";
-              print("Selected Category: $value");
-            },
-        // dropdownValue: "cat1",
+
           ),
+
           SizedBox(
             height: 10.h,
           ),
@@ -187,7 +231,7 @@ class _EditProductState extends State<EditProduct> {
                 if(stockViewModel.suppliers.isNotEmpty){
                   return AddProductTextField(
                     fieldName: "Supplier",
-                    hintText: "select supplier",
+                    hintText: productSup.text,
                     isEnabled: true,
                     isDropdown: true,
                     controller: productSup,

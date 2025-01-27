@@ -18,6 +18,7 @@ import '../../../../../widgets/add_product_text_field.dart';
 import '../../../../../widgets/container_icon_txt.dart';
 import '../../../bill/ui/view/add_bill_screen.dart';
 import '../../../bill/ui/view/bill_screen.dart';
+import '../../../categories/ui/view/category_screen.dart';
 import '../../../cutomers/ui/view/customers_screen.dart';
 import '../../../stock/ui/view/stock_screen.dart';
 import '../../domain/home_tab_di.dart';
@@ -39,7 +40,7 @@ HomeTabViewModel homeTabViewModel=HomeTabViewModel(homeTabUseCases: injectHomeTa
       child: SafeArea(
         child: Column(
           children: [
-             SizedBox(height: 80.h,),
+             SizedBox(height: 60.h,),
 
             InkWell(
               onTap: () {
@@ -385,6 +386,9 @@ homeTabViewModel.getBalance(currentUser.uid);
                 InkWell(onTap: () {
                   Navigator.pushNamed(context, OrdersScreen.routeName);
                 },child: ContainerIconTxt(txt: 'Orders ', icn: Icon(Icons.fact_check_outlined,color: AppColors.primaryColor,size: 25.sp,))),
+                InkWell(onTap: () {
+                  Navigator.pushNamed(context, CategoryScreen.routeName);
+                },child: ContainerIconTxt(txt: 'Categories ', icn: Icon(Icons.category,color: AppColors.primaryColor,size: 25.sp,))),
 
               ],
             ),

@@ -7,6 +7,8 @@ import 'package:trade_mate/screens/home/home.dart';
 import 'package:trade_mate/screens/home/tabs/add_product/domain/entity/product_entity.dart';
 import 'package:trade_mate/screens/home/tabs/add_product/ui/view_model/add_product_states.dart';
 import 'package:trade_mate/screens/home/tabs/bill/ui/view_model/bill_view_model.dart';
+import 'package:trade_mate/screens/home/tabs/categories/domain/entity/category_entity.dart';
+import 'package:trade_mate/screens/home/tabs/categories/ui/view/category_screen.dart';
 import 'package:trade_mate/screens/home/tabs/home_tab/ui/view/home_tab.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/domain/supplier_di.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/add_supplier_screen.dart';
@@ -18,6 +20,7 @@ import '../../../../../../utils/dialog_utils.dart';
 import '../../../../../../utils/text_field_item.dart';
 import '../../../../../widgets/add_product_text_field.dart';
 import '../../../bill/domain/bill_di.dart';
+import '../../../categories/ui/view_model/categories_states.dart';
 import '../../../suppliers/domain/entity/supplier_entity.dart';
 import '../../domain/add_product_di.dart';
 import '../view_model/add_product_view_model.dart';
@@ -48,6 +51,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     viewModel.productTotal.addListener(calculateTotalAfterDiscount);
     viewModel.discountController.addListener(calculateTotalAfterDiscount);
     viewModel.supplierViewModel.getSuppliers();
+    viewModel.categoriesViewModel.getCategorys();
 
 
   }
@@ -105,10 +109,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
   @override
   Widget build(BuildContext context) {
     var  bill= ModalRoute.of(context)!.settings.arguments;
-    print(bill);
+    if(bill is CategoryEntity)viewModel.productCat.text==bill.name;
 
     return BlocListener<AddProductViewModel, AddProductStates>(
-          bloc: viewModel..supplierViewModel.suppliers,
+          bloc: viewModel..supplierViewModel.suppliers..categoriesViewModel.categories,
           listener: (context, state) {
             if (state is AddProductLoadingState){
               return DialogUtils.showLoading(context, "Loading...");
@@ -250,26 +254,107 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   SizedBox(
                     width: 5.w,
                   ),
+                  bill is CategoryEntity?
 
                   Expanded(
+
                     child: AddProductTextField(
-                      hintText: "Category",
-                      isEnabled: true,
+                      hintText: bill.name,
+                      isEnabled: false,
 
                       controller: viewModel.productCat,
                       validator: (value) {
                         if(value==null|| viewModel.productCat.text.isEmpty){
-                          viewModel.productCat.text = value ?? "";
+                          viewModel.productCat.text =  bill.name;
                           return("please select a category");
                         }
                         return null;
                       },
                       onChanged: (value) {
-                        viewModel.productCat.text = value ?? "";
+                        viewModel.productCat.text = value ?? bill.name;
                         print("Selected Category: $value");
                       },
                     ),
+                  ):
+                  Expanded(
+                    child: BlocBuilder(
+                      bloc: viewModel.categoriesViewModel,
+                      builder: (context, state) {
+                        if (state is GetCategorySuccessState){
+                    
+                          viewModel.categories=state.entity;
+                    
+                          if(viewModel.categories.isNotEmpty){
+                            return AddProductTextField(
+                              // fieldName: "Category",
+                              hintText: "select category",
+                              isEnabled: true,
+                              isDropdown: true,
+                              controller: viewModel.productCat,
+                              validator: (value) {
+                                if(value==null|| viewModel.productCat.text.isEmpty ){
+                                  viewModel.productCat.text = value ?? "";
+                                  return("please select a category");
+                                }
+                    
+                              },
+                              dropdownItems: viewModel.categories.map((category) => category.name,).toList(),
+                              onChanged: (value) {
+                                viewModel.productCat.text = value ?? "";
+                                print("Selected Category: $value");
+                              },
+                            );
+                    
+                          }else{
+                            return InkWell(
+                              onTap: () {
+                                Navigator.pushNamed(context, CategoryScreen.routeName);
+                              },
+                              child: Expanded(
+                                flex: 2,
+                                child: AddProductTextField(
+                                  controller: viewModel.productCat,
+                                  fieldName: "Category",
+                                  hintText: "enter category",
+                    
+                                  validator: (value) {
+                                    if(value==null|| viewModel.productCat.text.isEmpty ){
+                                      viewModel.productCat.text = value ?? "";
+                                      return("please select a category");
+                                    }
+                    
+                                  },
+                                  isEnabled: false,
+                                ),
+                              ),
+                            );
+                          }
+                    
+                          print(viewModel.suppliers);
+                        }
+                        return SizedBox.shrink();
+                      },
+                    
+                    ),
                   ),
+                  // SizedBox(width: 5.w,),
+                  // InkWell(
+                  //   onTap: () {
+                  //     Navigator.pushNamed(
+                  //         context,
+                  //         CategoryScreen
+                  //             .routeName);
+                  //   },
+                  //   child: Padding(
+                  //     padding:
+                  //     EdgeInsets.only(left: 3.w),
+                  //     child: Icon(
+                  //       Icons.add_circle,
+                  //       color: AppColors.primaryColor,
+                  //       size: 25.sp,
+                  //     ),
+                  //   ),
+                  // )
 
                 ],
               ),
@@ -598,7 +683,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           print("Product Price: ${viewModel.productPrice.text}");
                           print("Product Category: ${viewModel.productCat.text}");
                           print("Product Supplier: ${viewModel.productSup.text}");
+
+
+
                           if (viewModel.formKey.currentState!.validate()){
+                            if(bill is CategoryEntity){
+                              viewModel.productCat.text==bill.name;
+                            }
                             ProductEntity product=ProductEntity(name: viewModel.productName.text,
                                 quantity: double.tryParse(viewModel.productQuantity.text)??0.0,
                                 quantityType: viewModel.productQuantityType.text,
@@ -609,7 +700,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                                 discountType: viewModel.discountTypeController.text??"%",
                                 notes: viewModel.productNotes.text==""?"N/A":viewModel.productNotes.text,
                                 supplier: viewModel.productSup.text==""?"N/A":viewModel.productSup.text,
-                                category: viewModel.productCat.text==""?"N/A":viewModel.productCat.text,
+                                category:bill is CategoryEntity?bill.name: viewModel.productCat.text==""?"N/A":viewModel.productCat.text,
                                 date: DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
                                 userId: FirebaseAuth.instance.currentUser!.uid);
                             viewModel.addProduct(product);

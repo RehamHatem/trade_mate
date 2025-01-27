@@ -5,6 +5,9 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:trade_mate/screens/home/tabs/add_product/domain/entity/product_entity.dart';
+import 'package:trade_mate/screens/home/tabs/categories/domain/category_di.dart';
+import 'package:trade_mate/screens/home/tabs/categories/domain/entity/category_entity.dart';
+import 'package:trade_mate/screens/home/tabs/categories/ui/view_model/categories_view_model.dart';
 import 'package:trade_mate/screens/home/tabs/stock/domain/use_case/stock_use_cases.dart';
 import 'package:trade_mate/screens/home/tabs/stock/ui/view_model/stock_states.dart';
 
@@ -19,6 +22,7 @@ class StockViewModel extends Cubit<StockStates>{
   var search= TextEditingController();
    StreamController<List<ProductEntity>> productStreamController = StreamController.broadcast();
   List<SupplierEntity>suppliers=[];
+
   SupplierViewModel supplierViewModel=SupplierViewModel(supplierUseCases: injectSupplierUseCases());
 
   void getProducts() async {

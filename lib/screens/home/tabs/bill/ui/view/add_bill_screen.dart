@@ -158,7 +158,7 @@ class _AddBillScreenState extends State<AddBillScreen> {
                   Expanded(
                     child: AddProductTextField(
                       hintText: "Category",
-                      isEnabled: billViewModel.selectedProduct==null?false:true,
+                      isEnabled: false,
 
                       controller:billViewModel.categoryController ,
                       validator: (value) {

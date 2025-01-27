@@ -17,7 +17,8 @@ class SupplierItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return
+      Stack(
       alignment: Alignment.topRight,
       children: [
         Container(

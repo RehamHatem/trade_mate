@@ -25,7 +25,6 @@ class SupplierDataSourceImpl implements SupplierDataSource{
             (failure) => left(failure),
             (snapshot) {
           try {
-            // Convert Firestore ProductModel to ProductEntity
             final entityList = snapshot.docs.map((doc) {
               final model = doc.data();
               return SupplierEntity(

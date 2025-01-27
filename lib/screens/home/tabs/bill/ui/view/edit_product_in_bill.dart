@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trade_mate/screens/home/tabs/add_product/domain/entity/product_entity.dart';
+import 'package:trade_mate/screens/home/tabs/categories/domain/category_di.dart';
+import 'package:trade_mate/screens/home/tabs/categories/ui/view_model/categories_view_model.dart';
 
 import '../../../../../../utils/app_colors.dart';
 import '../../../../../widgets/add_product_text_field.dart';
+import '../../../categories/domain/entity/category_entity.dart';
+import '../../../categories/ui/view/category_screen.dart';
+import '../../../categories/ui/view_model/categories_states.dart';
 
 class EditProductInBill extends StatefulWidget {
   EditProductInBill(
@@ -42,6 +48,8 @@ class _EditProductInBillState extends State<EditProductInBill> {
 
   double total = 0.0;
   double totalAfterDiscount = 0.0;
+  CategoriesViewModel categoriesViewModel=CategoriesViewModel(categoryUseCases: injectCategoryUseCases());
+  List<CategoryEntity>categories=[];
   void initState() {
     super.initState();
     productName.text = widget.productEntity.name;
@@ -59,6 +67,7 @@ class _EditProductInBillState extends State<EditProductInBill> {
     productPrice.addListener(calculateTotal);
     discountController.addListener(calculateTotalAfterDiscount);
     productTotal.addListener(calculateTotalAfterDiscount);
+    categoriesViewModel.getCategorys();
 
 
 
@@ -139,23 +148,84 @@ class _EditProductInBillState extends State<EditProductInBill> {
                           width: 5.w,
                         ),
                         Expanded(
-                          child: AddProductTextField(
-                            hintText: "Category",
-                            isEnabled: true,
-                            controller: productCat,
-                            validator: (value) {
-                              if (value == null || productCat.text.isEmpty) {
-                                productCat.text = value ?? "";
-                                return ("please select a category");
+                          child: BlocBuilder(
+                            bloc: categoriesViewModel,
+                            builder: (context, state) {
+                              if (state is GetCategorySuccessState){
+
+                                categories=state.entity;
+
+                                if(categories.isNotEmpty){
+                                  return AddProductTextField(
+                                    // fieldName: "Category",
+                                    hintText: "select category",
+                                    isEnabled: true,
+                                    isDropdown: true,
+                                    controller: productCat,
+
+                                    validator: (value) {
+                                      if(value==null|| productCat.text.isEmpty ){
+                                        productCat.text = value ?? "";
+                                        return("please select a category");
+                                      }
+
+                                    },
+                                    dropdownItems: categories.map((category) => category.name,).toList(),
+                                    onChanged: (value) {
+                                     productCat.text = value ?? "";
+                                      print("Selected Category: $value");
+                                    },
+                                  );
+
+                                }else{
+                                  return InkWell(
+                                    onTap: () {
+                                      Navigator.pushNamed(context, CategoryScreen.routeName);
+                                    },
+                                    child: Expanded(
+                                      flex: 2,
+                                      child: AddProductTextField(
+                                        controller: productCat,
+                                        fieldName: "Category",
+                                        hintText: "enter category",
+
+                                        validator: (value) {
+                                          if(value==null|| productCat.text.isEmpty ){
+                                            productCat.text = value ?? "";
+                                            return("please select a category");
+                                          }
+
+                                        },
+                                        isEnabled: false,
+                                      ),
+                                    ),
+                                  );
+                                }
+
                               }
-                              return null;
+                              return SizedBox.shrink();
                             },
-                            onChanged: (value) {
-                              productCat.text = value ?? "";
-                              print("Selected Category: $value");
-                            },
+
                           ),
                         ),
+                        // Expanded(
+                        //   child: AddProductTextField(
+                        //     hintText: "Category",
+                        //     isEnabled: true,
+                        //     controller: productCat,
+                        //     validator: (value) {
+                        //       if (value == null || productCat.text.isEmpty) {
+                        //         productCat.text = value ?? "";
+                        //         return ("please select a category");
+                        //       }
+                        //       return null;
+                        //     },
+                        //     onChanged: (value) {
+                        //       productCat.text = value ?? "";
+                        //       print("Selected Category: $value");
+                        //     },
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),

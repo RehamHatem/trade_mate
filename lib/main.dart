@@ -11,6 +11,8 @@ import 'package:trade_mate/screens/home/home.dart';
 import 'package:trade_mate/screens/home/tabs/add_product/ui/view/add_product_screen.dart';
 import 'package:trade_mate/screens/home/tabs/bill/ui/view/add_bill_screen.dart';
 import 'package:trade_mate/screens/home/tabs/bill/ui/view/bill_screen.dart';
+import 'package:trade_mate/screens/home/tabs/categories/ui/view/category_products.dart';
+import 'package:trade_mate/screens/home/tabs/categories/ui/view/category_screen.dart';
 import 'package:trade_mate/screens/home/tabs/cutomers/ui/view/add_customer_screen.dart';
 import 'package:trade_mate/screens/home/tabs/cutomers/ui/view/customers_screen.dart';
 import 'package:trade_mate/screens/home/tabs/orders/ui/view/orders_screen.dart';
@@ -63,6 +65,8 @@ class MyApp extends StatelessWidget {
           AddCustomerScreen.routeName:(context)=>AddCustomerScreen(),
           AddBillScreen.routeName:(context)=>AddBillScreen(),
           BillScreen.routeName:(context)=>BillScreen(),
+          CategoryScreen.routeName:(context)=>CategoryScreen(),
+          CategoryProducts.routeName:(context)=>CategoryProducts(),
 
         },
       ),
