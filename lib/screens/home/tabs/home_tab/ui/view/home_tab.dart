@@ -332,7 +332,7 @@ homeTabViewModel.getBalance(currentUser.uid);
 
                     },
                     child: Padding(
-                      padding: EdgeInsets.only(left: 15.w,right: 10.w),
+                      padding: EdgeInsets.only(left: 10.w,right: 10.w),
                       child: Row(
                         children: [
                           Image.asset("assets/images/mony_preview_rev_1.png",),
@@ -341,7 +341,7 @@ homeTabViewModel.getBalance(currentUser.uid);
                             style: Theme.of(context)
                                 .textTheme
                                 .titleLarge!
-                                .copyWith(color: AppColors.coffeColor),
+                                .copyWith(fontSize:25.sp,color: AppColors.coffeColor),
                           ),
                           StreamBuilder(
                             stream: homeTabViewModel.balanceee.stream,
@@ -354,7 +354,7 @@ homeTabViewModel.getBalance(currentUser.uid);
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleLarge!
-                                      .copyWith(color: AppColors.coffeColor,overflow: TextOverflow.ellipsis),
+                                      .copyWith(fontSize:25.sp,color: AppColors.coffeColor,overflow: TextOverflow.ellipsis),
                                 ),
                               );
                             },

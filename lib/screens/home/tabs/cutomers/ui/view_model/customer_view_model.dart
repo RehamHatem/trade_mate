@@ -7,6 +7,8 @@ import 'package:trade_mate/screens/home/tabs/suppliers/domain/use_case/supplier_
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view_model/supplier_states.dart';
 
 import '../../../../../../utils/failures.dart';
+import '../../../orders/domain/orders_di.dart';
+import '../../../orders/ui/view_model/orders_view_model.dart';
 import '../../domain/use_case/customer_use_cases.dart';
 import 'customer_states.dart';
 
@@ -32,6 +34,7 @@ class CustomerViewModel extends Cubit<CustomerStates> {
   StreamController<
       List<SupplierEntity>> customerStreamController = StreamController
       .broadcast();
+  OrdersViewModel ordersViewModel=OrdersViewModel(ordersUseCases: injectOrdersUseCases());
 
   void addCustomer(SupplierEntity customer) async {
     emit(AddCustomerLoadingState(load: "Loadin..."));

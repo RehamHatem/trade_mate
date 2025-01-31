@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:trade_mate/screens/home/tabs/orders/domain/orders_di.dart';
+import 'package:trade_mate/screens/home/tabs/orders/ui/view_model/orders_view_model.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/domain/entity/supplier_entity.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/domain/use_case/supplier_use_cases.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view_model/supplier_states.dart';
@@ -25,6 +27,7 @@ class SupplierViewModel extends Cubit<SupplierStates> {
   var supplierNotes = TextEditingController();
   var search = TextEditingController();
   List<SupplierEntity>suppliers = [];
+  OrdersViewModel ordersViewModel=OrdersViewModel(ordersUseCases: injectOrdersUseCases());
 
 
   StreamController<
@@ -123,6 +126,7 @@ class SupplierViewModel extends Cubit<SupplierStates> {
         print("view model update product error");
       }
     }
+
 
 }
 

@@ -14,11 +14,13 @@ import 'package:trade_mate/screens/home/tabs/bill/ui/view/bill_screen.dart';
 import 'package:trade_mate/screens/home/tabs/categories/ui/view/category_products.dart';
 import 'package:trade_mate/screens/home/tabs/categories/ui/view/category_screen.dart';
 import 'package:trade_mate/screens/home/tabs/cutomers/ui/view/add_customer_screen.dart';
+import 'package:trade_mate/screens/home/tabs/cutomers/ui/view/customer_history_details.dart';
 import 'package:trade_mate/screens/home/tabs/cutomers/ui/view/customers_screen.dart';
 import 'package:trade_mate/screens/home/tabs/orders/ui/view/orders_screen.dart';
 import 'package:trade_mate/screens/home/tabs/stock/ui/view/stock_screen.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/add_supplier_screen.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/suplliers_screen.dart';
+import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/supplier_history_details.dart';
 import 'package:trade_mate/screens/widgets/splash.dart';
 import 'package:trade_mate/utils/app_theme.dart';
 import 'package:trade_mate/utils/bloc_observer.dart';
@@ -67,6 +69,8 @@ class MyApp extends StatelessWidget {
           BillScreen.routeName:(context)=>BillScreen(),
           CategoryScreen.routeName:(context)=>CategoryScreen(),
           CategoryProducts.routeName:(context)=>CategoryProducts(),
+          SupplierHistoryDetails.routeName:(context)=>SupplierHistoryDetails(),
+          CustomerHistoryDetails.routeName:(context)=>CustomerHistoryDetails(),
 
         },
       ),

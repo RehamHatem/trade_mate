@@ -14,6 +14,7 @@ import '../../domain/customer_di.dart';
 import '../view_model/customer_states.dart';
 import '../view_model/customer_view_model.dart';
 import 'customer_item.dart';
+import 'customer_view.dart';
 
 class CustomersScreen extends StatelessWidget {
   static const String routeName = "customer";
@@ -55,7 +56,7 @@ class CustomersScreen extends StatelessWidget {
         children: [
           Container(
               width: double.infinity,
-              height: 110.h,
+
               decoration: BoxDecoration(color: AppColors.darkPrimaryColor),
               child: Padding(
                 padding: EdgeInsets.only(
@@ -172,8 +173,8 @@ class CustomersScreen extends StatelessWidget {
                                     ],
                                   ),
                                   alignment: Alignment.center,
-                                  content: SupplierView(
-                                    supplierEntity: customers[index],
+                                  content: CustomerView(
+                                   customerEntity : customers[index],
                                   ),
                                 );
                               },

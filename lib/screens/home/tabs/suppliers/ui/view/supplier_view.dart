@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:trade_mate/screens/home/tabs/suppliers/domain/entity/supplier_entity.dart';
+import 'package:trade_mate/screens/home/tabs/suppliers/ui/view/supplier_history_details.dart';
 
 import '../../../../../../utils/app_colors.dart';
 
@@ -100,6 +101,34 @@ SupplierEntity supplierEntity;
             ),
           ],
         ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, SupplierHistoryDetails.routeName,arguments: supplierEntity);
+
+              },
+              style: ButtonStyle(
+                  padding: WidgetStatePropertyAll(EdgeInsets.only(bottom: 5.h,top: 5.h,right: 15.w,left: 15.w)),
+                  backgroundColor:
+                  WidgetStatePropertyAll(AppColors.darkPrimaryColor),
+                  shape: WidgetStatePropertyAll(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.r)),
+                  )),
+              child: Text(
+                "view more",
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .copyWith(
+                    color: AppColors.whiteColor, fontSize: 20.sp),
+              ),
+            ),
+          ],
+        )
 
 
 

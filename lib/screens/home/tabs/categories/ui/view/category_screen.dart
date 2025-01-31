@@ -48,7 +48,7 @@ CategoriesViewModel categoriesViewModel=CategoriesViewModel(categoryUseCases: in
         children: [
           Container(
               width: double.infinity,
-              height: 110.h,
+
               decoration: BoxDecoration(color: AppColors.darkPrimaryColor),
               child: Padding(
                 padding: EdgeInsets.only(

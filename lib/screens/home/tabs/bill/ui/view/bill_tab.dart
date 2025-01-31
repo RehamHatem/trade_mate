@@ -97,8 +97,8 @@ class _BillTabState extends State<BillTab> {
                               .height,
 
                           padding: EdgeInsets.only(
-                              right: 30.w,
-                              left: 30.w,
+                              right: 25.w,
+                              left: 25.w,
                               top: 16.h,
                               bottom: 16.h),
                           child: Column(
@@ -216,7 +216,7 @@ class _BillTabState extends State<BillTab> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 20.w,
+                                    width: 10.w,
                                   ),
                                   Expanded(
                                     child: ElevatedButton.icon(
@@ -261,6 +261,7 @@ class _BillTabState extends State<BillTab> {
                                               billViewModel.totalInBill=0;
                                               billViewModel.updateTotalBill(bill!);
                                               billViewModel.totalInBillAfterDiscount=0;
+                                              billViewModel.discountTotalInBill.clear();
                                               billViewModel.paidInController.clear();
                                               supplier=null;
                                               selectedIndex=0;
@@ -273,6 +274,8 @@ class _BillTabState extends State<BillTab> {
                                               billViewModel.totalOutBill=0;
                                               billViewModel.totalOutBillAfterDiscount=0;
                                               billViewModel.paidOutController.clear();
+                                              billViewModel.discountTotalOutBill.clear();
+
                                               billViewModel.updateTotalBill(bill!);
                                               customer=null;
                                               selectedIndex=0;

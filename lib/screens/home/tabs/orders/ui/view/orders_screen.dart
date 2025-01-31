@@ -1,3 +1,7 @@
+
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,6 +14,7 @@ import '../../../../../../utils/dialog_utils.dart';
 import '../../../../../../utils/text_field_item.dart';
 import '../../../../home.dart';
 import '../view_model/orders_states.dart';
+import 'bill_view.dart';
 import 'filterd_button.dart';
 import 'order_item.dart';
 
@@ -24,11 +29,50 @@ class OrdersScreen extends StatefulWidget {
 class _OrdersScreenState extends State<OrdersScreen> {
 OrdersViewModel ordersViewModel=OrdersViewModel(ordersUseCases: injectOrdersUseCases());
 
-  String selectedButton = "All";
 
-  @override
+StreamSubscription? unpaidOrdersSubscription;
+StreamSubscription? completedOrdersSubscription;
+
+@override
+void initState() {
+  super.initState();
+  ordersViewModel.getOrders();
+  ordersViewModel.homeTabViewModel.getBalance( FirebaseAuth.instance.currentUser!.uid);
+
+
+  unpaidOrdersSubscription=ordersViewModel.npaidOrderStreamController.stream.listen((bills) {
+    if (mounted) {
+    setState(() {
+      ordersViewModel. notPaidCount = bills.length;
+    });}
+  });
+  completedOrdersSubscription=ordersViewModel.completedOrderStreamController.stream.listen((bills) {
+    if (mounted) {
+      setState(() {
+        ordersViewModel.completedCount = bills.length;
+      });
+    }
+  });
+}
+@override
+void dispose() {
+ordersViewModel.npaidOrderStreamController.close();
+ordersViewModel.completedOrderStreamController.close();
+ordersViewModel.orderStreamController.close();
+
+
+  unpaidOrdersSubscription?.cancel();
+  completedOrdersSubscription?.cancel();
+  super.dispose();
+
+}
+
+
+
+
+@override
   Widget build(BuildContext context) {
-    ordersViewModel.getOrders();
+    // ordersViewModel.getOrders();
     return Scaffold(
       backgroundColor: AppColors.lightGreyColor,
       appBar: AppBar(
@@ -60,22 +104,111 @@ OrdersViewModel ordersViewModel=OrdersViewModel(ordersUseCases: injectOrdersUseC
           children: [
             Container(
                 width: double.infinity,
-                height: 110.h,
+
                 decoration: BoxDecoration(color: AppColors.darkPrimaryColor),
                 child: Padding(
                   padding: EdgeInsets.only(
                     left: 15.w,
                     right: 15.w,
                   ),
-                  child: TextFieldItem(
-                    controller: ordersViewModel.search,
-                    change: (query) {
-                      ordersViewModel.searchOrders(query);
-                    },
-                    hintText: "Search in orders ",
-                    suffixIcon: Icon(
-                      Icons.search,
-                    ),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20.h,),
+                      BlocListener(
+                        bloc: ordersViewModel,
+                        listener: (context, state) {
+
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Container(
+                                padding: EdgeInsets.only(left: 30.w,right: 30.w,bottom: 20.h,top: 20.h),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15.r),
+                                  color: AppColors.whiteColor,
+
+                                ),
+                                child: Column(children: [
+                                  Text(
+                                    "You will give",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                        color: AppColors.redColor,
+                                        fontSize: 16.sp,
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                  Text(
+                                    "EGP ${ordersViewModel.youWillPay.toStringAsFixed(2)}",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge!
+                                        .copyWith(
+                                        color: AppColors.darkPrimaryColor,
+                                        fontSize: 20.sp,
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                ],),
+                              ),
+                            ),
+                            SizedBox(width: 10.w,),
+                            Expanded(
+                              child: Container(
+                                padding: EdgeInsets.only(left: 30.w,right: 30.w,bottom: 20.h,top: 20.h),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15.r),
+                                  color: AppColors.whiteColor,
+
+                                ),
+                                child: Column(children: [
+                                  Text(
+                                    "You will get",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium!
+                                        .copyWith(
+                                        color: AppColors.greenColor,
+                                        fontSize: 16.sp,
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                  Text(
+                                    "EGP ${ordersViewModel.youWillGet.toStringAsFixed(2)}",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleLarge!
+                                        .copyWith(
+                                        color: AppColors.darkPrimaryColor,
+                                        fontSize: 20.sp,
+                                        overflow: TextOverflow.ellipsis),
+                                  ),
+                                ],),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      TextFieldItem(
+                        controller: ordersViewModel.search,
+                        change: (query) {
+                          ordersViewModel.searchOrders(query);
+                        },
+                        hintText: "Search in orders ",
+                        suffixIcon: Icon(
+                          Icons.search,
+                        ),
+                      ),
+                    ],
                   ),
                 )),
             Padding(
@@ -86,50 +219,33 @@ OrdersViewModel ordersViewModel=OrdersViewModel(ordersUseCases: injectOrdersUseC
                   children: [
                     FilterButton(
                       label: "All",
-                      isSelected: selectedButton == "All",
+                      isSelected: ordersViewModel.selectedButton == "All",
                       onPressed: () {
                         setState(() {
-                          selectedButton = "All";
-                        });
-                      },
-                    ),
-                    SizedBox(width: 10),
-                    // FilterButton(
-                    //   label: "Delivery",
-                    //   isSelected: selectedButton == "Delivery",
-                    //   onPressed: () {
-                    //     setState(() {
-                    //       selectedButton = "Delivery";
-                    //     });
-                    //   },
-                    // ),
-                    // SizedBox(width: 10),
-                    // FilterButton(
-                    //   label: "Pickup",
-                    //   isSelected: selectedButton == "Pickup",
-                    //   onPressed: () {
-                    //     setState(() {
-                    //       selectedButton = "Pickup";
-                    //     });
-                    //   },
-                    // ),
-                    // SizedBox(width: 10),
-                    FilterButton(
-                      label: "Not Paid",
-                      isSelected: selectedButton == "Not Paid",
-                      onPressed: () {
-                        setState(() {
-                          selectedButton = "Not Paid";
+                          ordersViewModel.selectedButton = "All";
+                          ordersViewModel.getOrders();
                         });
                       },
                     ),
                     SizedBox(width: 10),
                     FilterButton(
-                      label: "Completed",
-                      isSelected: selectedButton == "Completed",
+                      label: "Not Paid (${ordersViewModel.notPaidCount})",
+                      isSelected: ordersViewModel.selectedButton == "Not Paid",
                       onPressed: () {
                         setState(() {
-                          selectedButton = "Completed";
+                          ordersViewModel.selectedButton = "Not Paid";
+                          ordersViewModel.getOrders();
+                        });
+                      },
+                    ),
+                    SizedBox(width: 10),
+                    FilterButton(
+                      label: "Completed (${ordersViewModel.completedCount})",
+                      isSelected: ordersViewModel.selectedButton == "Completed",
+                      onPressed: () {
+                        setState(() {
+                          ordersViewModel.selectedButton = "Completed";
+                          ordersViewModel.getOrders();
                         });
                       },
                     ),
@@ -143,6 +259,7 @@ OrdersViewModel ordersViewModel=OrdersViewModel(ordersUseCases: injectOrdersUseC
                 listener: (context, state) {
                   if (state is RemoveOrderLoadingState) {
                     DialogUtils.showLoading(context, "Deleting Order...");
+
                   } else if (state is RemoveOrderErrorState) {
                     DialogUtils.hideLoading(context);
                     DialogUtils.showMessage(context, state.error);
@@ -151,6 +268,7 @@ OrdersViewModel ordersViewModel=OrdersViewModel(ordersUseCases: injectOrdersUseC
                     DialogUtils.showMessage(
                         context, "Order deleted successfully",
                         title: "Note");
+
 
                   }
                   else if (state is UpdateOrderLoadingState) {
@@ -166,7 +284,7 @@ OrdersViewModel ordersViewModel=OrdersViewModel(ordersUseCases: injectOrdersUseC
                   }
                 },
                 child: StreamBuilder<List<BillEntity>>(
-                  stream: selectedButton=="All"?ordersViewModel.orderStreamController.stream:selectedButton=="Not Paid"?
+                  stream: ordersViewModel.selectedButton=="All"?ordersViewModel.orderStreamController.stream:ordersViewModel.selectedButton=="Not Paid"?
                   ordersViewModel.npaidOrderStreamController.stream:ordersViewModel.completedOrderStreamController.stream,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -237,16 +355,20 @@ OrdersViewModel ordersViewModel=OrdersViewModel(ordersUseCases: injectOrdersUseC
                                       ],
                                     ),
                                     alignment: Alignment.center,
-                                    // content: SupplierView(
-                                    //   supplierEntity: suppliers[index],
-                                    // ),
+                                    content: BillView(
+                                      billEntity: orders[index],
+                                    ),
                                   );
                                 },
                               );
                             },
                             child: OrderItem(billEntity:orders[index] ,delete: (p0) {
                               ordersViewModel.deleteOrder(p0);
-                            },),
+                            },update: (id, bill) {
+                              ordersViewModel.updateOrder(id, bill);
+                            },ordersViewModel: ordersViewModel,
+                            collectMoney: ordersViewModel.collectMoney,
+                            payMoney: ordersViewModel.payMoney,),
                           );
                         },
                         separatorBuilder: (_, __) => SizedBox(height: 1.h),
