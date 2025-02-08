@@ -34,7 +34,7 @@ class _BillScreenState extends State<BillScreen>  with TickerProviderStateMixin 
 
   void _addNewBill() {
     setState(() {
-      bills.add("Bill ${bills.length + 1}");
+      bills.add("Bill ${int.tryParse(bills.last.substring(5,6))!+1 }");
       _rebuildTabController();
     });
   }
@@ -85,7 +85,6 @@ class _BillScreenState extends State<BillScreen>  with TickerProviderStateMixin 
                     isScrollable: true,
 
                     controller: _tabController,
-
                     unselectedLabelColor: AppColors.primaryColor,
                     unselectedLabelStyle: Theme.of(context)
                         .textTheme
@@ -119,6 +118,7 @@ class _BillScreenState extends State<BillScreen>  with TickerProviderStateMixin 
                         .map(
                             (bill) {
                           return Tab(
+                            height: 40.h,
                             child:Row(
                               children: [
 
@@ -133,17 +133,16 @@ class _BillScreenState extends State<BillScreen>  with TickerProviderStateMixin 
                 ),
 
                 InkWell(
-
                   child: Column(
                     children: [
                       Container(
                           width: 35.w,
-                          height:53.h,
+                          height:40.h,
                           decoration: BoxDecoration(borderRadius:BorderRadius.only(
                               topLeft: Radius.circular(15.r) ),
                               color: AppColors.darkPrimaryColor),
                           child: Icon(Icons.add,color: AppColors.whiteColor, size: 20.sp,)),
-                      Container(height: 1.7.h,width: 35.h,decoration: BoxDecoration(color: AppColors.darkPrimaryColor,),)
+                      // Container(height: 1.7.h,width: 35.h,decoration: BoxDecoration(color: AppColors.darkPrimaryColor,),)
                     ],
                   ),
                   onTap: _addNewBill,

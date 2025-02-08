@@ -18,6 +18,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int index = 0;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,8 @@ class _HomeState extends State<Home> {
       extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColors.lightGreyColor,
-
+      endDrawer:  MoreTab(),
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
@@ -87,11 +90,17 @@ backgroundColor: Colors.transparent,
           type: BottomNavigationBarType.fixed,
 
 
-
           currentIndex: index,
           onTap: (value) {
-            index = value;
-            setState(() {});
+            // index = value;
+            // setState(() {});
+            if (value == 1) {
+              _scaffoldKey.currentState?.openEndDrawer();
+            } else {
+              setState(() {
+                index = value;
+              });
+            }
           },
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home,size: 22.sp), label: "Home"),
@@ -104,5 +113,5 @@ backgroundColor: Colors.transparent,
     );
   }
 
-  List<Widget> tabs = [HomeTab(),MoreTab()];
+  List<Widget> tabs = [HomeTab()];
 }

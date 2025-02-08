@@ -763,37 +763,40 @@ class _BillTabState extends State<BillTab> {
                                           ),
                                         ),
                                       ),
-                                      InkWell(
-                                        onTap: () {
-                                          setState(() {
-                                            selectedIndex = 1;
-                                          });
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.only(
-                                              left: 15.w, right: 15.w),
-                                          decoration: BoxDecoration(
-                                            color: selectedIndex == 1
-                                                ? AppColors.darkPrimaryColor
-                                                : Colors.transparent,
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(25.r),
-                                              bottomRight: Radius.circular(25.r),
-                                              topRight: Radius.circular(25.r),
-                                              bottomLeft: Radius.circular(25.r),
-                                            ),
-                                          ),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            "Wholesale",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge!
-                                                .copyWith(
-                                              fontSize: 16.sp,
+                                      Expanded(
+                                        child: InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              selectedIndex = 1;
+                                            });
+                                          },
+                                          child: Container(
+                                        
+                                            padding: EdgeInsets.only(
+                                                left: 15.w, right: 15.w),
+                                            decoration: BoxDecoration(
                                               color: selectedIndex == 1
-                                                  ? Colors.white
-                                                  : AppColors.darkPrimaryColor,
+                                                  ? AppColors.darkPrimaryColor
+                                                  : Colors.transparent,
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(25.r),
+                                                bottomRight: Radius.circular(25.r),
+                                                topRight: Radius.circular(25.r),
+                                                bottomLeft: Radius.circular(25.r),
+                                              ),
+                                            ),
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              "Wholesale",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge!
+                                                  .copyWith(
+                                                fontSize: 16.sp,
+                                                color: selectedIndex == 1
+                                                    ? Colors.white
+                                                    : AppColors.darkPrimaryColor,
+                                              ),
                                             ),
                                           ),
                                         ),

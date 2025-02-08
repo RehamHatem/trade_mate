@@ -38,7 +38,7 @@ class ContainerIconTxt extends StatelessWidget {
                   .textTheme
                   .titleMedium!
                   .copyWith(
-                  fontSize: 16,
+                  fontSize: 18.sp,
                   color: AppColors.primaryColor),
             ),
     
